@@ -69,6 +69,8 @@ type RecursivePartial<T> = {
 			: T[P];
 };
 
-export function mergeThemes(baseTheme: Theme, partialTheme: RecursivePartial<Theme>): Theme {
+export type PartialTheme = RecursivePartial<Theme>;
+
+export function mergeThemes(baseTheme: Theme, partialTheme: PartialTheme): Theme {
 	return deepMerge(baseTheme, partialTheme) as Theme;
 }

@@ -18,7 +18,8 @@ export const load: LayoutServerLoad = async ({
 			pronouns: true,
 			status: true,
 			widgets: true,
-			username: true
+			username: true,
+			theme: true
 		}
 	});
 

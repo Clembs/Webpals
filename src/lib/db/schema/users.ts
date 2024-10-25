@@ -1,3 +1,4 @@
+import type { PartialTheme } from '$lib/themes/mergeThemes';
 import type { AnyWidget } from '$lib/widgets/types';
 import { relations, sql } from 'drizzle-orm';
 import { integer, jsonb, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
@@ -53,8 +54,8 @@ export const users = pgTable('users', {
 		enum: ['online', 'dnd', 'offline']
 	})
 		.notNull()
-		.default('offline')
-	// theme: jsonb('theme')
+		.default('offline'),
+	theme: jsonb('theme').$type<PartialTheme>()
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
