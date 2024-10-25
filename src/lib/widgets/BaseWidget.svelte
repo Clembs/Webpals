@@ -23,6 +23,9 @@
 	let widgetDialogEl: HTMLDialogElement | undefined = $state();
 	let widgetEditEl: HTMLDivElement | undefined = $state();
 
+	const animationDurationSeconds = 200;
+	const animationDuration = `${animationDurationSeconds}ms`;
+
 	function expandDialog() {
 		if (!widgetWrapperEl || !widgetDialogEl) return;
 
@@ -37,14 +40,13 @@
 		widgetDialogEl.style.left = `${rect.x}px`;
 		widgetDialogEl.style.top = `${rect.y}px`;
 		widgetDialogEl.style.width = `${rect.width}px`;
-		widgetDialogEl.style.minHeight = `${rect.height}px`;
+		widgetDialogEl.style.height = `${rect.height}px`;
 		// hide the widget
 		widgetWrapperEl.style.opacity = '0.01';
 
 		setTimeout(() => {
 			if (!widgetDialogEl) return;
-			widgetDialogEl.style.transition =
-				'left 200ms, top 200ms, width 200ms, min-height 200ms, transform 200ms';
+			widgetDialogEl.style.transition = `left ${animationDuration}, top ${animationDuration}, width ${animationDuration}, height ${animationDuration}, transform ${animationDuration}`;
 
 			const widgetEditRect = widgetEditEl?.getBoundingClientRect();
 
@@ -52,48 +54,45 @@
 			widgetDialogEl.style.left = '50%';
 			widgetDialogEl.style.top = '50%';
 			widgetDialogEl.style.transform = 'translate(-50%, -50%)';
-			widgetDialogEl.style.minHeight = `calc(${widgetEditRect?.height}px + ${
-				window.getComputedStyle(widgetDialogEl).padding
-			} * 2.5)`;
+			widgetDialogEl.style.height = `${(widgetEditRect?.height || 200) + (parseInt(window.getComputedStyle(widgetDialogEl)?.padding.replace('px', '')) || 16) * 2.5}px`;
 		}, 10);
 
-		// remove the transition
-		widgetDialogEl.style.transition = 'none';
+		setTimeout(() => {
+			// remove the transition
+			widgetDialogEl!.style.transition = 'none';
+			widgetDialogEl!.style.height = 'fit-content';
+		}, animationDurationSeconds + 10);
 	}
 
 	function closeDialog(ev: Event) {
 		ev.preventDefault();
-
 		if (!widgetWrapperEl || !widgetDialogEl) return;
 
 		const rect = widgetWrapperEl.getBoundingClientRect();
+		const dialogRect = widgetDialogEl.getBoundingClientRect();
 
-		if (!rect) return;
+		if (!rect || !dialogRect) return;
 
 		modalOpened = false;
 
-		setTimeout(() => {
-			if (!widgetDialogEl) return;
-			widgetDialogEl.style.transition =
-				'left 200ms, top 200ms, width 200ms, min-height 200ms, transform 200ms';
+		// enable the transition on the dialog
+		widgetDialogEl.style.transition = `left ${animationDuration}, top ${animationDuration}, width ${animationDuration}, height ${animationDuration}, transform ${animationDuration}`;
 
-			// reset the dialog to the dimensions of the widget
-			widgetDialogEl.style.transform = 'none';
-			widgetDialogEl.style.left = `${rect.x}px`;
-			widgetDialogEl.style.top = `${rect.y}px`;
-			widgetDialogEl.style.width = `${rect.width}px`;
-			widgetDialogEl.style.minHeight = `${rect.height}px`;
-		}, 10);
-
-		// remove the transition and safely close the dialog
-		widgetDialogEl.style.transition = 'none';
+		// reset the dialog to the dimensions of the widget
+		widgetDialogEl.style.left = `${rect.x}px`;
+		widgetDialogEl.style.top = `${rect.y}px`;
+		widgetDialogEl.style.transform = 'none';
+		widgetDialogEl.style.width = `${rect.width}px`;
+		widgetDialogEl.style.height = `${rect.height}px`;
 
 		setTimeout(() => {
-			if (!widgetWrapperEl) return;
-			widgetDialogEl?.close();
+			// close the dialog
+			widgetDialogEl!.close();
 			// show the widget
-			widgetWrapperEl.style.opacity = '1';
-		}, 210);
+			widgetWrapperEl!.style.opacity = '1';
+			// remove the transition and safely close the dialog
+			widgetDialogEl!.style.transition = 'none';
+		}, animationDurationSeconds + 10);
 	}
 </script>
 
@@ -109,7 +108,7 @@
 	</div>
 </dialog>
 
-<div inert aria-hidden={true} class="dialog-backdrop"></div>
+<div inert aria-hidden={true} class:open={modalOpened} class="dialog-backdrop"></div>
 
 <div class="widget-wrapper" class:editing={edit} bind:this={widgetWrapperEl}>
 	<div class="hover-menu">
@@ -141,6 +140,12 @@
 		inset: 0;
 		height: 100vh;
 		width: 100vw;
+
+		&.open {
+			z-index: 99;
+			background-color: #00000060;
+			// transition: background-color 100ms;
+		}
 	}
 
 	dialog {
@@ -160,13 +165,6 @@
 			display: flex;
 			flex-direction: column;
 			will-change: transform, width, height, left, top;
-
-			& + .dialog-backdrop {
-				z-index: 99;
-				background-color: #00000060;
-
-				transition: background-color 100ms;
-			}
 		}
 
 		&::backdrop {
