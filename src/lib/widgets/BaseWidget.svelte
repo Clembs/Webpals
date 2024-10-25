@@ -6,6 +6,7 @@
 	import { PencilIcon, Trash2Icon } from 'lucide-svelte';
 
 	let {
+		widget,
 		modalOpened = $bindable(false),
 		edit = $bindable(false),
 		editMenu,
@@ -13,7 +14,7 @@
 	}: {
 		modalOpened?: boolean;
 		user: Partial<User>;
-		widget: AnyWidget;
+		widget?: AnyWidget;
 		edit?: boolean;
 		editMenu: Snippet;
 		children: Snippet;
@@ -23,7 +24,7 @@
 	let widgetDialogEl: HTMLDialogElement | undefined = $state();
 	let widgetEditEl: HTMLDivElement | undefined = $state();
 
-	const animationDurationSeconds = 200;
+	const animationDurationSeconds = 250;
 	const animationDuration = `${animationDurationSeconds}ms`;
 
 	function expandDialog() {
@@ -68,22 +69,26 @@
 		ev.preventDefault();
 		if (!widgetWrapperEl || !widgetDialogEl) return;
 
-		const rect = widgetWrapperEl.getBoundingClientRect();
-		const dialogRect = widgetDialogEl.getBoundingClientRect();
-
-		if (!rect || !dialogRect) return;
-
 		modalOpened = false;
 
-		// enable the transition on the dialog
-		widgetDialogEl.style.transition = `left ${animationDuration}, top ${animationDuration}, width ${animationDuration}, height ${animationDuration}, transform ${animationDuration}`;
+		// set dialog height to a value in px so it can animate
+		const dialogRect = widgetDialogEl.getBoundingClientRect();
+		widgetDialogEl.style.height = `${dialogRect.height}px`;
 
 		// reset the dialog to the dimensions of the widget
-		widgetDialogEl.style.left = `${rect.x}px`;
-		widgetDialogEl.style.top = `${rect.y}px`;
-		widgetDialogEl.style.transform = 'none';
-		widgetDialogEl.style.width = `${rect.width}px`;
-		widgetDialogEl.style.height = `${rect.height}px`;
+		setTimeout(() => {
+			if (!widgetDialogEl || !widgetWrapperEl) return;
+			// enable the transition on the dialog
+			widgetDialogEl.style.transition = `left ${animationDuration}, top ${animationDuration}, width ${animationDuration}, height ${animationDuration}, transform ${animationDuration}`;
+
+			const wrapperRect = widgetWrapperEl.getBoundingClientRect();
+
+			widgetDialogEl.style.left = `${wrapperRect.x}px`;
+			widgetDialogEl.style.top = `${wrapperRect.y}px`;
+			widgetDialogEl.style.transform = 'none';
+			widgetDialogEl.style.width = `${wrapperRect.width}px`;
+			widgetDialogEl.style.height = `${wrapperRect.height}px`;
+		}, 10);
 
 		setTimeout(() => {
 			// close the dialog
@@ -121,10 +126,12 @@
 		>
 			<PencilIcon size={20} />
 		</button>
-		<!-- TODO: Delete widget & "deletable" field -->
-		<button aria-label="Delete widget">
-			<Trash2Icon size={20} />
-		</button>
+		{#if !widget}
+			<!-- TODO: Delete widget & "deletable" field -->
+			<button aria-label="Delete widget">
+				<Trash2Icon size={20} />
+			</button>
+		{/if}
 	</div>
 
 	<Card>
@@ -140,9 +147,9 @@
 		inset: 0;
 		height: 100vh;
 		width: 100vw;
+		z-index: 99;
 
 		&.open {
-			z-index: 99;
 			background-color: #00000060;
 			// transition: background-color 100ms;
 		}
