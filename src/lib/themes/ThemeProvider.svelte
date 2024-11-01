@@ -28,8 +28,6 @@
 				return `url(${theme.background.image_url})`;
 		}
 	}
-
-	console.log(theme);
 </script>
 
 <theme-provider

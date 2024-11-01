@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Button from '$lib/components/Button.svelte';
-	import { plainTheme } from '$lib/themes/mergeThemes.js';
+	import { mergeThemes, plainTheme } from '$lib/themes/mergeThemes.js';
 	import ThemeProvider from '$lib/themes/ThemeProvider.svelte';
 	import CustomWidgetComponent from '$lib/widgets/blocks/CustomWidgetComponent.svelte';
 	import AboutMeWidgetComponent from '$lib/widgets/default/AboutMeWidgetComponent.svelte';
@@ -23,7 +23,7 @@
 	{/each}
 {/snippet}
 
-<ThemeProvider theme={plainTheme}>
+<ThemeProvider theme={data.user.theme ? mergeThemes(plainTheme, data.user.theme) : plainTheme}>
 	<main>
 		<div class="column">
 			<ProfileWidgetComponent user={data.user} />
@@ -53,6 +53,9 @@
 		padding: clamp(calc(var(--base-padding) / 2), 2vw, calc(var(--base-padding) * 2));
 		gap: var(--base-gap);
 		grid-template-columns: 1fr 1.5fr;
+		grid-template-rows: 0fr;
+		background-position: center;
+		background-size: cover;
 
 		@media (max-width: 950px) {
 			grid-template-columns: 1fr;
