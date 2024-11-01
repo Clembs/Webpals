@@ -5,6 +5,8 @@ fun highly customizable mini profiles for everyone :3
 
 This project is a social network of profiles with plenty of customization options to make each one unique, sort of a modern equivalent to MySpace, or a mix of bento.me and a blog. Users can set up a profile, theme it using the graphical editor, add community-built widgets, friend other users, send posts, etc.
 
+This doesn't aim to replace anything, just to have a fun and creative way to connect to other users. It's something I've wanted to make for a WHILE, so I hope you'll enjoy it <3
+
 ## Feature roadmap
 
 - [ ] Authentication (Login, Register, Logout)
