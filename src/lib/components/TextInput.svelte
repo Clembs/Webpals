@@ -37,9 +37,9 @@
 			</div>
 		{/if}
 		{#if !multiline}
-			<input {type} id={name} {name} {...restProps} bind:value />
+			<input {type} id={name} {name} {required} {...restProps} bind:value />
 		{:else}
-			<textarea id={name} {name} {...restProps} bind:value></textarea>
+			<textarea id={name} {name} {required} {...restProps} bind:value></textarea>
 		{/if}
 	</div>
 
