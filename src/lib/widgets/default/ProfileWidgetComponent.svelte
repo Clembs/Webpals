@@ -6,6 +6,7 @@
 	import BaseWidget from '../BaseWidget.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import { enhance } from '$app/forms';
+	import InlineTextInput from '$lib/components/InlineTextInput.svelte';
 
 	let { user }: { user: PublicUser } = $props();
 
@@ -33,12 +34,13 @@
 				<img src={user.avatar} alt="{user.username}'s avatar" />
 			</label>
 			<div class="text-bits">
-				<input
+				<InlineTextInput
 					type="text"
 					id="display-name"
 					name="display-name"
 					placeholder="Display name"
 					value={user.displayName || user.username}
+					font-size="1.5rem"
 					autofocus
 					required
 				/>
@@ -55,7 +57,8 @@
 			<p>
 				Joined on {formatDate(snowflakeToDate(user.id), 'en-US')}
 				&bull;
-				<input
+
+				<InlineTextInput
 					type="text"
 					id="pronouns"
 					name="pronouns"
@@ -104,16 +107,6 @@
 		flex-direction: column;
 		gap: calc(var(--base-gap) * 1.5);
 
-		input[type='text'] {
-			border: none;
-			border-bottom: 1px solid var(--inputs-border-color);
-			outline: none;
-
-			&:focus-visible {
-				border-bottom-color: var(--buttons-primary-border-color);
-			}
-		}
-
 		.pro-tip {
 			opacity: 0;
 			transition: opacity 200ms;
@@ -158,11 +151,6 @@
 				color: white;
 				border-radius: var(--avatar-border-radius);
 			}
-		}
-
-		.text-bits #display-name {
-			font-size: 1.5rem;
-			font-weight: 500;
 		}
 	}
 
