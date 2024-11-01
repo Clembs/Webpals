@@ -8,14 +8,12 @@
 	let {
 		widget,
 		modalOpened = $bindable(false),
-		edit = $bindable(false),
 		editMenu,
 		children
 	}: {
 		modalOpened?: boolean;
 		user: Partial<User>;
 		widget?: AnyWidget;
-		edit?: boolean;
 		editMenu: Snippet;
 		children: Snippet;
 	} = $props();
@@ -99,15 +97,17 @@
 			widgetDialogEl!.style.transition = 'none';
 		}, animationDurationSeconds + 10);
 	}
+
+	$effect(() => {
+		if (modalOpened) {
+			expandDialog();
+		} else {
+			closeDialog(new Event('cancel'));
+		}
+	});
 </script>
 
-<dialog
-	aria-label="Edit widget"
-	bind:this={widgetDialogEl}
-	oncancel={(ev) => {
-		closeDialog(ev);
-	}}
->
+<dialog aria-label="Edit widget" bind:this={widgetDialogEl} oncancel={closeDialog}>
 	<div class="menu" bind:this={widgetEditEl}>
 		{@render editMenu()}
 	</div>
@@ -115,18 +115,12 @@
 
 <div inert aria-hidden={true} class:open={modalOpened} class="dialog-backdrop"></div>
 
-<div class="widget-wrapper" class:editing={edit} bind:this={widgetWrapperEl}>
+<div class="widget-wrapper" class:editing={modalOpened} bind:this={widgetWrapperEl}>
 	<div class="hover-menu">
-		<button
-			aria-label="Edit widget"
-			onclick={() => {
-				edit = true;
-				expandDialog();
-			}}
-		>
+		<button aria-label="Edit widget" onclick={() => (modalOpened = true)}>
 			<PencilIcon size={20} />
 		</button>
-		{#if !widget}
+		{#if widget}
 			<!-- TODO: Delete widget & "deletable" field -->
 			<button aria-label="Delete widget">
 				<Trash2Icon size={20} />

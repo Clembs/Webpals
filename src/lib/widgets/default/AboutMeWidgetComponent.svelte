@@ -19,15 +19,23 @@
 </script>
 
 {#snippet editMenu()}
-	<!--TODO: add form action endpoint  -->
-	<form use:enhance class="about-me-edit" action="/api/profile?/editAboutMe" method="post">
+	<form
+		use:enhance={() =>
+			({ update }) => {
+				update({ reset: false });
+				modalOpened = false;
+			}}
+		class="about-me-edit"
+		action="/api/profile?/editAboutMe"
+		method="post"
+	>
 		<h2>About me</h2>
 		<textarea class:big-text={modalOpened} name="content" value={widget.content}></textarea>
 		<Button type="submit">Save</Button>
 	</form>
 {/snippet}
 
-<BaseWidget bind:modalOpened {editMenu} {edit} {user} {widget}>
+<BaseWidget bind:modalOpened {editMenu} {user} {widget}>
 	<div class="about-me">
 		<h2>About me</h2>
 		<p>{widget.content}</p>
