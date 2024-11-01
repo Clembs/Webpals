@@ -1,3 +1,25 @@
-# MySpace (pending name)
+# Islands
+fun highly customizable mini profiles for everyone :3
 
-This project is a social media akin to MySpace (no way), or a mix of bento.me and a blog, where users can set up a profile with connections to other users, post articles, and customize everything with a simple theme editor and extensive, community-built widgets.
+## Description
+
+This project is a social network of profiles with plenty of customization options to make each one unique, sort of a modern equivalent to MySpace, or a mix of bento.me and a blog. Users can set up a profile, theme it using the graphical editor, add community-built widgets, friend other users, send posts, etc.
+
+## Feature roadmap
+
+- [ ] Authentication (Login, Register, Logout)
+- [ ] Onboarding
+- [ ] Customizing widgets (adding, removing, reordering)
+- [ ] Widget marketplace
+- [ ] Customizing profile theme
+- [ ] User friending
+- [ ] Commenting on profiles
+- [ ] Sending posts
+- [ ] Commenting on posts
+- [ ] Notifications
+- [ ] User settings
+- [ ] Search
+- [ ] Post feed
+- [ ] Profile feed
+
+I'm going to pre-release this project with an invitation system whenever the basics are covered. Let me know if you're interested via [Twitter](https://twitter.com/clembsv), [Bluesky](https://bsky.app/profile/clembs.com) or [Discord](https://clembs.com/discord) (I post updates on all three quite often!).
