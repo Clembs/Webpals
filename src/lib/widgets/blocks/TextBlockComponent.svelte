@@ -2,6 +2,7 @@
 	import InlineTextInput from '$lib/components/InlineTextInput.svelte';
 	import { replacePlaceholders } from '../placeholders';
 	import type { TextBlock } from '../types';
+	import { parseMarkdown } from '$lib/helpers/text';
 
 	let {
 		edit,
@@ -45,16 +46,24 @@
 	}
 </script>
 
+{#snippet blockContent()}
+	{#if block.editable}
+		{@html parseMarkdown(replacePlaceholders(block.content, data))}
+	{:else}
+		{replacePlaceholders(block.content, data)}
+	{/if}
+{/snippet}
+
 {#if !block.editable || !edit}
 	{#if block.text_type === 'paragraph'}
-		<p>{replacePlaceholders(block.content, data)}</p>
+		{@render blockContent()}
 	{:else if block.text_type === 'subtext'}
 		<span class="subtext">
-			{replacePlaceholders(block.content, data)}
+			{@render blockContent()}
 		</span>
 	{:else}
 		<svelte:element this={block.text_type} style="font-size: {fontSize}">
-			{replacePlaceholders(block.content, data)}
+			{@render blockContent()}
 		</svelte:element>
 	{/if}
 {:else}
