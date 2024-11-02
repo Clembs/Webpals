@@ -7,11 +7,15 @@
 	import { onMount } from 'svelte';
 
 	let {
+		edit = false,
 		user,
-		block
+		block,
+		basePath
 	}: {
+		edit?: boolean;
 		user: { id: string };
 		block: CustomWidget | LayoutBlock;
+		basePath: string;
 	} = $props();
 
 	let loading = $state(false);
@@ -47,13 +51,13 @@
 	{:else if loading}
 		<p>Loading data...</p>
 	{:else}
-		{#each block.blocks as b}
+		{#each block.blocks as b, i}
 			{#if b.type === 'text'}
-				<TextBlockComponent block={b} {data} />
+				<TextBlockComponent basePath="{basePath}[{i}]" {edit} block={b} {data} />
 			{:else if b.type === 'key_value'}
-				<KeyValueBlockComponent block={b} {data} />
+				<KeyValueBlockComponent basePath="{basePath}[{i}]" {edit} block={b} {data} />
 			{:else if b.type === 'layout'}
-				<LayoutBlockComponent {user} block={b} />
+				<LayoutBlockComponent basePath="{basePath}[{i}].blocks" {edit} {user} block={b} />
 			{/if}
 		{/each}
 	{/if}

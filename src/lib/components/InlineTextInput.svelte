@@ -73,6 +73,7 @@
 			font-size: var(--font-size, inherit);
 			font-weight: 500;
 			color: inherit;
+			width: 100%;
 
 			&.error {
 				border-bottom-color: #e90000;
