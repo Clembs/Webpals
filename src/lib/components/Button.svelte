@@ -52,16 +52,21 @@
 <style lang="scss">
 	a,
 	button {
-		display: block;
+		display: flex;
+		gap: calc(var(--base-gap) * 0.5);
+
 		padding: calc(var(--base-padding) * 0.75) var(--base-padding);
 		border-radius: var(--inputs-border-base-radius);
+
 		text-align: center;
+		justify-content: center;
 		width: 100%;
+		height: max-content;
+
 		font-weight: 500;
 		cursor: pointer;
 		text-decoration: none;
 		user-select: none;
-		height: max-content;
 
 		&.icon {
 			display: grid;
@@ -70,7 +75,7 @@
 		}
 
 		&.inline {
-			display: inline-block;
+			display: inline-flex;
 			width: max-content;
 		}
 
