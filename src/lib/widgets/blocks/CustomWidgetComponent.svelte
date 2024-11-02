@@ -10,13 +10,13 @@
 
 {#snippet editMenu()}
 	<form use:enhance method="post" action="/api/profile?/editCustomWidget&id={widget.id}">
-		<LayoutBlockComponent basePath={widget.id} edit {user} block={widget} />
+		<LayoutBlockComponent edit {user} block={widget} />
 		<Button type="submit">Save</Button>
 	</form>
 {/snippet}
 
 <BaseWidget {widget} {editMenu} {user}>
-	<LayoutBlockComponent basePath={widget.id} {user} block={widget} />
+	<LayoutBlockComponent {user} block={widget} />
 </BaseWidget>
 
 <style lang="scss">
