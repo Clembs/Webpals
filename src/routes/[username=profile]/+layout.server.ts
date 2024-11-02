@@ -42,6 +42,6 @@ export const load: LayoutServerLoad = async ({
 	return {
 		user,
 		editable: isCurrentUser,
-		edit: url.searchParams.has('edit')
+		editing: url.searchParams.has('edit')
 	};
 };

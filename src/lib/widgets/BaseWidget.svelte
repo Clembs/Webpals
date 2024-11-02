@@ -3,14 +3,17 @@
 	import type { AnyWidget } from '$lib/widgets/types';
 	import type { Snippet } from 'svelte';
 	import Card from '$lib/components/Card.svelte';
+	import { enhance } from '$app/forms';
 	import { PencilSimple, TrashSimple } from 'phosphor-svelte';
 
 	let {
 		widget,
+		editing,
 		modalOpened = $bindable(false),
 		editMenu,
 		children
 	}: {
+		editing: boolean;
 		modalOpened?: boolean;
 		user: Partial<User>;
 		widget?: AnyWidget;
@@ -108,31 +111,39 @@
 	});
 </script>
 
-<dialog aria-label="Edit widget" bind:this={widgetDialogEl} oncancel={closeDialog}>
-	<div class="menu" bind:this={widgetEditEl}>
-		{@render editMenu()}
-	</div>
-</dialog>
+{#if editing}
+	<dialog aria-label="Edit widget" bind:this={widgetDialogEl} oncancel={closeDialog}>
+		<div class="menu" bind:this={widgetEditEl}>
+			{@render editMenu()}
+		</div>
+	</dialog>
 
-<div inert aria-hidden={true} class:open={modalOpened} class="dialog-backdrop"></div>
+	<div inert aria-hidden={true} class:open={modalOpened} class="dialog-backdrop"></div>
 
-<div class="widget-wrapper" class:editing={modalOpened} bind:this={widgetWrapperEl}>
-	<div class="hover-menu">
-		<button aria-label="Edit widget" onclick={expandDialog}>
-			<PencilSimple size={20} />
-		</button>
-		{#if widget}
-			<!-- TODO: Delete widget & "deletable" field -->
-			<button aria-label="Delete widget">
-				<TrashSimple size={20} />
+	<div class="widget-wrapper" class:editing={modalOpened} bind:this={widgetWrapperEl}>
+		<div class="hover-menu">
+			<button aria-label="Edit widget" onclick={expandDialog}>
+				<PencilSimple size={20} />
 			</button>
-		{/if}
-	</div>
+			{#if widget}
+				<!-- TODO: Delete widget & "deletable" field -->
+				<form use:enhance action="/api/profile?/deleteWidget&id={widget.id}" method="post">
+					<button aria-label="Delete widget">
+						<TrashSimple size={20} />
+					</button>
+				</form>
+			{/if}
+		</div>
 
+		<Card>
+			{@render children()}
+		</Card>
+	</div>
+{:else}
 	<Card>
 		{@render children()}
 	</Card>
-</div>
+{/if}
 
 <style lang="scss">
 	.dialog-backdrop {

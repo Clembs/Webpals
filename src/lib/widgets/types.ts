@@ -1,3 +1,5 @@
+import type { User } from '$lib/db/schema/users';
+
 export type BaseDefaultWidget = {
 	id: string;
 	position: number;
@@ -63,3 +65,9 @@ export type AnyWidget =
 	| PostsWidget
 	| CommentsWidget
 	| CustomWidget;
+
+export type WidgetComponentProps<T extends AnyWidget> = {
+	user: Partial<User>;
+	widget: T;
+	editing: boolean;
+};

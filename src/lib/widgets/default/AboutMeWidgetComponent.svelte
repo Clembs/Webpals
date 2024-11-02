@@ -1,20 +1,11 @@
 <script lang="ts">
 	import BaseWidget from '$lib/widgets/BaseWidget.svelte';
 	import Button from '$lib/components/Button.svelte';
-	import type { User } from '$lib/db/schema/users';
-	import type { AboutMeWidget } from '../types';
+	import type { AboutMeWidget, WidgetComponentProps } from '../types';
 	import { enhance } from '$app/forms';
 	import { parseMarkdown } from '$lib/helpers/text';
 
-	let {
-		user,
-		widget,
-		edit = false
-	}: {
-		user: Partial<User>;
-		widget: AboutMeWidget;
-		edit?: boolean;
-	} = $props();
+	let { user, widget, editing }: WidgetComponentProps<AboutMeWidget> = $props();
 
 	let modalOpened = $state(false);
 </script>
@@ -36,7 +27,7 @@
 	</form>
 {/snippet}
 
-<BaseWidget bind:modalOpened {editMenu} {user} {widget}>
+<BaseWidget bind:modalOpened {editMenu} {user} {widget} {editing}>
 	<div class="about-me">
 		<h2>About me</h2>
 		{@html parseMarkdown(widget.content)}

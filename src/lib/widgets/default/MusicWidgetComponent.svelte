@@ -1,23 +1,16 @@
 <script lang="ts">
-	import type { User } from '$lib/db/schema/users';
 	import { MusicNote } from 'phosphor-svelte';
 	import BaseWidget from '../BaseWidget.svelte';
-	import type { MusicWidget } from '../types';
+	import type { MusicWidget, WidgetComponentProps } from '../types';
 
-	let {
-		user,
-		widget
-	}: {
-		user: Partial<User>;
-		widget: MusicWidget;
-	} = $props();
+	let { user, widget, editing }: WidgetComponentProps<MusicWidget> = $props();
 </script>
 
 {#snippet editMenu()}
 	hi
 {/snippet}
 
-<BaseWidget {editMenu} {widget} {user}>
+<BaseWidget {editMenu} {widget} {user} {editing}>
 	<div class="music-widget">
 		<div class="heading">
 			<MusicNote />

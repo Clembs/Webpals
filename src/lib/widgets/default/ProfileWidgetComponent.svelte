@@ -2,13 +2,13 @@
 	import type { PublicUser } from '$lib/db/schema/users';
 	import { formatDate } from '$lib/helpers/text';
 	import { snowflakeToDate } from '$lib/helpers/users';
-	import { PencilSimple, Cake, Circle, DotsThreeOutline } from 'phosphor-svelte';
+	import { PencilSimple, Cake, Circle } from 'phosphor-svelte';
 	import BaseWidget from '../BaseWidget.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import { enhance } from '$app/forms';
 	import InlineTextInput from '$lib/components/InlineTextInput.svelte';
 
-	let { user }: { user: PublicUser } = $props();
+	let { user, editing }: { user: PublicUser; editing: boolean } = $props();
 
 	let modalOpened = $state(false);
 </script>
@@ -93,7 +93,7 @@
 	</form>
 {/snippet}
 
-<BaseWidget bind:modalOpened {editMenu} {user}>
+<BaseWidget bind:modalOpened {editMenu} {user} {editing}>
 	<div class="top-part">
 		<div class="important-stuff">
 			<img src={user.avatar} alt="{user.username}'s avatar" />
