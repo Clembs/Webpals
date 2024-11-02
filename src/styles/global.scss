@@ -60,7 +60,12 @@ h6,
 	color: var(--color-heading);
 }
 
-p {
-	font-size: 0.9em;
+.darken {
+	color: var(--color-heading);
+}
+
+p,
+.subtext {
+	font-size: 15px;
 	color: var(--color-paragraph);
 }
