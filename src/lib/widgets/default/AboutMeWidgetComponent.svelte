@@ -4,6 +4,8 @@
 	import type { User } from '$lib/db/schema/users';
 	import type { AboutMeWidget } from '../types';
 	import { enhance } from '$app/forms';
+	import { marked } from 'marked';
+	import insane from 'insane';
 
 	let {
 		user,
@@ -16,6 +18,12 @@
 	} = $props();
 
 	let modalOpened = $state(false);
+
+	const insaneOptions: insane.SanitizeOptions = {
+		allowedAttributes: {
+			a: ['href', 'target', 'rel']
+		}
+	};
 </script>
 
 {#snippet editMenu()}
@@ -38,7 +46,12 @@
 <BaseWidget bind:modalOpened {editMenu} {user} {widget}>
 	<div class="about-me">
 		<h2>About me</h2>
-		<p>{widget.content}</p>
+		{@html insane(
+			marked.parse(widget.content, {
+				async: false
+			}),
+			insaneOptions
+		)}
 	</div>
 </BaseWidget>
 
@@ -49,7 +62,7 @@
 		gap: var(--base-gap);
 	}
 	h2 {
-		font-size: 1.25rem;
+		font-size: 1.5rem;
 	}
 
 	.about-me-edit {
@@ -64,6 +77,7 @@
 			font-size: 0.9rem;
 			transition: font-size 200ms;
 			resize: vertical;
+			min-height: 10rem;
 
 			&.big-text {
 				font-size: 1.1rem;
