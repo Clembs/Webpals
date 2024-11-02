@@ -3,7 +3,7 @@
 	import type { AnyWidget } from '$lib/widgets/types';
 	import type { Snippet } from 'svelte';
 	import Card from '$lib/components/Card.svelte';
-	import { PencilIcon, Trash2Icon } from 'lucide-svelte';
+	import { PencilSimple, TrashSimple } from 'phosphor-svelte';
 
 	let {
 		widget,
@@ -53,7 +53,8 @@
 			widgetDialogEl.style.left = '50%';
 			widgetDialogEl.style.top = '50%';
 			widgetDialogEl.style.transform = 'translate(-50%, -50%)';
-			widgetDialogEl.style.height = `${(widgetEditRect?.height || 200) + (parseInt(window.getComputedStyle(widgetDialogEl)?.padding.replace('px', '')) || 16) * 2.5}px`;
+			widgetDialogEl.style.height = `${(widgetEditRect?.height || 200) + (parseInt(window.getComputedStyle(widgetDialogEl)?.padding.replace('px', '')) || 16) * 2}px`;
+			widgetDialogEl.style.width = '700px';
 		}, 10);
 
 		setTimeout(() => {
@@ -117,13 +118,13 @@
 
 <div class="widget-wrapper" class:editing={modalOpened} bind:this={widgetWrapperEl}>
 	<div class="hover-menu">
-		<button aria-label="Edit widget" onclick={() => (modalOpened = true)}>
-			<PencilIcon size={20} />
+		<button aria-label="Edit widget" onclick={expandDialog}>
+			<PencilSimple size={20} />
 		</button>
 		{#if widget}
 			<!-- TODO: Delete widget & "deletable" field -->
 			<button aria-label="Delete widget">
-				<Trash2Icon size={20} />
+				<TrashSimple size={20} />
 			</button>
 		{/if}
 	</div>
@@ -159,7 +160,8 @@
 		box-shadow: var(--widgets-box-shadow-x) var(--widgets-box-shadow-y)
 			var(--widgets-box-shadow-blur) var(--widgets-box-shadow-color);
 		overflow: hidden;
-		will-change: transform, width, height, left, top;
+		/* will-change: transform, width, height, left, top; */
+		max-width: 100%;
 
 		&[open] {
 			// opacity: 1;

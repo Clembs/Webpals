@@ -2,7 +2,7 @@
 	import type { PublicUser } from '$lib/db/schema/users';
 	import { formatDate } from '$lib/helpers/text';
 	import { snowflakeToDate } from '$lib/helpers/users';
-	import { PencilIcon } from 'lucide-svelte';
+	import { PencilSimple } from 'phosphor-svelte';
 	import BaseWidget from '../BaseWidget.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import { enhance } from '$app/forms';
@@ -29,7 +29,7 @@
 			<input type="file" id="avatar" name="avatar" accept="image/*" />
 			<label for="avatar" aria-label="Edit avatar">
 				<span class="hover-text">
-					<PencilIcon />
+					<PencilSimple />
 				</span>
 				<img src={user.avatar} alt="{user.username}'s avatar" />
 			</label>
@@ -64,6 +64,7 @@
 					name="pronouns"
 					placeholder="Set your pronouns"
 					value={user.pronouns || ''}
+					required={false}
 				/>
 			</p>
 			{#if user.status === 'online'}
@@ -134,6 +135,7 @@
 			cursor: pointer;
 			border-radius: var(--avatar-border-radius);
 			position: relative;
+			flex-shrink: 0;
 
 			&:hover .hover-text,
 			&:active .hover-text,
