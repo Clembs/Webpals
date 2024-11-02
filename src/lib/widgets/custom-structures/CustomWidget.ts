@@ -3,6 +3,7 @@ import {
 	boolean,
 	lazy,
 	literal,
+	number,
 	picklist,
 	strictObject,
 	string,
@@ -31,5 +32,6 @@ export const BlockStructure: GenericSchema<AnyBlock> = union([
 
 export const CustomWidgetStructure = strictObject({
 	id: string(),
+	position: number(),
 	blocks: array(BlockStructure)
 });

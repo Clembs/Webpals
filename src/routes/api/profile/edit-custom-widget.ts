@@ -69,8 +69,6 @@ export async function editCustomWidget({ url, locals: { getCurrentUser }, reques
 		});
 	}
 
-	console.log(widget);
-
 	await db
 		.update(users)
 		.set({
