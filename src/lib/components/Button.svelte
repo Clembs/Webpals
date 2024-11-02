@@ -8,6 +8,7 @@
 		href,
 		disabled = false,
 		inline = false,
+		icon = false,
 		children,
 		onclick,
 		...restProps
@@ -16,6 +17,7 @@
 		variant?: 'primary' | 'secondary';
 		href?: string;
 		disabled?: boolean;
+		icon?: boolean;
 		inline?: boolean;
 		children: Snippet;
 		onclick?: () => void;
@@ -25,6 +27,7 @@
 {#if href}
 	<a
 		class:inline
+		class:icon
 		class={variant}
 		{href}
 		aria-disabled={disabled}
@@ -35,6 +38,7 @@
 {:else}
 	<button
 		class:inline
+		class:icon
 		class={variant}
 		{onclick}
 		{type}
@@ -57,6 +61,13 @@
 		cursor: pointer;
 		text-decoration: none;
 		user-select: none;
+		height: max-content;
+
+		&.icon {
+			display: grid;
+			place-items: center;
+			padding: calc(var(--base-padding) * 0.75);
+		}
 
 		&.inline {
 			display: inline-block;
