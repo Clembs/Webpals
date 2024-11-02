@@ -2,7 +2,7 @@
 	import type { PublicUser } from '$lib/db/schema/users';
 	import { formatDate } from '$lib/helpers/text';
 	import { snowflakeToDate } from '$lib/helpers/users';
-	import { PencilSimple } from 'phosphor-svelte';
+	import { PencilSimple, Cake, Circle, DotsThreeOutline } from 'phosphor-svelte';
 	import BaseWidget from '../BaseWidget.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import { enhance } from '$app/forms';
@@ -12,6 +12,30 @@
 
 	let modalOpened = $state(false);
 </script>
+
+{#snippet nonInteractive()}
+	<div class="less-important-stuff">
+		<p class="line">
+			<Cake />
+			Joined on
+			<span class="darken">
+				{formatDate(snowflakeToDate(user.id), 'en-US')}
+			</span>
+		</p>
+		<p class="line">
+			{#if user.status === 'online'}
+				<Circle />
+				<span class="darken"> Currently online </span>
+			{:else if user.status === 'offline'}
+				<Circle />
+				Last online on
+				<span class="darken">
+					{formatDate(user.last_online, 'en-US')}
+				</span>
+			{/if}
+		</p>
+	</div>
+{/snippet}
 
 {#snippet editMenu()}
 	<form
@@ -25,7 +49,7 @@
 		action="/api/profile?/editProfile"
 	>
 		<div class="important-stuff">
-			<!-- TODO: work this out -->
+			<!-- TODO: work avatar upload out -->
 			<input type="file" id="avatar" name="avatar" accept="image/*" />
 			<label for="avatar" aria-label="Edit avatar">
 				<span class="hover-text">
@@ -40,66 +64,63 @@
 					name="display-name"
 					placeholder="Display name"
 					value={user.displayName || user.username}
-					font-size="1.5rem"
+					font-size="1.75rem"
 					autofocus
 					required
 				/>
-				<p>
-					@{user.username}
-					<span class="pro-tip" class:open={modalOpened}>
-						(Pro tip: change this in user settings)
-					</span>
+				<p class="username">
+					<a href="/settings">
+						@{user.username}
+					</a>
+
+					&bull;
+
+					<InlineTextInput
+						type="text"
+						id="pronouns"
+						name="pronouns"
+						placeholder="Set your pronouns"
+						value={user.pronouns || ''}
+						required={false}
+					/>
 				</p>
 			</div>
 		</div>
 
-		<div class="less-important-stuff">
-			<p>
-				Joined on {formatDate(snowflakeToDate(user.id), 'en-US')}
-				&bull;
-
-				<InlineTextInput
-					type="text"
-					id="pronouns"
-					name="pronouns"
-					placeholder="Set your pronouns"
-					value={user.pronouns || ''}
-					required={false}
-				/>
-			</p>
-			{#if user.status === 'online'}
-				<p>🟢 Currently online</p>
-			{:else if user.status === 'offline'}
-				<p>⚫ Last online: {formatDate(user.last_online, 'en-US')}</p>
-			{/if}
-		</div>
+		{@render nonInteractive()}
 
 		<Button type="submit">Save</Button>
 	</form>
 {/snippet}
 
 <BaseWidget bind:modalOpened {editMenu} {user}>
-	<div class="important-stuff">
-		<img src={user.avatar} alt="{user.username}'s avatar" />
-		<div class="text-bits">
-			<h1>{user.displayName || user.username}</h1>
-			<p>@{user.username}</p>
+	<div class="top-part">
+		<div class="important-stuff">
+			<img src={user.avatar} alt="{user.username}'s avatar" />
+			<div class="text-bits">
+				<h1>{user.displayName || user.username}</h1>
+				<p class="username">
+					@{user.username}
+
+					{#if user.pronouns}
+						&bull;
+						{user.pronouns}
+					{/if}
+				</p>
+			</div>
 		</div>
+
+		<!-- TODO: adding friends, more options menu -->
+		<!-- <div class="buttons">
+			<Button icon inline variant="secondary">
+				<DotsThreeOutline />
+			</Button>
+
+			<Button inline>Add friend</Button>
+		</div> -->
 	</div>
 
-	<div class="less-important-stuff">
-		<p>
-			Joined on {formatDate(snowflakeToDate(user.id), 'en-US')}
-			{#if user.pronouns}
-				&bull; {user.pronouns}
-			{/if}
-		</p>
-		{#if user.status === 'online'}
-			<p>🟢 Currently online</p>
-		{:else if user.status === 'offline'}
-			<p>⚫ Last online: {formatDate(user.last_online, 'en-US')}</p>
-		{/if}
-	</div>
+	{@render nonInteractive()}
 </BaseWidget>
 
 <style lang="scss">
@@ -156,6 +177,17 @@
 		}
 	}
 
+	.top-part {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.buttons {
+		display: flex;
+		gap: calc(var(--base-gap) * 0.5);
+	}
+
 	.important-stuff {
 		display: flex;
 		gap: var(--base-gap);
@@ -170,10 +202,13 @@
 		.text-bits {
 			display: flex;
 			flex-direction: column;
-			gap: calc(var(--base-gap) / 4);
 
 			h1 {
-				font-size: 1.5rem;
+				font-size: 1.75rem;
+			}
+
+			.username {
+				font-size: 1rem;
 			}
 		}
 	}
@@ -182,5 +217,11 @@
 		display: flex;
 		flex-direction: column;
 		gap: calc(var(--base-gap) / 2);
+
+		.line {
+			display: flex;
+			gap: calc(var(--base-gap) / 4);
+			align-items: center;
+		}
 	}
 </style>
