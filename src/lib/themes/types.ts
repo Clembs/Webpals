@@ -15,7 +15,7 @@ type ShadowProps = {
 type BackgroundGradientProps = {
 	type: 'gradient';
 	gradient_colors: string[];
-	gradient_direction: number;
+	gradient_direction?: number;
 	gradient_type: 'linear' | 'radial' | 'conic';
 };
 

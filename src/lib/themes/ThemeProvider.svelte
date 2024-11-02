@@ -16,9 +16,9 @@
 				return theme.background.color;
 			case 'gradient': {
 				if (theme.background.gradient_type === 'conic') {
-					return `conic-gradient(${theme.background.gradient_direction}deg, ${theme.background.gradient_colors.join(', ')})`;
+					return `conic-gradient(from ${theme.background.gradient_direction}deg, ${theme.background.gradient_colors.join(', ')})`;
 				} else if (theme.background.gradient_type === 'radial') {
-					return `radial-gradient(${theme.background.gradient_direction}deg, ${theme.background.gradient_colors.join(', ')})`;
+					return `radial-gradient(circle at center, ${theme.background.gradient_colors.join(', ')})`;
 				} else if (theme.background.gradient_type === 'linear') {
 					return `linear-gradient(${theme.background.gradient_direction}deg, ${theme.background.gradient_colors.join(', ')})`;
 				}
