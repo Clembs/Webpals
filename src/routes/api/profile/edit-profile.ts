@@ -28,8 +28,8 @@ export async function editProfile({ locals: { getCurrentUser }, request }: Reque
 	await db
 		.update(users)
 		.set({
-			...(displayName && { displayName }),
-			...(pronouns && { pronouns })
+			displayName,
+			pronouns
 		})
 		.where(eq(users.id, user.id));
 
