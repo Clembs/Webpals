@@ -10,12 +10,12 @@
 		edit = false,
 		user,
 		block,
-		basePath
+		basePath = ''
 	}: {
 		edit?: boolean;
 		user: { id: string };
 		block: CustomWidget | LayoutBlock;
-		basePath: string;
+		basePath?: string;
 	} = $props();
 
 	let loading = $state(false);
@@ -67,6 +67,6 @@
 	.blocks {
 		display: flex;
 		flex-direction: column;
-		gap: 0.5rem;
+		gap: var(--base-gap);
 	}
 </style>
