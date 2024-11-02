@@ -36,6 +36,7 @@ export type MusicWidget = BaseDefaultWidget & {
 	content_url: string | undefined | null;
 	content_type: 'spotify' | 'youtube' | 'soundcloud' | `audio/${string}` | undefined | null;
 	title: string | undefined | null;
+	artist: string | undefined | null;
 };
 
 export type AboutMeWidget = BaseDefaultWidget & {

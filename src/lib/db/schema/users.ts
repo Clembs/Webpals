@@ -26,7 +26,8 @@ export const users = pgTable('users', {
 					position: 1,
 					content_url: undefined,
 					content_type: undefined,
-					title: undefined
+					title: undefined,
+					artist: undefined
 				},
 				{
 					id: 'favorites',
