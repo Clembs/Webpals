@@ -6,15 +6,18 @@
 	import AboutMeWidgetComponent from '$lib/widgets/default/AboutMeWidgetComponent.svelte';
 	import MusicWidgetComponent from '$lib/widgets/default/MusicWidgetComponent.svelte';
 	import ProfileWidgetComponent from '$lib/widgets/default/ProfileWidgetComponent.svelte';
+	import WidgetPicker from '$lib/widgets/picker/WidgetPicker.svelte';
 	import type { AnyWidget } from '$lib/widgets/types';
 	import { Eye, PencilSimple, Plus, Palette } from 'phosphor-svelte';
 	import { fly } from 'svelte/transition';
 
 	let { data } = $props();
+
+	let showPicker = $state(true);
 </script>
 
 <div id="top-info" class:show={data.editing}>
-	You are in edit mode. Hover over a widget or click it to reveal more options.
+	You are in editing mode. Hover over a widget or click it to reveal more options.
 </div>
 
 {#snippet widgets(widgets: AnyWidget[])}
@@ -57,9 +60,11 @@
 	</div>
 {/if}
 
+<WidgetPicker bind:showPicker />
+
 {#if data.editing}
 	<div id="edit-bar" transition:fly={{ y: 200 }}>
-		<button aria-label="Add widget">
+		<button onclick={() => (showPicker = true)} aria-label="Add widget">
 			<Plus weight="bold" size={30} />
 		</button>
 		<button aria-label="Edit theme">
@@ -70,7 +75,8 @@
 
 <style lang="scss">
 	#top-info {
-		background-color: lime;
+		background-color: #2f9126;
+		color: white;
 		border-bottom: 1px solid black;
 		font-weight: 500;
 		font-size: 1.25rem;
@@ -121,12 +127,12 @@
 	}
 
 	#edit-bar {
+		display: flex;
 		position: fixed;
 		bottom: var(--base-padding);
 		left: 50%;
 		transform: translateX(-50%);
 		z-index: 5;
-		display: flex;
 		gap: calc(var(--base-gap) * 0.5);
 		background-color: var(--widgets-background-color);
 		padding: calc(var(--base-padding) * 0.5);
