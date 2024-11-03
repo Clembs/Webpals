@@ -2,7 +2,7 @@
 	import IconContext from 'phosphor-svelte/lib/IconContext';
 	import '../styles/global.scss';
 
-	export let children;
+	let { children } = $props();
 </script>
 
 <IconContext
