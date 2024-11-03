@@ -119,8 +119,10 @@
 	</dialog>
 
 	<div inert aria-hidden={true} class:open={modalOpened} class="dialog-backdrop"></div>
+{/if}
 
-	<div class="widget-wrapper" class:editing={modalOpened} bind:this={widgetWrapperEl}>
+<div class="widget-wrapper" class:editing={modalOpened} bind:this={widgetWrapperEl}>
+	{#if editing}
 		<div class="hover-menu">
 			<button aria-label="Edit widget" onclick={expandDialog}>
 				<PencilSimple size={20} />
@@ -134,16 +136,12 @@
 				</form>
 			{/if}
 		</div>
+	{/if}
 
-		<Card>
-			{@render children()}
-		</Card>
-	</div>
-{:else}
 	<Card>
 		{@render children()}
 	</Card>
-{/if}
+</div>
 
 <style lang="scss">
 	.dialog-backdrop {
