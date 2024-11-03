@@ -3,6 +3,8 @@ import type { AnyWidget } from '$lib/widgets/types';
 import { relations, sql } from 'drizzle-orm';
 import { integer, jsonb, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
 
+export const UserStatusTypes = ['online', 'dnd', 'offline'] as const;
+
 export const users = pgTable('users', {
 	id: text('id').primaryKey(),
 	email: text('email').notNull().unique(),
@@ -12,7 +14,7 @@ export const users = pgTable('users', {
 	displayName: text('display_name'),
 	avatar: text('avatar'),
 	pronouns: text('pronouns'),
-	last_online: timestamp('last_online', {
+	lastOnline: timestamp('last_online', {
 		withTimezone: true
 	})
 		.notNull()
@@ -52,7 +54,7 @@ export const users = pgTable('users', {
 		] as AnyWidget[][])
 		.$type<AnyWidget[][]>(),
 	status: text('status', {
-		enum: ['online', 'dnd', 'offline']
+		enum: UserStatusTypes
 	})
 		.notNull()
 		.default('offline'),

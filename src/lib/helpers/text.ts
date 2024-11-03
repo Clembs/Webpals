@@ -9,6 +9,13 @@ export function formatDate(date: Date, locale: string): string {
 	});
 }
 
+export function formatRelativeTime(date: Date, locale: string): string {
+	return new Intl.RelativeTimeFormat(locale, {
+		style: 'long',
+		numeric: 'auto'
+	}).format(Math.round((date.getTime() - Date.now()) / 60000), 'minutes');
+}
+
 export function parseMarkdown(text: string, ...markedExtensions: MarkedExtension[]): string {
 	const insaneOptions: insane.SanitizeOptions = {
 		allowedAttributes: {

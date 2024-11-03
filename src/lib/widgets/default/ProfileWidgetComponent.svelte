@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { PublicUser } from '$lib/db/schema/users';
-	import { formatDate } from '$lib/helpers/text';
+	import { formatDate, formatRelativeTime } from '$lib/helpers/text';
 	import { snowflakeToDate } from '$lib/helpers/users';
-	import { PencilSimple, Cake, Circle } from 'phosphor-svelte';
+	import { PencilSimple, Cake, Circle, Island, CircleDashed, Prohibit } from 'phosphor-svelte';
 	import BaseWidget from '../BaseWidget.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import { enhance } from '$app/forms';
@@ -16,23 +16,31 @@
 {#snippet nonInteractive()}
 	<div class="less-important-stuff">
 		<p class="line">
+			{#if user.status === 'online'}
+				<Circle color="#2f9126" />
+				Currently <span class="darken"> online </span>
+			{:else if user.status === 'dnd'}
+				<Prohibit color="#e90000" />
+				Currently <span class="darken"> busy </span>
+			{:else if user.status === 'offline'}
+				<CircleDashed />
+				Last seen
+				<span class="darken">
+					<!-- if the last seen was less than a day ago, use relative time -->
+					{#if user.lastOnline.getTime() > Date.now() - 86400000}
+						{formatRelativeTime(user.lastOnline, 'en-US')}
+					{:else}
+						on {formatDate(user.lastOnline, 'en-US')}
+					{/if}
+				</span>
+			{/if}
+		</p>
+		<p class="line">
 			<Cake />
 			Joined on
 			<span class="darken">
 				{formatDate(snowflakeToDate(user.id), 'en-US')}
 			</span>
-		</p>
-		<p class="line">
-			{#if user.status === 'online'}
-				<Circle />
-				<span class="darken"> Currently online </span>
-			{:else if user.status === 'offline'}
-				<Circle />
-				Last online on
-				<span class="darken">
-					{formatDate(user.last_online, 'en-US')}
-				</span>
-			{/if}
 		</p>
 	</div>
 {/snippet}
@@ -96,7 +104,13 @@
 <BaseWidget bind:modalOpened {editMenu} {user} {editing}>
 	<div class="top-part">
 		<div class="important-stuff">
-			<img src={user.avatar} alt="{user.username}'s avatar" />
+			{#if user.avatar}
+				<img class="avatar" src={user.avatar} alt="{user.username}'s avatar" />
+			{:else}
+				<div class="avatar fallback">
+					<Island />
+				</div>
+			{/if}
 			<div class="text-bits">
 				<h1>{user.displayName || user.username}</h1>
 				<p class="username">
@@ -193,10 +207,21 @@
 		gap: var(--base-gap);
 		align-items: center;
 
-		img {
+		.avatar {
 			width: var(--avatar-size);
 			height: var(--avatar-size);
 			border-radius: var(--avatar-border-radius);
+
+			&.fallback {
+				background-color: var(--widgets-background-color-dim);
+				display: grid;
+				place-items: center;
+
+				:global(svg) {
+					width: 50%;
+					height: 50%;
+				}
+			}
 		}
 
 		.text-bits {

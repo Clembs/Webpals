@@ -14,7 +14,7 @@ export const load: LayoutServerLoad = async ({
 			id: true,
 			avatar: true,
 			displayName: true,
-			last_online: true,
+			lastOnline: true,
 			pronouns: true,
 			status: true,
 			widgets: true,
