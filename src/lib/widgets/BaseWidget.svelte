@@ -217,7 +217,7 @@
 		}
 
 		&:hover .hover-menu,
-		&:focus-within .hover-menu,
+		&:focus-visible .hover-menu,
 		&:active .hover-menu {
 			transition:
 				opacity 150ms,

@@ -62,7 +62,6 @@
 			}
 
 			.subtext {
-				align-self: baseline;
 				margin-left: calc(var(--base-gap) * 0.25);
 			}
 		}
