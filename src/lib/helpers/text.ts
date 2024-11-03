@@ -17,11 +17,18 @@ export function parseMarkdown(text: string, ...markedExtensions: MarkedExtension
 	};
 
 	return insane(
-		marked.use(...markedExtensions).parse(text, {
-			async: false,
-			gfm: true,
-			breaks: true
-		}),
+		marked
+			.use(...markedExtensions, {
+				renderer: {
+					link: ({ href, title, text }) =>
+						`<a href="${href}" title="${title}" target="_blank" rel="noopener noreferrer">${text}</a>`
+				}
+			})
+			.parse(text, {
+				async: false,
+				gfm: true,
+				breaks: true
+			}),
 		insaneOptions
 	);
 }
