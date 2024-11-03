@@ -10,7 +10,7 @@
 	} = $props();
 
 	let addWidgetMenuScroll = $state(0);
-	let dialogEl: HTMLDialogElement | undefined = $state();
+	let dialogEl = $state<HTMLDialogElement>();
 
 	$effect(() => {
 		if (showPicker) {

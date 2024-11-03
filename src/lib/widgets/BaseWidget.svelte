@@ -21,9 +21,9 @@
 		children: Snippet;
 	} = $props();
 
-	let widgetWrapperEl: HTMLDivElement | undefined = $state();
-	let widgetDialogEl: HTMLDialogElement | undefined = $state();
-	let widgetEditEl: HTMLDivElement | undefined = $state();
+	let widgetWrapperEl = $state<HTMLDivElement>();
+	let widgetDialogEl = $state<HTMLDialogElement>();
+	let widgetEditEl = $state<HTMLDivElement>();
 
 	const animationDurationSeconds = 250;
 	const animationDuration = `${animationDurationSeconds}ms`;

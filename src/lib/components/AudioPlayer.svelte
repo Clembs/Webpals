@@ -9,7 +9,7 @@
 		type: string;
 	} = $props();
 
-	let audioEl: HTMLAudioElement | undefined = $state();
+	let audioEl = $state<HTMLAudioElement>();
 </script>
 
 <!-- TODO: link this to the actual audio player -->
