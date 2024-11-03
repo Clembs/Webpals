@@ -7,7 +7,8 @@
 	import MusicWidgetComponent from '$lib/widgets/default/MusicWidgetComponent.svelte';
 	import ProfileWidgetComponent from '$lib/widgets/default/ProfileWidgetComponent.svelte';
 	import type { AnyWidget } from '$lib/widgets/types';
-	import { Eye, PencilSimple } from 'phosphor-svelte';
+	import { Eye, PencilSimple, Plus, Palette } from 'phosphor-svelte';
+	import { fly } from 'svelte/transition';
 
 	let { data } = $props();
 </script>
@@ -53,6 +54,17 @@
 				View profile
 			</Button>
 		{/if}
+	</div>
+{/if}
+
+{#if data.editing}
+	<div id="edit-bar" transition:fly={{ y: 200 }}>
+		<button aria-label="Add widget">
+			<Plus weight="bold" size={30} />
+		</button>
+		<button aria-label="Edit theme">
+			<Palette size={30} />
+		</button>
 	</div>
 {/if}
 
@@ -105,6 +117,34 @@
 		position: fixed;
 		bottom: var(--base-padding);
 		right: var(--base-padding);
-		z-index: 100;
+		z-index: 5;
+	}
+
+	#edit-bar {
+		position: fixed;
+		bottom: var(--base-padding);
+		left: 50%;
+		transform: translateX(-50%);
+		z-index: 5;
+		display: flex;
+		gap: calc(var(--base-gap) * 0.5);
+		background-color: var(--widgets-background-color);
+		padding: calc(var(--base-padding) * 0.5);
+		border-radius: var(--widgets-border-base-radius);
+		box-shadow: var(--widgets-box-shadow-x) var(--widgets-box-shadow-y)
+			var(--widgets-box-shadow-blur) var(--widgets-box-shadow-color);
+		border: var(--widgets-border-width) solid var(--widgets-border-color);
+
+		button {
+			background: var(--widgets-background-color-dim);
+			border: var(--inputs-border-width) solid var(--inputs-border-color);
+			border-radius: var(--inputs-border-base-radius);
+			padding: calc(var(--base-padding) * 0.25);
+			cursor: pointer;
+
+			&:hover {
+				filter: brightness(0.9);
+			}
+		}
 	}
 </style>
