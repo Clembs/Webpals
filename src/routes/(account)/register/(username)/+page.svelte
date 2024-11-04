@@ -3,7 +3,7 @@
 	import { replaceState } from '$app/navigation';
 	import Button from '$lib/components/Button.svelte';
 	import TextInput from '$lib/components/TextInput.svelte';
-	import { USERNAME_REGEX } from '$lib/helpers/regex.js';
+	import { USERNAME_REGEX } from '$lib/helpers/constants';
 
 	let { data: initialData, form } = $props();
 	let isLoading = $state(false);

@@ -3,18 +3,14 @@ import { error, redirect } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
 import { sql } from 'drizzle-orm';
 
-export const load: LayoutServerLoad = async ({
-	params: { username },
-	url,
-	locals: { getCurrentUser }
-}) => {
+export const load: LayoutServerLoad = async ({ params: { username }, url, parent }) => {
 	const user = await db.query.users.findFirst({
 		where: (user, { eq }) => eq(sql`LOWER(${user.username})`, username.toLowerCase()),
 		columns: {
 			id: true,
 			avatar: true,
 			displayName: true,
-			lastOnline: true,
+			lastHeartbeat: true,
 			pronouns: true,
 			status: true,
 			widgets: true,
@@ -30,7 +26,7 @@ export const load: LayoutServerLoad = async ({
 		redirect(301, `/${user.username}`);
 	}
 
-	const currentUser = await getCurrentUser();
+	const { currentUser } = await parent();
 	const isCurrentUser = currentUser && currentUser.id === user.id;
 
 	if (url.searchParams.has('edit')) {

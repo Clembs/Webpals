@@ -1,6 +1,6 @@
 import { EMAIL_REGEX } from 'valibot';
 import type { LayoutServerLoad } from './$types';
-import { USERNAME_REGEX } from '$lib/helpers/regex';
+import { USERNAME_REGEX } from '$lib/helpers/constants';
 
 export const load: LayoutServerLoad = async ({ url }) => {
 	const login = url.searchParams.get('login');

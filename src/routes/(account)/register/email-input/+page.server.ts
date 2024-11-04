@@ -1,7 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { EMAIL_REGEX } from 'valibot';
-import { USERNAME_REGEX } from '$lib/helpers/regex';
+import { USERNAME_REGEX } from '$lib/helpers/constants';
 import { sendEmail } from '$lib/helpers/email';
 import { db } from '$lib/db';
 import { authCodes } from '$lib/db/schema/users';

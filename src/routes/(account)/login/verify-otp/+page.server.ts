@@ -1,5 +1,5 @@
 import { db } from '$lib/db';
-import { USERNAME_REGEX } from '$lib/helpers/regex';
+import { USERNAME_REGEX } from '$lib/helpers/constants';
 import { createSession } from '$lib/helpers/sessions';
 import { EMAIL_REGEX } from 'valibot';
 import type { Actions, PageServerLoad } from './$types';

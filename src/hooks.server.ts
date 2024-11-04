@@ -1,5 +1,8 @@
 import { db } from '$lib/db';
+import { users } from '$lib/db/schema/users';
+import { HEARTBEAT_INTERVAL } from '$lib/helpers/constants';
 import type { Handle } from '@sveltejs/kit';
+import { eq } from 'drizzle-orm';
 
 export const handle: Handle = async ({ event, resolve }) => {
 	const sessionId = event.cookies.get('sessionId');
@@ -26,6 +29,22 @@ export const handle: Handle = async ({ event, resolve }) => {
 			}
 		});
 	};
+
+	const user = await event.locals.getCurrentUser();
+
+	// if the user hasn't sent a heartbeat in the past 3 minutes ago, update it (unless they're purposefully offline)
+	if (
+		user &&
+		user.lastHeartbeat.getTime() < Date.now() - HEARTBEAT_INTERVAL &&
+		user.status !== 'offline'
+	) {
+		await db
+			.update(users)
+			.set({
+				lastHeartbeat: new Date()
+			})
+			.where(eq(users.id, user.id));
+	}
 
 	return await resolve(event);
 };

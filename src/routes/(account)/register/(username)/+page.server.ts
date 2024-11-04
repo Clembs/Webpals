@@ -1,6 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
-import { USERNAME_REGEX } from '$lib/helpers/regex';
+import { USERNAME_REGEX } from '$lib/helpers/constants';
 import { db } from '$lib/db';
 
 export const actions: Actions = {

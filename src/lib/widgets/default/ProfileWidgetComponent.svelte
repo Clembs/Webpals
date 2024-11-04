@@ -7,8 +7,11 @@
 	import Button from '$lib/components/Button.svelte';
 	import { enhance } from '$app/forms';
 	import InlineTextInput from '$lib/components/InlineTextInput.svelte';
+	import { HEARTBEAT_INTERVAL } from '$lib/helpers/constants';
 
 	let { user, editing }: { user: PublicUser; editing: boolean } = $props();
+	// If the user set their status to something other than offline AND that the last heartbeat was within the timeframe (plus a second for safety)
+	const userAlive = user.lastHeartbeat.getTime() > Date.now() - HEARTBEAT_INTERVAL - 1000;
 
 	let modalOpened = $state(false);
 </script>
@@ -16,21 +19,21 @@
 {#snippet nonInteractive()}
 	<div class="less-important-stuff">
 		<p class="line">
-			{#if user.status === 'online'}
+			{#if user.status === 'online' && userAlive}
 				<Circle color="#2f9126" />
 				Currently <span class="darken"> online </span>
-			{:else if user.status === 'dnd'}
+			{:else if user.status === 'dnd' && userAlive}
 				<Prohibit color="#e90000" />
 				Currently <span class="darken"> busy </span>
-			{:else if user.status === 'offline'}
+			{:else}
 				<CircleDashed />
 				Last seen
 				<span class="darken">
-					<!-- if the last seen was less than a day ago, use relative time -->
-					{#if user.lastOnline.getTime() > Date.now() - 86400000}
-						{formatRelativeTime(user.lastOnline, 'en-US')}
+					<!-- if the last heartbeat was less than a day ago, use relative time -->
+					{#if user.lastHeartbeat.getTime() > Date.now() - 24 * 60 * 60 * 1000}
+						{formatRelativeTime(user.lastHeartbeat, 'en-US')}
 					{:else}
-						on {formatDate(user.lastOnline, 'en-US')}
+						on {formatDate(user.lastHeartbeat, 'en-US')}
 					{/if}
 				</span>
 			{/if}

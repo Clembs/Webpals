@@ -14,7 +14,7 @@ export const users = pgTable('users', {
 	displayName: text('display_name'),
 	avatar: text('avatar'),
 	pronouns: text('pronouns'),
-	lastOnline: timestamp('last_online', {
+	lastHeartbeat: timestamp('last_heartbeat', {
 		withTimezone: true
 	})
 		.notNull()
