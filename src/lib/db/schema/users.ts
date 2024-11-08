@@ -1,7 +1,8 @@
 import type { PartialTheme } from '$lib/themes/mergeThemes';
 import type { AnyWidget } from '$lib/widgets/types';
-import { relations, sql } from 'drizzle-orm';
-import { integer, jsonb, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
+import { relations } from 'drizzle-orm';
+import { jsonb, pgTable, primaryKey, smallint, text, timestamp } from 'drizzle-orm/pg-core';
+import { passkeys, sessions, type Passkey, type Session } from './auth';
 
 export const UserStatusTypes = ['online', 'dnd', 'offline'] as const;
 
@@ -57,75 +58,67 @@ export const users = pgTable('users', {
 		enum: UserStatusTypes
 	})
 		.notNull()
-		.default('offline'),
+		.default('online'),
 	theme: jsonb('theme').$type<PartialTheme>()
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
 	passkeys: many(passkeys),
-	sessions: many(sessions)
+	sessions: many(sessions),
+	// Relationships can be bi-directional (for friends for example), so we need to define the relation twice
+	initatedRelationships: many(relationships, {
+		relationName: 'initiated'
+	}),
+	receivedRelationships: many(relationships, {
+		relationName: 'received'
+	})
 }));
 
-export type User = typeof users.$inferSelect;
+type User = typeof users.$inferSelect;
 
 export type PublicUser = Omit<User, 'challenge' | 'challengeExpiresAt' | 'email'>;
 
 export type FullUser = User & {
 	passkeys: Passkey[];
 	sessions: Session[];
+	initatedRelationships: Relationship[];
+	receivedRelationships: Relationship[];
 };
 
-export const passkeys = pgTable('passkeys', {
-	credentialId: text('credential_id').primaryKey(),
-	userId: text('user_id')
-		.notNull()
-		.references(() => users.id),
-	publicKey: text('public_key').notNull(),
-	counter: integer('counter').notNull(),
-	name: text('name').notNull(),
-	createdAt: timestamp('created_at').notNull().defaultNow()
-});
+export enum RelationshipTypes {
+	FriendPending,
+	Friend,
+	Blocked
+}
 
-export const passkeysRelations = relations(passkeys, ({ one }) => ({
+export const relationships = pgTable(
+	'relationships',
+	{
+		userId: text('user_id').notNull(),
+		targetId: text('target_id').notNull(),
+		status: smallint('status').notNull().$type<RelationshipTypes>(),
+		createdAt: timestamp('created_at').notNull().defaultNow()
+	},
+	({ userId, targetId }) => ({
+		id: primaryKey({
+			columns: [userId, targetId]
+		})
+	})
+);
+
+export const relationshipsRelations = relations(relationships, ({ one }) => ({
 	user: one(users, {
-		fields: [passkeys.userId],
-		references: [users.id]
+		fields: [relationships.userId],
+		references: [users.id],
+		relationName: 'initiated'
+	}),
+	recipient: one(users, {
+		fields: [relationships.targetId],
+		references: [users.id],
+		relationName: 'received'
 	})
 }));
 
-export type Passkey = typeof passkeys.$inferSelect;
-
-export const authCodes = pgTable('auth_codes', {
-	id: text('id')
-		.primaryKey()
-		.default(sql`gen_random_uuid()`),
-	code: text('code').notNull(),
-	email: text('email').notNull(),
-	expiresAt: timestamp('expires_at').notNull()
-});
-
-export type AuthCode = typeof authCodes.$inferSelect;
-
-export const sessions = pgTable('sessions', {
-	id: text('id')
-		.primaryKey()
-		.default(sql`gen_random_uuid()`),
-	name: text('name').notNull(),
-	deviceType: text('device_type', {
-		enum: ['desktop', 'mobile', 'other']
-	}).notNull(),
-	userId: text('user_id')
-		.notNull()
-		.references(() => users.id),
-	createdAt: timestamp('created_at').notNull().defaultNow(),
-	expiresAt: timestamp('expires_at').notNull()
-});
-
-export const sessionsRelations = relations(sessions, ({ one }) => ({
-	user: one(users, {
-		fields: [sessions.userId],
-		references: [users.id]
-	})
-}));
-
-export type Session = typeof sessions.$inferSelect;
+export type Relationship = typeof relationships.$inferSelect & {
+	recipient: PublicUser;
+};

@@ -11,23 +11,58 @@ export const handle: Handle = async ({ event, resolve }) => {
 		if (!sessionId) return null;
 
 		return await db.query.sessions.findFirst({
-			where: ({ id }, { eq }) => eq(id, sessionId),
-			with: { user: true }
+			where: ({ id }, { eq }) => eq(id, sessionId)
 		});
 	};
 
 	event.locals.getCurrentUser = async () => {
 		const session = await event.locals.getSession();
 
-		if (!session || !session.user) return null;
+		if (!session) return null;
 
-		return await db.query.users.findFirst({
+		const user = await db.query.users.findFirst({
 			where: ({ id }, { eq }) => eq(id, session.userId),
 			with: {
 				sessions: true,
-				passkeys: true
+				passkeys: true,
+				initatedRelationships: {
+					with: {
+						recipient: {
+							columns: {
+								avatar: true,
+								displayName: true,
+								id: true,
+								status: true,
+								lastHeartbeat: true,
+								pronouns: true,
+								theme: true,
+								username: true,
+								widgets: true
+							}
+						}
+					}
+				},
+				receivedRelationships: {
+					with: {
+						recipient: {
+							columns: {
+								avatar: true,
+								displayName: true,
+								id: true,
+								status: true,
+								lastHeartbeat: true,
+								pronouns: true,
+								theme: true,
+								username: true,
+								widgets: true
+							}
+						}
+					}
+				}
 			}
 		});
+
+		return user && { ...user, status: 'online' };
 	};
 
 	const user = await event.locals.getCurrentUser();
