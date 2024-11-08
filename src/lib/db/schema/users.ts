@@ -95,13 +95,13 @@ export const relationships = pgTable(
 	'relationships',
 	{
 		userId: text('user_id').notNull(),
-		targetId: text('target_id').notNull(),
+		recipientId: text('recipient_id').notNull(),
 		status: smallint('status').notNull().$type<RelationshipTypes>(),
 		createdAt: timestamp('created_at').notNull().defaultNow()
 	},
-	({ userId, targetId }) => ({
+	({ userId, recipientId }) => ({
 		id: primaryKey({
-			columns: [userId, targetId]
+			columns: [userId, recipientId]
 		})
 	})
 );
@@ -113,7 +113,7 @@ export const relationshipsRelations = relations(relationships, ({ one }) => ({
 		relationName: 'initiated'
 	}),
 	recipient: one(users, {
-		fields: [relationships.targetId],
+		fields: [relationships.recipientId],
 		references: [users.id],
 		relationName: 'received'
 	})
