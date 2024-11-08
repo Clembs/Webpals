@@ -16,7 +16,7 @@
 		data?: unknown;
 	} = $props();
 
-	let fontSize: string;
+	let fontSize = $state<string>();
 
 	switch (block.text_type) {
 		case 'h1':
