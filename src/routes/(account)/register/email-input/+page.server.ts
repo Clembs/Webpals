@@ -4,7 +4,7 @@ import { EMAIL_REGEX } from 'valibot';
 import { USERNAME_REGEX } from '$lib/helpers/constants';
 import { sendEmail } from '$lib/helpers/email';
 import { db } from '$lib/db';
-import { authCodes } from '$lib/db/schema/users';
+import { authCodes } from '$lib/db/schema/auth';
 import { randomInt } from 'crypto';
 
 export const load: PageServerLoad = async ({ url }) => {

@@ -48,7 +48,7 @@
 						formData.append('login', data.login!);
 						formData.append('credential', JSON.stringify(credential));
 
-						const req = await fetch('/login?/verifyPasskeyAuthChallenge', {
+						const req = await fetch('/login?/verifyPasskeyChallenge', {
 							method: 'POST',
 							body: formData
 						});

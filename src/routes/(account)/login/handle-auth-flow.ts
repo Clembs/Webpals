@@ -2,12 +2,13 @@ import { USERNAME_REGEX } from '$lib/helpers/constants';
 import { fail, redirect } from '@sveltejs/kit';
 import type { RequestEvent } from './$types';
 import { db } from '$lib/db';
-import { authCodes, users } from '$lib/db/schema/users';
+import { users } from '$lib/db/schema/users';
 import { eq, sql } from 'drizzle-orm';
 import { randomInt } from 'crypto';
 import { generateAuthenticationOptions } from '@simplewebauthn/server';
 import { EMAIL_REGEX } from 'valibot';
 import { sendEmail } from '$lib/helpers/email';
+import { authCodes } from '$lib/db/schema/auth';
 
 // This function:
 // Checks if the user exists (if not, onboard them)

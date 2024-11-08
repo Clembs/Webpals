@@ -6,12 +6,13 @@ import {
 	type VerifiedAuthenticationResponse
 } from '@simplewebauthn/server';
 import { type AuthenticationResponseJSON } from '@simplewebauthn/types';
-import { passkeys, users } from '$lib/db/schema/users';
+import { users } from '$lib/db/schema/users';
 import { eq } from 'drizzle-orm';
 import { createSession } from '$lib/helpers/sessions';
 import type { RequestEvent } from './$types';
+import { passkeys } from '$lib/db/schema/auth';
 
-export async function verifyPasskeyAuthChallenge({ request, url, cookies }: RequestEvent) {
+export async function verifyPasskeyChallenge({ request, url, cookies }: RequestEvent) {
 	const formData = await request.formData();
 
 	const authDataValidation = strictObject({
