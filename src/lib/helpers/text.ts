@@ -10,10 +10,21 @@ export function formatDate(date: Date, locale: string): string {
 }
 
 export function formatRelativeTime(date: Date, locale: string): string {
+	let amount: number = Math.round((date.getTime() - Date.now()) / 60000);
+	let unit: Intl.RelativeTimeFormatUnit = 'minute';
+
+	if (Math.abs(date.getTime() - Date.now()) > 60 * 60 * 1000) {
+		amount = Math.round(amount / 60);
+		unit = 'hour';
+	} else if (Math.abs(date.getTime() - Date.now()) > 24 * 60 * 60 * 1000) {
+		amount = Math.round(amount / 60 / 24);
+		unit = 'day';
+	}
+
 	return new Intl.RelativeTimeFormat(locale, {
 		style: 'long',
 		numeric: 'auto'
-	}).format(Math.round((date.getTime() - Date.now()) / 60000), 'minutes');
+	}).format(amount, unit);
 }
 
 export function parseMarkdown(text: string, ...markedExtensions: MarkedExtension[]): string {
