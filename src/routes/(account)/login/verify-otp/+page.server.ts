@@ -4,6 +4,8 @@ import { createSession } from '$lib/helpers/sessions';
 import { EMAIL_REGEX } from 'valibot';
 import type { Actions, PageServerLoad } from './$types';
 import { fail, redirect } from '@sveltejs/kit';
+import { authCodes } from '$lib/db/schema/auth';
+import { eq } from 'drizzle-orm';
 
 export const load: PageServerLoad = async ({ parent }) => {
 	const { login } = await parent();
@@ -61,6 +63,8 @@ export const actions: Actions = {
 				message: 'Invalid or expired OTP. Please check your email and try again.'
 			});
 		}
+
+		await db.delete(authCodes).where(eq(authCodes.id, code.id));
 
 		const userAgent = request.headers.get('user-agent') || '';
 
