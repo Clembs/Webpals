@@ -32,6 +32,7 @@
 
 <theme-provider
 	style="
+	display: contents;
   --avatar-size: {theme.avatar.size}px;
   --avatar-border-radius: {typeof theme.avatar.border?.radius === 'string'
 		? theme.avatar.border?.radius
