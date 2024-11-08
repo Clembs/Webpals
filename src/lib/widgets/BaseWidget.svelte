@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { User } from '$lib/db/schema/users';
+	import type { PublicUser } from '$lib/db/schema/users';
 	import type { AnyWidget } from '$lib/widgets/types';
 	import type { Snippet } from 'svelte';
 	import Card from '$lib/components/Card.svelte';
@@ -15,7 +15,7 @@
 	}: {
 		editing: boolean;
 		modalOpened?: boolean;
-		user: Partial<User>;
+		user: PublicUser;
 		widget?: AnyWidget;
 		editMenu: Snippet;
 		children: Snippet;
