@@ -13,7 +13,7 @@
 
 	let { data } = $props();
 
-	let showPicker = $state(true);
+	let showPicker = $state(false);
 </script>
 
 <div id="top-info" class:show={data.editing}>
@@ -77,7 +77,7 @@
 	#top-info {
 		background-color: #2f9126;
 		color: white;
-		border-bottom: 1px solid black;
+		border-bottom: 0px solid black;
 		font-weight: 500;
 		font-size: 1.25rem;
 		max-height: 0px;
@@ -88,6 +88,7 @@
 		overflow: hidden;
 
 		&.show {
+			border-width: 1px;
 			padding: 1rem;
 			max-height: 999px;
 			transition:
