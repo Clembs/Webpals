@@ -23,8 +23,10 @@
 	import { scale } from 'svelte/transition';
 
 	let { user, editing }: { user: PublicUser; editing: boolean } = $props();
-	// If the user set their status to something other than offline AND that the last heartbeat was within the timeframe (plus a second for safety)
-	const userAlive = user.lastHeartbeat.getTime() > Date.now() - HEARTBEAT_INTERVAL - 1000;
+	// If the user set their status to something other than offline AND that the last heartbeat was within the IN (plus a second for safety)
+	const userAlive =
+		user.status !== 'offline' &&
+		user.lastHeartbeat.getTime() > Date.now() - HEARTBEAT_INTERVAL + 1000;
 
 	let modalOpened = $state(false);
 
