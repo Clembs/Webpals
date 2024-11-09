@@ -1,6 +1,6 @@
 // See https://kit.svelte.dev/docs/types#app
 
-import type { FullUser, Session, User } from '$lib/db/schema/users';
+import type { FullUser, Session } from '$lib/db/schema/users';
 
 // for information about these interfaces
 declare global {
@@ -10,7 +10,9 @@ declare global {
 			getSession: () => Promise<Session | null | undefined>;
 			getCurrentUser: () => Promise<FullUser | null | undefined>;
 		}
-		// interface PageData {}
+		interface PageData {
+			currentUser: FullUser | null;
+		}
 		// interface PageState {}
 		// interface Platform {}
 	}
