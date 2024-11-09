@@ -1,5 +1,5 @@
 import { db } from '$lib/db';
-import { sessions, type Session } from '$lib/db/schema/users';
+import { sessions, type Session } from '$lib/db/schema/auth';
 import type { Cookies } from '@sveltejs/kit';
 
 export async function createSession(cookies: Cookies, userAgent: string, userId: string) {
