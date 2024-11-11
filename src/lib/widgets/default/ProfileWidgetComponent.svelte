@@ -88,7 +88,7 @@
 				<span class="hover-text">
 					<PencilSimple />
 				</span>
-				<img src={user.avatar} alt="{user.username}'s avatar" />
+				<Avatar {user} />
 			</label>
 			<div class="text-bits">
 				<InlineTextInput
