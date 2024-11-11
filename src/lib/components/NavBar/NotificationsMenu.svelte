@@ -1,10 +1,9 @@
 <script lang="ts">
 	import { NotificationTypes } from '$lib/db/schema/notifications';
 	import type { FullUser } from '$lib/db/schema/users';
-	import { Check, X } from 'phosphor-svelte';
-	import Avatar from '../Avatar.svelte';
 	import Button from '../Button.svelte';
 	import { fly } from 'svelte/transition';
+	import FriendRequestNotification from './notifications/FriendRequestNotification.svelte';
 
 	let {
 		menuOpen = $bindable(false),
@@ -37,40 +36,7 @@
 			{#each user.notifications as notification}
 				<li class="notification">
 					{#if notification.type === NotificationTypes.FriendRequest && notification.mentionedUsers.length}
-						{@const user = notification.mentionedUsers[0].user!}
-						<div class="left">
-							<Avatar {user} size="48px" />
-
-							<div class="text">
-								<a href="/{user.username}">
-									@{user.username}
-								</a>
-								<span class="subtext">wants to be friends with you!</span>
-							</div>
-						</div>
-
-						<div class="right">
-							<Button
-								size="small"
-								inline
-								icon
-								variant="primary"
-								aria-label="Accept friend request"
-								title="Accept friend request"
-							>
-								<Check weight="regular" />
-							</Button>
-							<Button
-								size="small"
-								inline
-								icon
-								variant="secondary"
-								aria-label="Decline friend request"
-								title="Decline friend request"
-							>
-								<X weight="regular" />
-							</Button>
-						</div>
+						<FriendRequestNotification {notification} />
 					{:else}
 						Invalid notification... Report this issue to the developers via Discord, Twitter or
 						Bluesky!
@@ -115,11 +81,19 @@
 				gap: var(--base-gap);
 				justify-content: space-between;
 
-				.left,
-				.right {
+				:global(.left),
+				:global(.right) {
 					display: flex;
 					align-items: center;
 					gap: calc(var(--base-gap) * 0.5);
+
+					:global(a) {
+						text-decoration: none;
+
+						&:hover {
+							text-decoration: underline;
+						}
+					}
 				}
 			}
 		}
