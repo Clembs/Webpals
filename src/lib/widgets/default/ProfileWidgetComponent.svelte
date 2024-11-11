@@ -41,10 +41,10 @@
 	<div class="less-important-stuff">
 		<p class="line">
 			{#if user.status === 'online' && userAlive}
-				<Circle color="#2f9126" />
+				<Circle color="var(--color-success)" />
 				Currently <span class="darken"> online </span>
 			{:else if user.status === 'dnd' && userAlive}
-				<Prohibit color="#e90000" />
+				<Prohibit color="var(--color-urgent)" />
 				Currently <span class="darken"> busy </span>
 			{:else}
 				<CircleDashed />

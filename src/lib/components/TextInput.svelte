@@ -81,8 +81,8 @@
 			margin-top: calc(var(--base-gap) * 0.5);
 
 			&.error {
-				border-color: #e90000;
-				outline: 1px solid #e90000;
+				border-color: var(--color-urgent);
+				outline: 1px solid var(--color-urgent);
 			}
 
 			.prefix-icon {
@@ -116,7 +116,7 @@
 		}
 
 		.error {
-			color: #e90000;
+			color: var(--color-urgent);
 		}
 	}
 </style>

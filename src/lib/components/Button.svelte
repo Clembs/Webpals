@@ -3,7 +3,7 @@
 	import type { HTMLButtonAttributes, HTMLAnchorAttributes } from 'svelte/elements';
 
 	let {
-		type = 'button',
+		type,
 		variant = 'primary',
 		href,
 		disabled = false,
@@ -15,7 +15,7 @@
 		...restProps
 	}: (HTMLButtonAttributes | HTMLAnchorAttributes) & {
 		type?: 'submit' | 'button';
-		variant?: 'primary' | 'secondary';
+		variant?: 'primary' | 'secondary' | 'success' | 'urgent';
 		href?: string;
 		disabled?: boolean;
 		icon?: boolean;
@@ -98,6 +98,26 @@
 
 			&:hover {
 				background-color: var(--widgets-background-color-dim);
+			}
+		}
+
+		&.success {
+			background-color: var(--color-success);
+			color: var(--background);
+			border: var(--inputs-border-width) solid var(--color-success);
+
+			&:hover {
+				opacity: 0.75;
+			}
+		}
+
+		&.urgent {
+			background-color: var(--color-urgent);
+			color: var(--background);
+			border: var(--inputs-border-width) solid var(--color-urgent);
+
+			&:hover {
+				opacity: 0.75;
 			}
 		}
 

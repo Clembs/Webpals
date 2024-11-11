@@ -1,5 +1,10 @@
 @import url('plain-theme.scss');
 
+:root {
+	--color-success: #2f9126;
+	--color-urgent: #e90000;
+}
+
 *,
 *::after,
 *::before {

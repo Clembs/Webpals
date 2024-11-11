@@ -78,7 +78,7 @@
 
 <style lang="scss">
 	#top-info {
-		background-color: #2f9126;
+		background-color: var(--color-success);
 		color: white;
 		border-bottom: 0px solid black;
 		font-weight: 500;

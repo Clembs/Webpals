@@ -76,7 +76,7 @@
 			width: 100%;
 
 			&.error {
-				border-bottom-color: #e90000;
+				border-bottom-color: var(--color-urgent);
 			}
 
 			&:focus-visible {
@@ -90,7 +90,7 @@
 		}
 
 		.error {
-			color: #e90000;
+			color: var(--color-urgent);
 		}
 	}
 </style>
