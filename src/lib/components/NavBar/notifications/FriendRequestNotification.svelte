@@ -11,33 +11,39 @@
 		notification: Notification;
 	} = $props();
 
-	let user = $derived(notification.mentionedUsers[0].user!);
+	let recipient = $derived(notification.mentionedUsers[0].user!);
 </script>
 
 <div class="left">
-	<a href="/{user.username}">
-		<Avatar {user} size="48px" />
+	<a href="/{recipient.username}">
+		<Avatar user={recipient} size="48px" />
 	</a>
 
 	<div class="text">
-		<a href="/{user.username}">
-			@{user.username}
+		<a href="/{recipient.username}">
+			@{recipient.username}
 		</a>
 		<span class="subtext">wants to be friends with you!</span>
 	</div>
 </div>
 
 <div class="right">
-	<Button
-		size="small"
-		inline
-		icon
-		variant="success"
-		aria-label="Accept friend request"
-		title="Accept friend request"
+	<form
+		use:enhance
+		action="/api/relationships?/acceptFriendRequest&id={recipient.id}"
+		method="post"
 	>
-		<Check weight="regular" />
-	</Button>
+		<Button
+			size="small"
+			inline
+			icon
+			variant="success"
+			aria-label="Accept friend request"
+			title="Accept friend request"
+		>
+			<Check weight="regular" />
+		</Button>
+	</form>
 	<form
 		use:enhance
 		action="/api/notifications?/deleteNotification&id={notification.id}"

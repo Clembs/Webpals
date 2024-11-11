@@ -93,28 +93,58 @@ export async function sendFriendRequest({ locals: { getCurrentUser }, request }:
 			recipientId: recipientUser.id,
 			status: RelationshipTypes.Friend
 		});
+
+		// send a friend request accepted notification to the recipient
+		const [notification] = await db
+			.insert(notifications)
+			.values({
+				id: generateSnowflake(),
+				userId: recipientUser.id,
+				type: NotificationTypes.FriendRequestAccepted
+			})
+			.returning();
+
+		await db.insert(notificationsMentionedUsers).values({
+			notificationId: notification.id,
+			userId: currentUser.id
+		});
+
+		// remove the pending notification from the current user
+		const pendingNotification = currentUser.notifications.find(
+			(n) =>
+				n.type === NotificationTypes.FriendRequest &&
+				n.mentionedUsers[0].userId === recipientUser.id
+		);
+		if (pendingNotification) {
+			await db
+				.delete(notificationsMentionedUsers)
+				.where(eq(notificationsMentionedUsers.notificationId, pendingNotification.id));
+
+			await db.delete(notifications).where(eq(notifications.id, pendingNotification.id));
+		}
 	} else {
+		// otherwise, create a new relationship with the status of pending
 		await db.insert(relationships).values({
 			userId: currentUser.id,
 			recipientId: recipientUser.id,
 			status: RelationshipTypes.FriendPending
 		});
+
+		// send a notification to the recipient
+		const [notification] = await db
+			.insert(notifications)
+			.values({
+				id: generateSnowflake(),
+				userId: recipientUser.id,
+				type: NotificationTypes.FriendRequest
+			})
+			.returning();
+
+		await db.insert(notificationsMentionedUsers).values({
+			notificationId: notification.id,
+			userId: currentUser.id
+		});
 	}
-
-	// send a notification to the recipient
-	const [notification] = await db
-		.insert(notifications)
-		.values({
-			id: generateSnowflake(),
-			userId: recipientUser.id,
-			type: NotificationTypes.FriendRequest
-		})
-		.returning();
-
-	await db.insert(notificationsMentionedUsers).values({
-		notificationId: notification.id,
-		userId: currentUser.id
-	});
 
 	// TODO: send email notification to recipient
 

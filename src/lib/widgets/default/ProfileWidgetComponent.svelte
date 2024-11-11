@@ -177,7 +177,7 @@
 							async ({ result }) =>
 								console.log(result)}
 						style="display: contents;"
-						action="/api/relationship?/sendFriendRequest&id={user.id}"
+						action="/api/relationships?/sendFriendRequest&id={user.id}"
 						method="post"
 					>
 						<Button
