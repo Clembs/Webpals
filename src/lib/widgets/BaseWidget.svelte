@@ -7,17 +7,17 @@
 	import { PencilSimple, TrashSimple } from 'phosphor-svelte';
 
 	let {
-		widget,
 		editing,
 		modalOpened = $bindable(false),
+		widget,
 		editMenu,
 		children
 	}: {
-		editing: boolean;
+		editing?: boolean;
 		modalOpened?: boolean;
 		user: PublicUser;
 		widget?: AnyWidget;
-		editMenu: Snippet;
+		editMenu?: Snippet;
 		children: Snippet;
 	} = $props();
 
@@ -103,6 +103,8 @@
 	}
 
 	$effect(() => {
+		if (!editMenu) return;
+
 		if (modalOpened) {
 			expandDialog();
 		} else {
@@ -111,7 +113,7 @@
 	});
 </script>
 
-{#if editing}
+{#if editing && editMenu}
 	<dialog aria-label="Edit widget" bind:this={widgetDialogEl} oncancel={closeDialog}>
 		<div class="menu" bind:this={widgetEditEl}>
 			{@render editMenu()}
@@ -124,9 +126,11 @@
 <div class="widget-wrapper" class:editing={modalOpened} bind:this={widgetWrapperEl}>
 	{#if editing}
 		<div class="hover-menu">
-			<button aria-label="Edit widget" onclick={expandDialog}>
-				<PencilSimple size={20} />
-			</button>
+			{#if editMenu}
+				<button aria-label="Edit widget" onclick={expandDialog}>
+					<PencilSimple size={20} />
+				</button>
+			{/if}
 			{#if widget}
 				<!-- TODO: Delete widget & "deletable" field -->
 				<form use:enhance action="/api/profile?/deleteWidget&id={widget.id}" method="post">
