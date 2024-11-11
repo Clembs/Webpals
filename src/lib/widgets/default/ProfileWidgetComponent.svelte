@@ -151,7 +151,7 @@
 			<div class="buttons">
 				<!-- TODO: adding friends, more options menu -->
 				<Button inline icon variant="secondary">
-					<DotsThree weight="bold" />
+					<DotsThree weight="regular" />
 				</Button>
 				{#if relationship === RelationshipTypes.FriendPending}
 					<!-- TODO: remove request -->

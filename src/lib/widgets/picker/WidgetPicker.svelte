@@ -27,7 +27,7 @@
 
 		<form method="dialog">
 			<button class="close-btn" onclick={() => (showPicker = false)}>
-				<X weight="bold" />
+				<X weight="regular" />
 			</button>
 		</form>
 	</div>
@@ -47,10 +47,10 @@
 					<h3>Music <span class="subtext"> Artist </span></h3>
 				</div>
 
-				<AudioPlayer
+				<!-- <AudioPlayer
 					file="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
 					type="audio/mpeg"
-				/>
+				/> -->
 			</BasePlaceholderWidget>
 			<BasePlaceholderWidget widget-id="connections">
 				<h3>Connections</h3>
@@ -59,7 +59,7 @@
 					<li>
 						<a href="https://twitter.com">
 							<div class="left">
-								<XLogo weight="bold" />
+								<XLogo weight="regular" />
 								<div class="text">
 									X/Twitter
 									<div class="subtext">@username</div>

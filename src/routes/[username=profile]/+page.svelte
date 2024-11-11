@@ -65,7 +65,7 @@
 {#if data.editing}
 	<div id="edit-bar" transition:fly={{ y: 200 }}>
 		<button onclick={() => (showPicker = true)} aria-label="Add widget">
-			<Plus weight="bold" size={30} />
+			<Plus weight="regular" size={30} />
 		</button>
 		<button aria-label="Edit theme">
 			<Palette size={30} />
