@@ -3,6 +3,7 @@
 	import { Island, House, Palette, Bell, BellRinging } from 'phosphor-svelte';
 	import Avatar from '../Avatar.svelte';
 	import NotificationsMenu from './NotificationsMenu.svelte';
+	import { clickoutside } from '@svelte-put/clickoutside';
 
 	let notificationsMenuOpen = $state(false);
 </script>
@@ -26,7 +27,11 @@
 					</button>
 				</li>
 				{#if $page.data.currentUser}
-					<li data-submenu="true">
+					<li
+						data-submenu="true"
+						use:clickoutside
+						onclickoutside={() => (notificationsMenuOpen = false)}
+					>
 						<button
 							onclick={() => (notificationsMenuOpen = !notificationsMenuOpen)}
 							aria-current={notificationsMenuOpen}
@@ -41,7 +46,10 @@
 						</button>
 
 						{#if notificationsMenuOpen}
-							<NotificationsMenu user={$page.data.currentUser} />
+							<NotificationsMenu
+								bind:menuOpen={notificationsMenuOpen}
+								user={$page.data.currentUser}
+							/>
 						{/if}
 					</li>
 				{/if}

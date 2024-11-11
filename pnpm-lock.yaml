@@ -33,6 +33,9 @@ importers:
       '@supabase/supabase-js':
         specifier: ^2.46.1
         version: 2.46.1
+      '@svelte-put/clickoutside':
+        specifier: ^4.0.0
+        version: 4.0.0(svelte@5.0.2)
       '@sveltejs/adapter-auto':
         specifier: ^3.2.5
         version: 3.2.5(@sveltejs/kit@2.7.1(@sveltejs/vite-plugin-svelte@4.0.0(svelte@5.0.2)(vite@5.4.9(@types/node@22.7.7)(sass@1.80.3)))(svelte@5.0.2)(vite@5.4.9(@types/node@22.7.7)(sass@1.80.3)))
@@ -830,6 +833,11 @@ packages:
 
   '@supabase/supabase-js@2.46.1':
     resolution: {integrity: sha512-HiBpd8stf7M6+tlr+/82L8b2QmCjAD8ex9YdSAKU+whB/SHXXJdus1dGlqiH9Umy9ePUuxaYmVkGd9BcvBnNvg==}
+
+  '@svelte-put/clickoutside@4.0.0':
+    resolution: {integrity: sha512-36lLICc+RB6t/Kw0L6fZKU/y/yAAx3P+SsI2BtYM1GUBaYytSFHBWMw1c3TQEWj7Y8SgY6H3JsfEd2flbNWhqA==}
+    peerDependencies:
+      svelte: ^5.1.0
 
   '@sveltejs/adapter-auto@3.2.5':
     resolution: {integrity: sha512-27LR+uKccZ62lgq4N/hvyU2G+hTP9fxWEAfnZcl70HnyfAjMSsGk1z/SjAPXNCD1mVJIE7IFu3TQ8cQ/UH3c0A==}
@@ -2327,6 +2335,10 @@ snapshots:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
+
+  '@svelte-put/clickoutside@4.0.0(svelte@5.0.2)':
+    dependencies:
+      svelte: 5.0.2
 
   '@sveltejs/adapter-auto@3.2.5(@sveltejs/kit@2.7.1(@sveltejs/vite-plugin-svelte@4.0.0(svelte@5.0.2)(vite@5.4.9(@types/node@22.7.7)(sass@1.80.3)))(svelte@5.0.2)(vite@5.4.9(@types/node@22.7.7)(sass@1.80.3)))':
     dependencies:
