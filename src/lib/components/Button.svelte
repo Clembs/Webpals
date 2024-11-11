@@ -79,6 +79,7 @@
 		&.inline {
 			display: inline-flex;
 			width: max-content;
+			flex-shrink: 0;
 		}
 
 		&.primary {
