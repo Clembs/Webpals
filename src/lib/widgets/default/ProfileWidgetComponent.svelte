@@ -204,7 +204,7 @@
 	.update-profile {
 		display: flex;
 		flex-direction: column;
-		gap: calc(var(--base-gap) * 1.5);
+		gap: var(--base-gap);
 
 		.pro-tip {
 			opacity: 0;
