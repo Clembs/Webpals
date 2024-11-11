@@ -36,7 +36,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 						}
 					}
 				},
-				initatedRelationships: {
+				initiatedRelationships: {
 					with: {
 						recipient: {
 							columns: publicUserColumns

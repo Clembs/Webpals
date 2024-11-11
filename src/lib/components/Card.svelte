@@ -22,6 +22,6 @@
 	@use '../../styles/mixins';
 
 	div {
-		@include mixins.card(1.5);
+		@include mixins.card;
 	}
 </style>

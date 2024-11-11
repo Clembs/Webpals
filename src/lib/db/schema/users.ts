@@ -69,7 +69,7 @@ export const usersRelations = relations(users, ({ many }) => ({
 	notifications: many(notifications),
 	mentionedInNotifications: many(notificationsMentionedUsers),
 	// Relationships can be bi-directional (for friends for example), so we need to define the relation twice
-	initatedRelationships: many(relationships, {
+	initiatedRelationships: many(relationships, {
 		relationName: 'initiated'
 	}),
 	receivedRelationships: many(relationships, {
@@ -97,7 +97,7 @@ export type FullUser = User & {
 	passkeys: Passkey[];
 	sessions: Session[];
 	notifications: Notification[];
-	initatedRelationships: Relationship[];
+	initiatedRelationships: Relationship[];
 	receivedRelationships: Relationship[];
 };
 

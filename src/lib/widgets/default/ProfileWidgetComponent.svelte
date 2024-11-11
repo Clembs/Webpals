@@ -31,7 +31,7 @@
 	let modalOpened = $state(false);
 
 	let relationship = $derived(
-		$page.data.currentUser?.initatedRelationships.find(
+		$page.data.currentUser?.initiatedRelationships.find(
 			(relationship) => relationship.recipientId === user.id
 		)?.status
 	);

@@ -41,7 +41,7 @@ export async function sendFriendRequest({ locals: { getCurrentUser }, request }:
 	}
 
 	// find relationships where the current user is the initiator
-	const existingFriendship = currentUser.initatedRelationships.find(
+	const existingFriendship = currentUser.initiatedRelationships.find(
 		(relationship) => relationship.recipientId === recipientUser.id
 	);
 
