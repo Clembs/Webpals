@@ -9,6 +9,7 @@
 		disabled = false,
 		inline = false,
 		icon = false,
+		size = 'medium',
 		children,
 		onclick,
 		...restProps
@@ -19,6 +20,7 @@
 		disabled?: boolean;
 		icon?: boolean;
 		inline?: boolean;
+		size?: 'small' | 'medium';
 		children: Snippet;
 		onclick?: () => void;
 	} = $props();
@@ -28,7 +30,7 @@
 	<a
 		class:inline
 		class:icon
-		class={variant}
+		class="{variant} {size}"
 		{href}
 		aria-disabled={disabled}
 		{...restProps as HTMLAnchorAttributes}
@@ -39,7 +41,7 @@
 	<button
 		class:inline
 		class:icon
-		class={variant}
+		class="{variant} {size}"
 		{onclick}
 		{type}
 		{disabled}
@@ -97,6 +99,12 @@
 			&:hover {
 				background-color: var(--widgets-background-color-dim);
 			}
+		}
+
+		&.small {
+			font-size: 15px;
+			border-radius: calc(var(--inputs-border-base-radius) * 3);
+			padding: calc(var(--base-padding) * 0.5) calc(var(--base-padding) * 0.75);
 		}
 
 		&:disabled,
