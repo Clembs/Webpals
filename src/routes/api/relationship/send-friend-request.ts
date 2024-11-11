@@ -3,6 +3,12 @@ import type { RequestEvent } from './$types';
 import { and, eq, sql } from 'drizzle-orm';
 import { relationships, RelationshipTypes, users } from '$lib/db/schema/users';
 import { db } from '$lib/db';
+import {
+	notifications,
+	notificationsMentionedUsers,
+	NotificationTypes
+} from '$lib/db/schema/notifications';
+import { generateSnowflake } from '$lib/helpers/users';
 
 export async function sendFriendRequest({ locals: { getCurrentUser }, request }: RequestEvent) {
 	const currentUser = await getCurrentUser();
@@ -95,7 +101,22 @@ export async function sendFriendRequest({ locals: { getCurrentUser }, request }:
 		});
 	}
 
-	// TODO: send notification to recipient, either by email or in-app
+	// send a notification to the recipient
+	const [notification] = await db
+		.insert(notifications)
+		.values({
+			id: generateSnowflake(),
+			userId: recipientUser.id,
+			type: NotificationTypes.FriendRequest
+		})
+		.returning();
+
+	await db.insert(notificationsMentionedUsers).values({
+		notificationId: notification.id,
+		userId: currentUser.id
+	});
+
+	// TODO: send email notification to recipient
 
 	return {};
 }
