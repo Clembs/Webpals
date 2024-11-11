@@ -4,6 +4,7 @@
 	import { browser } from '$app/environment';
 	import { HEARTBEAT_INTERVAL } from '$lib/helpers/constants';
 	import NavBar from '$lib/components/NavBar/NavBar.svelte';
+	import DialogPortal from '$lib/components/DialogPortal.svelte';
 
 	let { data, children } = $props();
 
@@ -24,6 +25,8 @@
 		weight: 'fill'
 	}}
 >
+	<DialogPortal />
+
 	<NavBar />
 
 	{@render children()}
