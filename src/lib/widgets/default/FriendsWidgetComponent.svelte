@@ -24,35 +24,38 @@
 <BaseWidget {user} {widget} {editing}>
 	<h2>Friends ({friends.length})</h2>
 
-	<div class="friends">
+	<ul class="friends">
 		{#each friends as friend}
-			<a href="/{friend.username}" class="friend">
-				<Avatar user={friend} size="48px" />
+			<li class="friend">
+				<a href="/{friend.username}">
+					<Avatar user={friend} size="48px" />
 
-				<div class="text">
-					<div class="display-name heading">
-						{friend.displayName || friend.username}
+					<div class="text">
+						<div class="display-name heading">
+							{friend.displayName || friend.username}
+						</div>
+						<div class="username subtext">
+							@{friend.username}
+						</div>
 					</div>
-					<div class="username subtext">
-						@{friend.username}
-					</div>
-				</div>
-			</a>
+				</a>
+			</li>
 		{/each}
-	</div>
+	</ul>
 </BaseWidget>
 
 <style lang="scss">
 	.friends {
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+		// grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
 		gap: var(--base-gap);
 		background-color: var(--widgets-background-color-dim);
 		border-radius: calc(var(--widgets-border-base-radius) * 0.5);
+		list-style: none;
 
-		.friend {
+		.friend a {
 			display: flex;
-			padding: calc(var(--base-padding) * 0.75);
+			padding: calc(var(--base-padding) * 0.5) calc(var(--base-padding) * 0.75);
 			gap: calc(var(--base-gap) * 0.5);
 			text-decoration: none;
 			align-items: center;
