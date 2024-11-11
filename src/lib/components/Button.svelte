@@ -105,6 +105,10 @@
 			font-size: 15px;
 			border-radius: calc(var(--inputs-border-base-radius) * 3);
 			padding: calc(var(--base-padding) * 0.5) calc(var(--base-padding) * 0.75);
+
+			&.icon {
+				padding: calc(var(--base-padding) * 0.25);
+			}
 		}
 
 		&:disabled,

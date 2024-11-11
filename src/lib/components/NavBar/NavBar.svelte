@@ -1,32 +1,48 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import { Island, House, Palette, Bell, BellRinging } from 'phosphor-svelte';
-	import Avatar from './Avatar.svelte';
+	import Avatar from '../Avatar.svelte';
+	import NotificationsMenu from './NotificationsMenu.svelte';
+
+	let notificationsMenuOpen = $state(false);
 </script>
 
 <header>
 	<nav>
 		<a class="logo" href="/" aria-label="Home" title="Home">
-			<Island weight="bold" />
+			<Island />
 		</a>
 
 		<div class="right">
 			<ul>
 				<li>
-					<a href="/" aria-label="Feeds" title="Feeds">
-						<House weight={$page.url.pathname === '/' ? 'fill' : 'bold'} />
+					<a href="/" aria-label="Feeds" title="Feeds" aria-current={$page.url.pathname === '/'}>
+						<House weight={$page.url.pathname === '/' ? 'fill' : 'regular'} />
 					</a>
 				</li>
 				<li>
 					<button aria-label="Theme settings" title="Theme settings">
-						<Palette weight="bold" />
+						<Palette weight="regular" />
 					</button>
 				</li>
 				{#if $page.data.currentUser}
-					<li>
-						<button aria-label="Notifications" title="Notifications">
-							<Bell weight="bold" />
+					<li data-submenu="true">
+						<button
+							onclick={() => (notificationsMenuOpen = !notificationsMenuOpen)}
+							aria-current={notificationsMenuOpen}
+							aria-label="Notifications"
+							title="Notifications"
+						>
+							{#if $page.data.currentUser.notifications.length > 0}
+								<BellRinging weight={notificationsMenuOpen ? 'fill' : 'regular'} />
+							{:else}
+								<Bell weight={notificationsMenuOpen ? 'fill' : 'regular'} />
+							{/if}
 						</button>
+
+						{#if notificationsMenuOpen}
+							<NotificationsMenu user={$page.data.currentUser} />
+						{/if}
 					</li>
 				{/if}
 			</ul>
@@ -61,6 +77,10 @@
 			cursor: pointer;
 			border: none;
 
+			&[aria-current='true'] {
+				background-color: var(--widgets-background-color-dim);
+			}
+
 			&:global(.logo svg) {
 				width: 2rem;
 				height: 2rem;
@@ -79,6 +99,10 @@
 		ul {
 			display: contents;
 			list-style: none;
+
+			li[data-submenu='true'] {
+				position: relative;
+			}
 		}
 	}
 </style>
