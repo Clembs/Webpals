@@ -24,11 +24,14 @@
 		width: var(--size, var(--avatar-size));
 		height: var(--size, var(--avatar-size));
 		border-radius: var(--avatar-border-radius);
+		flex-shrink: 0;
 
 		&.fallback {
-			background-color: var(--widgets-background-color-dim);
 			display: grid;
 			place-items: center;
+			background-color: var(--widgets-background-color-dim);
+			color: var(--color-heading);
+			border: 1px solid var(--widgets-border-color);
 
 			:global(svg) {
 				width: 50%;
