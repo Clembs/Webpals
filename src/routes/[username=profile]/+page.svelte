@@ -4,6 +4,7 @@
 	import ThemeProvider from '$lib/themes/ThemeProvider.svelte';
 	import CustomWidgetComponent from '$lib/widgets/blocks/CustomWidgetComponent.svelte';
 	import AboutMeWidgetComponent from '$lib/widgets/default/AboutMeWidgetComponent.svelte';
+	import FriendsWidgetComponent from '$lib/widgets/default/FriendsWidgetComponent.svelte';
 	import MusicWidgetComponent from '$lib/widgets/default/MusicWidgetComponent.svelte';
 	import ProfileWidgetComponent from '$lib/widgets/default/ProfileWidgetComponent.svelte';
 	import WidgetPicker from '$lib/widgets/picker/WidgetPicker.svelte';
@@ -26,6 +27,8 @@
 			<AboutMeWidgetComponent {widget} {...data} />
 		{:else if widget.id === 'music' && 'content_url' in widget && widget.content_url}
 			<MusicWidgetComponent {widget} {...data} />
+		{:else if widget.id === 'friends'}
+			<FriendsWidgetComponent user={data.user} />
 		{:else if 'blocks' in widget}
 			<CustomWidgetComponent {widget} {...data} />
 		{/if}

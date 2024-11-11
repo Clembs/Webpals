@@ -2,6 +2,7 @@ import { db } from '$lib/db';
 import { error, redirect } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
 import { sql } from 'drizzle-orm';
+import { publicUserColumns } from '$lib/db/schema/users';
 
 export const load: LayoutServerLoad = async ({ params: { username }, url, parent }) => {
 	const user = await db.query.users.findFirst({
@@ -16,6 +17,15 @@ export const load: LayoutServerLoad = async ({ params: { username }, url, parent
 			widgets: true,
 			username: true,
 			theme: true
+		},
+		with: {
+			initiatedRelationships: {
+				with: {
+					recipient: {
+						columns: publicUserColumns
+					}
+				}
+			}
 		}
 	});
 
