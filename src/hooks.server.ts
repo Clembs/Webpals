@@ -1,5 +1,5 @@
 import { db } from '$lib/db';
-import { users } from '$lib/db/schema/users';
+import { publicUserColumns, users } from '$lib/db/schema/users';
 import { HEARTBEAT_INTERVAL } from '$lib/helpers/constants';
 import type { Handle } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
@@ -25,37 +25,28 @@ export const handle: Handle = async ({ event, resolve }) => {
 			with: {
 				sessions: true,
 				passkeys: true,
+				notifications: {
+					with: {
+						mentionedUsers: {
+							with: {
+								user: {
+									columns: publicUserColumns
+								}
+							}
+						}
+					}
+				},
 				initatedRelationships: {
 					with: {
 						recipient: {
-							columns: {
-								avatar: true,
-								displayName: true,
-								id: true,
-								status: true,
-								lastHeartbeat: true,
-								pronouns: true,
-								theme: true,
-								username: true,
-								widgets: true
-							}
+							columns: publicUserColumns
 						}
 					}
 				},
 				receivedRelationships: {
 					with: {
 						recipient: {
-							columns: {
-								avatar: true,
-								displayName: true,
-								id: true,
-								status: true,
-								lastHeartbeat: true,
-								pronouns: true,
-								theme: true,
-								username: true,
-								widgets: true
-							}
+							columns: publicUserColumns
 						}
 					}
 				}

@@ -3,6 +3,7 @@ import type { AnyWidget } from '$lib/widgets/types';
 import { relations } from 'drizzle-orm';
 import { jsonb, pgTable, primaryKey, smallint, text, timestamp } from 'drizzle-orm/pg-core';
 import { passkeys, sessions, type Passkey, type Session } from './auth';
+import { notifications, notificationsMentionedUsers, type Notification } from './notifications';
 
 export const UserStatusTypes = ['online', 'dnd', 'offline'] as const;
 
@@ -65,6 +66,8 @@ export const users = pgTable('users', {
 export const usersRelations = relations(users, ({ many }) => ({
 	passkeys: many(passkeys),
 	sessions: many(sessions),
+	notifications: many(notifications),
+	mentionedInNotifications: many(notificationsMentionedUsers),
 	// Relationships can be bi-directional (for friends for example), so we need to define the relation twice
 	initatedRelationships: many(relationships, {
 		relationName: 'initiated'
@@ -78,9 +81,22 @@ type User = typeof users.$inferSelect;
 
 export type PublicUser = Omit<User, 'challenge' | 'challengeExpiresAt' | 'email'>;
 
+export const publicUserColumns: { [K in Partial<keyof PublicUser>]: true } = {
+	avatar: true,
+	displayName: true,
+	id: true,
+	status: true,
+	lastHeartbeat: true,
+	pronouns: true,
+	theme: true,
+	username: true,
+	widgets: true
+} as const;
+
 export type FullUser = User & {
 	passkeys: Passkey[];
 	sessions: Session[];
+	notifications: Notification[];
 	initatedRelationships: Relationship[];
 	receivedRelationships: Relationship[];
 };

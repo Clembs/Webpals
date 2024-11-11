@@ -1,5 +1,5 @@
-import { pgTable, smallint, text } from 'drizzle-orm/pg-core';
-import { users } from './users';
+import { boolean, pgTable, primaryKey, smallint, text } from 'drizzle-orm/pg-core';
+import { users, type PublicUser } from './users';
 import { relations } from 'drizzle-orm';
 
 export enum NotificationTypes {
@@ -19,21 +19,52 @@ export const notifications = pgTable('notifications', {
 		.notNull()
 		.references(() => users.id),
 	type: smallint('type').notNull().$type<NotificationTypes>(),
-	targetId: text('target_id').references(() => users.id)
+	read: boolean('read').notNull().default(false)
 	// TODO: when i implement posts
 	// postId: text('post_id'),
-	// commentId: text('comment_id')
 });
 
-export const notificationsRelations = relations(notifications, ({ one }) => ({
+export const notificationsRelations = relations(notifications, ({ one, many }) => ({
 	user: one(users, {
 		fields: [notifications.userId],
-		references: [users.id],
-		relationName: 'notifications'
+		references: [users.id]
 	}),
-	target: one(users, {
-		fields: [notifications.targetId],
-		references: [users.id],
-		relationName: 'targer'
-	})
+	mentionedUsers: many(notificationsMentionedUsers)
 }));
+
+export type Notification = typeof notifications.$inferSelect & {
+	mentionedUsers: (typeof notificationsMentionedUsers.$inferSelect & {
+		user: PublicUser | null;
+	})[];
+};
+
+export const notificationsMentionedUsers = pgTable(
+	'notif_mentioned',
+	{
+		notificationId: text('notification_id')
+			.notNull()
+			.references(() => notifications.id),
+		userId: text('user_id')
+			.notNull()
+			.references(() => users.id)
+	},
+	({ notificationId, userId }) => ({
+		id: primaryKey({
+			columns: [notificationId, userId]
+		})
+	})
+);
+
+export const notificationsMentionedUsersRelations = relations(
+	notificationsMentionedUsers,
+	({ one }) => ({
+		notification: one(notifications, {
+			fields: [notificationsMentionedUsers.notificationId],
+			references: [notifications.id]
+		}),
+		user: one(users, {
+			fields: [notificationsMentionedUsers.userId],
+			references: [users.id]
+		})
+	})
+);
