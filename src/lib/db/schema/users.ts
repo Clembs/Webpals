@@ -97,8 +97,12 @@ export type FullUser = User & {
 	passkeys: Passkey[];
 	sessions: Session[];
 	notifications: Notification[];
-	initiatedRelationships: Relationship[];
-	receivedRelationships: Relationship[];
+	initiatedRelationships: (Relationship & {
+		recipient: PublicUser;
+	})[];
+	receivedRelationships: (Relationship & {
+		user: PublicUser;
+	})[];
 };
 
 export enum RelationshipTypes {
@@ -135,6 +139,4 @@ export const relationshipsRelations = relations(relationships, ({ one }) => ({
 	})
 }));
 
-export type Relationship = typeof relationships.$inferSelect & {
-	recipient: PublicUser;
-};
+export type Relationship = typeof relationships.$inferSelect;

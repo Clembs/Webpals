@@ -45,7 +45,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 				},
 				receivedRelationships: {
 					with: {
-						recipient: {
+						user: {
 							columns: publicUserColumns
 						}
 					}
