@@ -27,8 +27,8 @@
 			<AboutMeWidgetComponent {widget} {...data} />
 		{:else if widget.id === 'music' && 'content_url' in widget && widget.content_url}
 			<MusicWidgetComponent {widget} {...data} />
-		{:else if widget.id === 'friends'}
-			<FriendsWidgetComponent user={data.user} />
+		{:else if widget.id === 'friends' && !('blocks' in widget)}
+			<FriendsWidgetComponent {widget} {...data} />
 		{:else if 'blocks' in widget}
 			<CustomWidgetComponent {widget} {...data} />
 		{/if}
