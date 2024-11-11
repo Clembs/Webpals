@@ -1,11 +1,14 @@
 <script lang="ts">
 	import Avatar from '$lib/components/Avatar.svelte';
-	import Card from '$lib/components/Card.svelte';
 	import { RelationshipTypes, type PublicUser, type Relationship } from '$lib/db/schema/users';
+	import BaseWidget from '../BaseWidget.svelte';
+	import type { FriendsWidget, WidgetComponentProps } from '../types';
 
 	let {
-		user
-	}: {
+		user,
+		widget,
+		editing
+	}: WidgetComponentProps<FriendsWidget> & {
 		user: PublicUser & {
 			initiatedRelationships: Relationship[];
 		};
@@ -18,7 +21,7 @@
 	);
 </script>
 
-<Card>
+<BaseWidget {user} {widget} {editing}>
 	<h2>Friends ({friends.length})</h2>
 
 	<div class="friends">
@@ -37,7 +40,7 @@
 			</a>
 		{/each}
 	</div>
-</Card>
+</BaseWidget>
 
 <style lang="scss">
 	.friends {
