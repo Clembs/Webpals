@@ -4,6 +4,7 @@
 	import Button from '../Button.svelte';
 	import { fly } from 'svelte/transition';
 	import FriendRequestNotification from './notifications/FriendRequestNotification.svelte';
+	import FriendRequestAccepted from './notifications/FriendRequestAccepted.svelte';
 
 	let {
 		menuOpen = $bindable(false),
@@ -37,6 +38,8 @@
 				<li class="notification">
 					{#if notification.type === NotificationTypes.FriendRequest && notification.mentionedUsers.length}
 						<FriendRequestNotification {notification} />
+					{:else if notification.type === NotificationTypes.FriendRequestAccepted && notification.mentionedUsers.length}
+						<FriendRequestAccepted {notification} />
 					{:else}
 						Invalid notification... Report this issue to the developers via Discord, Twitter or
 						Bluesky!
