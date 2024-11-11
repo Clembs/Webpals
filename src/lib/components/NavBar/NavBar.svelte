@@ -6,6 +6,8 @@
 	import { clickoutside } from '@svelte-put/clickoutside';
 
 	let notificationsMenuOpen = $state(false);
+
+	let unreadNotifications = $derived($page.data.currentUser?.notifications.filter((n) => !n.read));
 </script>
 
 <header>
@@ -39,6 +41,14 @@
 							title="Notifications"
 						>
 							{#if $page.data.currentUser.notifications.length > 0}
+								{#if unreadNotifications!.length > 0}
+									<div
+										aria-label="{$page.data.currentUser.notifications.length} new notifications"
+										class="badge"
+									>
+										{$page.data.currentUser.notifications.length}
+									</div>
+								{/if}
 								<BellRinging weight={notificationsMenuOpen ? 'fill' : 'regular'} />
 							{:else}
 								<Bell weight={notificationsMenuOpen ? 'fill' : 'regular'} />
@@ -84,6 +94,7 @@
 			background-color: transparent;
 			cursor: pointer;
 			border: none;
+			position: relative;
 
 			&[aria-current='true'] {
 				background-color: var(--widgets-background-color-dim);
@@ -96,6 +107,21 @@
 
 			&:hover {
 				background-color: var(--widgets-background-color-dim);
+			}
+
+			.badge {
+				position: absolute;
+				top: -2px;
+				right: -2px;
+				font-weight: bold;
+				background-color: var(--color-urgent);
+				color: var(--background);
+				border-radius: 99px;
+				display: grid;
+				place-items: center;
+				height: calc(var(--base-padding) * 1.25);
+				width: calc(var(--base-padding) * 1.25);
+				font-size: 14px;
 			}
 		}
 
