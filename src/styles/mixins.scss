@@ -1,0 +1,13 @@
+@mixin card($gap: 1) {
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--base-gap) * $gap);
+	background-color: var(--widgets-background-color);
+	min-width: var(--min-width);
+	max-width: var(--max-width);
+	padding: var(--base-padding);
+	border-radius: var(--widgets-border-base-radius);
+	border: var(--widgets-border-width) solid var(--widgets-border-color);
+	box-shadow: var(--widgets-box-shadow-x) var(--widgets-box-shadow-y) var(--widgets-box-shadow-blur)
+		var(--widgets-box-shadow-color);
+}

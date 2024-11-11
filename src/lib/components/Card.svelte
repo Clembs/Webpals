@@ -19,17 +19,9 @@
 </div>
 
 <style lang="scss">
+	@use '../../styles/mixins';
+
 	div {
-		display: flex;
-		flex-direction: column;
-		gap: calc(var(--base-gap) * 1.5);
-		background-color: var(--widgets-background-color);
-		min-width: var(--min-width);
-		max-width: var(--max-width);
-		padding: var(--base-padding);
-		border-radius: var(--widgets-border-base-radius);
-		border: var(--widgets-border-width) solid var(--widgets-border-color);
-		box-shadow: var(--widgets-box-shadow-x) var(--widgets-box-shadow-y)
-			var(--widgets-box-shadow-blur) var(--widgets-box-shadow-color);
+		@include mixins.card(1.5);
 	}
 </style>
