@@ -115,6 +115,10 @@
 		&[aria-disabled='true'] {
 			opacity: 0.5;
 			cursor: not-allowed;
+
+			&:hover {
+				opacity: 0.5;
+			}
 		}
 	}
 </style>
