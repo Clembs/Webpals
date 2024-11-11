@@ -1,3 +1,8 @@
+<!-- TODO: click outside closes dialog (optionally, maybe through an options object) -->
+<!-- TODO: lock the body when a dialog is opened -->
+<!-- TODO: make so elements in the background are not interactive -->
+<!-- TODO: polish close animation -->
+
 <script lang="ts">
 	import { dialogState } from '$lib/helpers/dialog.svelte';
 </script>
