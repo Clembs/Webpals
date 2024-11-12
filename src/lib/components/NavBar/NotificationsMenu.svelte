@@ -29,9 +29,11 @@
 	<div class="header">
 		<h2>Notifications ({user.notifications.length})</h2>
 
-		<Button disabled={!user.notifications.length} size="small" inline variant="secondary">
-			Clear all
-		</Button>
+		<form use:enhance action="/api/notifications?/deleteAllNotifications" method="post">
+			<Button disabled={!user.notifications.length} size="small" inline variant="secondary">
+				Clear all
+			</Button>
+		</form>
 	</div>
 
 	{#if user.notifications.length}
