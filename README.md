@@ -1,4 +1,5 @@
 # Islands
+
 fun highly customizable mini profiles for everyone :3
 
 ## Description
@@ -9,19 +10,21 @@ This doesn't aim to replace anything, just to have a fun and creative way to con
 
 ## Feature roadmap
 
-- [ ] Authentication (Login, Register, Logout)
+- [x] Authentication (Login, Register, Logout)
 - [ ] Onboarding
 - [ ] Customizing widgets (adding, removing, reordering)
 - [ ] Widget marketplace
 - [ ] Customizing profile theme
-- [ ] User friending
+- [x] User friending\*
 - [ ] Commenting on profiles
 - [ ] Sending posts
 - [ ] Commenting on posts
-- [ ] Notifications
+- [x] Notifications\*
 - [ ] User settings
 - [ ] Search
 - [ ] Post feed
 - [ ] Profile feed
+
+\* Partly implemented
 
 I'm going to pre-release this project with an invitation system whenever the basics are covered. Let me know if you're interested via [Twitter](https://twitter.com/clembsv), [Bluesky](https://bsky.app/profile/clembs.com) or [Discord](https://clembs.com/discord) (I post updates on all three quite often!).
