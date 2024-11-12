@@ -132,7 +132,7 @@
 				dialogState.closeDialog();
 				update();
 			}}
-		action="/api/profile?/delete-widget?id={widget!.id}"
+		action="/api/profile?/deleteWidget&id={widget!.id}"
 		method="post"
 		class="confirm-delete"
 	>
