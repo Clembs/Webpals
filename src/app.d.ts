@@ -12,7 +12,7 @@ declare global {
 			getCurrentUser: () => Promise<FullUser | null | undefined>;
 		}
 		interface PageData {
-			currentUser: FullUser | null;
+			currentUser: FullUser | null | undefined;
 		}
 		// interface PageState {}
 		// interface Platform {}

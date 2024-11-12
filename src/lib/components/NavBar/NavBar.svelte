@@ -6,11 +6,36 @@
 	import { clickoutside } from '@svelte-put/clickoutside';
 	import { enhance } from '$app/forms';
 	import AccountMenu from './AccountMenu.svelte';
+	import { supabase } from '$lib/db/supabase';
+	import { onDestroy, onMount } from 'svelte';
+	import { invalidate } from '$app/navigation';
+	import { RealtimeChannel } from '@supabase/supabase-js';
 
 	let accountMenuOpen = $state(false);
 	let notificationsMenuOpen = $state(false);
 
 	let unreadNotifications = $derived($page.data.currentUser?.notifications.filter((n) => !n.read));
+
+	let supabaseChannel = $state<RealtimeChannel>();
+
+	onMount(() => {
+		supabaseChannel = supabase
+			.channel('notification-updates')
+			.on(
+				'postgres_changes',
+				{
+					event: 'INSERT',
+					table: 'notifications',
+					schema: 'public',
+					// TODO: figure out better security
+					filter: `user_id = ${$page.data.currentUser?.id}`
+				},
+				(payload) => invalidate('layout:user')
+			)
+			.subscribe((status) => console.log('supabase realtime', status));
+	});
+
+	onDestroy(() => supabaseChannel?.unsubscribe());
 </script>
 
 <header>
