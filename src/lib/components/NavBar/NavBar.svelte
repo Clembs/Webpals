@@ -4,6 +4,7 @@
 	import Avatar from '../Avatar.svelte';
 	import NotificationsMenu from './NotificationsMenu.svelte';
 	import { clickoutside } from '@svelte-put/clickoutside';
+	import { enhance } from '$app/forms';
 
 	let notificationsMenuOpen = $state(false);
 
@@ -34,26 +35,23 @@
 						use:clickoutside
 						onclickoutside={() => (notificationsMenuOpen = false)}
 					>
-						<button
-							onclick={() => (notificationsMenuOpen = !notificationsMenuOpen)}
-							aria-current={notificationsMenuOpen}
-							aria-label="Notifications"
-							title="Notifications"
-						>
-							{#if $page.data.currentUser.notifications.length > 0}
+						<form use:enhance action="/api/notifications?/markAllAsRead" method="post">
+							<button
+								onclick={() => (notificationsMenuOpen = !notificationsMenuOpen)}
+								aria-current={notificationsMenuOpen}
+								aria-label="Notifications"
+								title="Notifications"
+							>
 								{#if unreadNotifications!.length > 0}
-									<div
-										aria-label="{$page.data.currentUser.notifications.length} new notifications"
-										class="badge"
-									>
-										{$page.data.currentUser.notifications.length}
+									<div aria-label="{unreadNotifications!.length} new notifications" class="badge">
+										{unreadNotifications!.length}
 									</div>
+									<BellRinging weight={notificationsMenuOpen ? 'fill' : 'regular'} />
+								{:else}
+									<Bell weight={notificationsMenuOpen ? 'fill' : 'regular'} />
 								{/if}
-								<BellRinging weight={notificationsMenuOpen ? 'fill' : 'regular'} />
-							{:else}
-								<Bell weight={notificationsMenuOpen ? 'fill' : 'regular'} />
-							{/if}
-						</button>
+							</button>
+						</form>
 
 						{#if notificationsMenuOpen}
 							<NotificationsMenu
