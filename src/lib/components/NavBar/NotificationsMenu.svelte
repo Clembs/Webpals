@@ -4,7 +4,9 @@
 	import Button from '../Button.svelte';
 	import { fly } from 'svelte/transition';
 	import FriendRequestNotification from './notifications/FriendRequestNotification.svelte';
-	import FriendRequestAccepted from './notifications/FriendRequestAccepted.svelte';
+	import FriendRequestAcceptedNotification from './notifications/FriendRequestAcceptedNotification.svelte';
+	import GenericNotification from './notifications/GenericNotification.svelte';
+	import { enhance } from '$app/forms';
 
 	let {
 		menuOpen = $bindable(false),
@@ -39,7 +41,7 @@
 					{#if notification.type === NotificationTypes.FriendRequest && notification.mentionedUsers.length}
 						<FriendRequestNotification {notification} />
 					{:else if notification.type === NotificationTypes.FriendRequestAccepted && notification.mentionedUsers.length}
-						<FriendRequestAccepted {notification} />
+						<FriendRequestAcceptedNotification {notification} />
 					{:else}
 						Invalid notification... Report this issue to the developers via Discord, Twitter or
 						Bluesky!
@@ -83,6 +85,12 @@
 				padding: calc(var(--base-padding) * 0.75);
 				gap: var(--base-gap);
 				justify-content: space-between;
+
+				border-bottom: var(--inputs-border-width) solid var(--widgets-border-color);
+
+				&:last-child {
+					border-bottom: none;
+				}
 
 				:global(.left),
 				:global(.right) {
