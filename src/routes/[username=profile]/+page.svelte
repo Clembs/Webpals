@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Button from '$lib/components/Button.svelte';
 	import { mergeThemes, plainTheme } from '$lib/themes/mergeThemes.js';
+	import ThemeEditor from '$lib/themes/ThemeEditor.svelte';
 	import ThemeProvider from '$lib/themes/ThemeProvider.svelte';
 	import CustomWidgetComponent from '$lib/widgets/blocks/CustomWidgetComponent.svelte';
 	import AboutMeWidgetComponent from '$lib/widgets/default/AboutMeWidgetComponent.svelte';
@@ -10,16 +11,21 @@
 	import WidgetPicker from '$lib/widgets/picker/WidgetPicker.svelte';
 	import type { AnyWidget } from '$lib/widgets/types';
 	import { Eye, PencilSimple, Plus, Palette } from 'phosphor-svelte';
-	import { fly } from 'svelte/transition';
+	import { fly, slide } from 'svelte/transition';
 
 	let { data } = $props();
 
-	let showPicker = $state(false);
+	let widgetPickerOpen = $state(false);
+	let themeEditorOpen = $state(false);
+
+	let theme = $state(data.user.theme);
 </script>
 
-<div id="top-info" class:show={data.editing}>
-	You are in editing mode. Hover over a widget or click it to reveal more options.
-</div>
+{#if data.editing}
+	<div id="top-info" transition:slide>
+		You are in editing mode. Hover over a widget or click it to reveal more options.
+	</div>
+{/if}
 
 {#snippet widgets(widgets: AnyWidget[])}
 	{#each widgets as widget}
@@ -35,17 +41,25 @@
 	{/each}
 {/snippet}
 
-<ThemeProvider theme={data.user.theme ? mergeThemes(plainTheme, data.user.theme) : plainTheme}>
-	<main>
-		<div class="column">
-			<ProfileWidgetComponent {...data} />
-			{@render widgets(data.user.widgets[0].sort((a, b) => a.position - b.position))}
-		</div>
-		<div class="column">
-			{@render widgets(data.user.widgets[1].sort((a, b) => a.position - b.position))}
-		</div>
-	</main>
-</ThemeProvider>
+<div id="root-profile">
+	<div id="profile">
+		<ThemeProvider {theme}>
+			<main>
+				<div class="column">
+					<ProfileWidgetComponent {...data} />
+					{@render widgets(data.user.widgets[0].sort((a, b) => a.position - b.position))}
+				</div>
+				<div class="column">
+					{@render widgets(data.user.widgets[1].sort((a, b) => a.position - b.position))}
+				</div>
+			</main>
+		</ThemeProvider>
+	</div>
+
+	{#if data.editing && themeEditorOpen}
+		<ThemeEditor bind:theme />
+	{/if}
+</div>
 
 {#if data.editable}
 	<div id="edit-button">
@@ -63,14 +77,14 @@
 	</div>
 {/if}
 
-<WidgetPicker user={data.currentUser} bind:showPicker />
+<WidgetPicker user={data.currentUser} bind:showPicker={widgetPickerOpen} />
 
 {#if data.editing}
 	<div id="edit-bar" transition:fly={{ y: 200 }}>
-		<button onclick={() => (showPicker = true)} aria-label="Add widget">
+		<button onclick={() => (widgetPickerOpen = true)} aria-label="Add widget">
 			<Plus weight="regular" size={30} />
 		</button>
-		<button aria-label="Edit theme">
+		<button onclick={() => (themeEditorOpen = !themeEditorOpen)} aria-label="Edit theme">
 			<Palette size={30} />
 		</button>
 	</div>
@@ -83,26 +97,23 @@
 		border-bottom: 0px solid black;
 		font-weight: 500;
 		font-size: 1.25rem;
-		max-height: 0px;
-		padding: 0 1rem;
-		transition:
-			max-height 100ms,
-			padding 100ms;
-		overflow: hidden;
+		border-width: 1px;
+		padding: 1rem;
+	}
 
-		&.show {
-			border-width: 1px;
-			padding: 1rem;
-			max-height: 999px;
-			transition:
-				max-height 200ms,
-				padding 200ms;
-		}
+	#root-profile {
+		display: flex;
+		flex: 1;
+	}
+
+	#profile {
+		display: contents;
+		container-type: inline-size;
+		flex-grow: 1;
 	}
 
 	main {
 		background: var(--background);
-		min-height: 100vh;
 		display: grid;
 		padding: clamp(calc(var(--base-padding) / 2), 2vw, calc(var(--base-padding) * 2));
 		gap: var(--base-gap);
@@ -110,16 +121,19 @@
 		grid-template-rows: 0fr;
 		background-position: center;
 		background-size: cover;
-
-		@media (max-width: 950px) {
-			grid-template-columns: 1fr;
-		}
+		flex: 1;
 
 		.column {
 			flex: 1;
 			display: flex;
 			flex-direction: column;
 			gap: var(--base-gap);
+		}
+	}
+
+	@container (max-width: 950px) {
+		main {
+			grid-template-columns: 1fr;
 		}
 	}
 

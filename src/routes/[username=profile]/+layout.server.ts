@@ -3,6 +3,7 @@ import { error, redirect } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
 import { sql } from 'drizzle-orm';
 import { publicUserColumns } from '$lib/db/schema/users';
+import { mergeThemes, plainTheme } from '$lib/themes/mergeThemes';
 
 export const load: LayoutServerLoad = async ({ params: { username }, url, parent }) => {
 	const user = await db.query.users.findFirst({
@@ -46,7 +47,7 @@ export const load: LayoutServerLoad = async ({ params: { username }, url, parent
 	}
 
 	return {
-		user,
+		user: { ...user, theme: mergeThemes(plainTheme, user?.theme || {}) },
 		editable: isCurrentUser,
 		editing: url.searchParams.has('edit')
 	};

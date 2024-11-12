@@ -38,6 +38,7 @@
 		"prettier-plugin-svelte": "^3.2.7",
 		"sass": "^1.80.3",
 		"svelte": "5.0.2",
+		"svelte-awesome-color-picker": "^3.1.4",
 		"svelte-check": "^4.0.5",
 		"typescript": "^5.6.3",
 		"typescript-eslint": "^8.10.0",
