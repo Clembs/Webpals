@@ -25,7 +25,7 @@
 	{#each widgets as widget}
 		{#if widget.id === 'about_me' && 'content' in widget}
 			<AboutMeWidgetComponent {widget} {...data} />
-		{:else if widget.id === 'music' && 'content_url' in widget && widget.content_url}
+		{:else if widget.id === 'music' && 'content_url' in widget && (!data.editing ? widget.content_url : true)}
 			<MusicWidgetComponent {widget} {...data} />
 		{:else if widget.id === 'friends' && !('blocks' in widget)}
 			<FriendsWidgetComponent {widget} {...data} />
@@ -63,7 +63,7 @@
 	</div>
 {/if}
 
-<WidgetPicker bind:showPicker />
+<WidgetPicker user={data.currentUser} bind:showPicker />
 
 {#if data.editing}
 	<div id="edit-bar" transition:fly={{ y: 200 }}>
