@@ -49,19 +49,19 @@ export type Theme = {
 	widgets: {
 		color_background: string;
 		color_background_dim: string;
-		border: BorderProps | null;
+		border: BorderProps;
 		shadow: ShadowProps | null;
 	};
 	primary_buttons: {
 		color_background: string;
 		color_on_background: string;
-		border: BorderProps | null;
+		border: BorderProps;
 		shadow: ShadowProps | null;
 	};
 	secondary_inputs: {
 		color_background: string;
 		color_on_background: string;
-		border: BorderProps | null;
+		border: BorderProps;
 		shadow: ShadowProps | null;
 	};
 };
