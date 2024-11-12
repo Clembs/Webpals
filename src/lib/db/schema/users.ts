@@ -4,6 +4,12 @@ import { relations } from 'drizzle-orm';
 import { jsonb, pgTable, primaryKey, smallint, text, timestamp } from 'drizzle-orm/pg-core';
 import { passkeys, sessions, type Passkey, type Session } from './auth';
 import { notifications, notificationsMentionedUsers, type Notification } from './notifications';
+import {
+	defaultAboutMeWidget,
+	defaultCommentsWidget,
+	defaultFriendsWidget,
+	defaultMusicWidget
+} from '$lib/widgets/default-widgets';
 
 export const UserStatusTypes = ['online', 'dnd', 'offline'] as const;
 
@@ -24,35 +30,8 @@ export const users = pgTable('users', {
 	widgets: jsonb('widgets')
 		.notNull()
 		.default([
-			[
-				{
-					id: 'music',
-					position: 1,
-					content_url: undefined,
-					content_type: undefined,
-					title: undefined,
-					artist: undefined
-				},
-				{
-					id: 'favorites',
-					position: 2
-				}
-			],
-			[
-				{
-					id: 'about_me',
-					content: 'Hello, Islands!',
-					position: 1
-				},
-				{
-					id: 'friends',
-					position: 2
-				},
-				{
-					id: 'comments',
-					position: 3
-				}
-			]
+			[defaultMusicWidget],
+			[defaultAboutMeWidget, defaultFriendsWidget, defaultCommentsWidget]
 		] as AnyWidget[][])
 		.$type<AnyWidget[][]>(),
 	status: text('status', {
