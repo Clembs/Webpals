@@ -74,6 +74,7 @@
 		width: fit-content;
 		height: fit-content;
 		max-width: min(600px, calc(100% - 2 * var(--base-padding)));
+		min-width: min(300px, calc(100% - 2 * var(--base-padding)));
 
 		transition:
 			scale 200ms,
