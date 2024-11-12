@@ -16,10 +16,10 @@
 			<MusicNote />
 
 			<h2>
-				{widget.title}
+				{widget.title || 'Music'}
 
 				<span class="subtext">
-					{widget.artist}
+					{widget.artist || 'Artist'}
 				</span>
 			</h2>
 		</div>
@@ -36,12 +36,13 @@
 				loading="eager"
 				class="spotify-embed"
 			></iframe>
-		{/if}
-		{#if widget.content_type?.startsWith('audio/')}
+		{:else if widget.content_type?.startsWith('audio/')}
 			<audio controls>
 				<source src={widget.content_url} type={widget.content_type} />
 				Your browser does not support the audio element.
 			</audio>
+		{:else}
+			No content provided! Click here to setup.
 		{/if}
 	</div>
 </BaseWidget>
