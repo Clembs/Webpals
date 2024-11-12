@@ -10,7 +10,6 @@ import { and, eq } from 'drizzle-orm';
 import { relationships, RelationshipTypes } from '$lib/db/schema/users';
 
 export async function deleteNotification({ url, locals: { getCurrentUser } }: RequestEvent) {
-	console.log('h');
 	const user = await getCurrentUser();
 
 	if (!user) redirect(302, '/login');
