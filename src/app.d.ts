@@ -1,6 +1,7 @@
 // See https://kit.svelte.dev/docs/types#app
 
-import type { FullUser, Session } from '$lib/db/schema/users';
+import type { Session } from '$lib/db/schema/auth';
+import type { FullUser } from '$lib/db/schema/users';
 
 // for information about these interfaces
 declare global {
