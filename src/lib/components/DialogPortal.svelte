@@ -1,7 +1,5 @@
 <!-- TODO: click outside closes dialog (optionally, maybe through an options object) -->
 <!-- TODO: lock the body when a dialog is opened -->
-<!-- TODO: make so elements in the background are not interactive -->
-<!-- TODO: polish close animation -->
 
 <script lang="ts">
 	import { dialogState } from '$lib/helpers/dialog.svelte';
@@ -16,7 +14,12 @@
 />
 
 <dialog-portal>
-	<div class="dialog-backdrop" class:open={dialogState.current} inert aria-hidden={true}></div>
+	<div
+		class="dialog-backdrop"
+		class:open={dialogState.current}
+		inert={!dialogState.current}
+		aria-hidden={true}
+	></div>
 
 	{#each dialogState.history as dialog, i}
 		<!-- svelte-ignore a11y_autofocus -->
@@ -64,13 +67,13 @@
 		// "left: 50%; top: 50%; transform: translate(-50%, -50%);"
 		// since that makes the dialog only take a third of the viewport max (so on mobile it looks like shit)
 		// we set the height & width to "fit-content" because otherwise its set to 100% for some reason
-		// but the max width is 700px, OR the width of the viewport minus 2*base-padding to create some side spacing
+		// but the max width is 600px, OR the width of the viewport minus 2*base-padding to create some side spacing
 		// whew
 		inset: 0;
 		margin: auto;
 		width: fit-content;
 		height: fit-content;
-		max-width: min(700px, calc(100% - 2 * var(--base-padding)));
+		max-width: min(600px, calc(100% - 2 * var(--base-padding)));
 
 		transition:
 			scale 200ms,
@@ -100,7 +103,7 @@
 		@keyframes fadeIn {
 			from {
 				opacity: 0;
-				scale: 1.25;
+				scale: 1.1;
 			}
 			to {
 				opacity: 1;
