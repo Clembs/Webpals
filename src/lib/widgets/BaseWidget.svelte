@@ -5,6 +5,8 @@
 	import Card from '$lib/components/Card.svelte';
 	import { enhance } from '$app/forms';
 	import { PencilSimple, TrashSimple } from 'phosphor-svelte';
+	import Button from '$lib/components/Button.svelte';
+	import { dialogState } from '$lib/helpers/dialog.svelte';
 
 	let {
 		editing,
@@ -123,6 +125,33 @@
 	<div inert aria-hidden={true} class:open={modalOpened} class="dialog-backdrop"></div>
 {/if}
 
+{#snippet confirmDeleteDialog()}
+	<form
+		use:enhance={() =>
+			({ update }) => {
+				dialogState.closeDialog();
+				update();
+			}}
+		action="/api/profile?/delete-widget?id={widget!.id}"
+		method="post"
+		class="confirm-delete"
+	>
+		<h2>Are you sure you want to delete this widget?</h2>
+
+		<p>
+			Contents of the widget will be lost. You can bring it back with the + menu, but it will be
+			blank.
+		</p>
+
+		<div class="buttons">
+			<Button inline type="button" variant="secondary" onclick={() => dialogState.closeDialog()}>
+				Cancel
+			</Button>
+			<Button inline type="submit" variant="urgent">Delete widget</Button>
+		</div>
+	</form>
+{/snippet}
+
 <div class="widget-wrapper" class:editing={modalOpened} bind:this={widgetWrapperEl}>
 	{#if editing}
 		<div class="hover-menu">
@@ -132,12 +161,22 @@
 				</button>
 			{/if}
 			{#if widget}
-				<!-- TODO: Delete widget & "deletable" field -->
-				<form use:enhance action="/api/profile?/deleteWidget&id={widget.id}" method="post">
-					<button aria-label="Delete widget">
+				<!-- if the menu is editable, open the dialog to confirm deletion -->
+				{#if editMenu}
+					<button
+						onclick={() => dialogState.openDialog(confirmDeleteDialog)}
+						aria-label="Delete widget"
+					>
 						<TrashSimple size={20} />
 					</button>
-				</form>
+					<!-- otherwise we dont really care and can delete right away -->
+				{:else}
+					<form use:enhance action="/api/profile?/deleteWidget&id={widget.id}" method="post">
+						<button aria-label="Delete widget">
+							<TrashSimple size={20} />
+						</button>
+					</form>
+				{/if}
 			{/if}
 		</div>
 	{/if}
@@ -228,6 +267,23 @@
 				top 150ms;
 			opacity: 1;
 			top: calc(0px - var(--base-padding));
+		}
+	}
+
+	.confirm-delete {
+		display: flex;
+		flex-direction: column;
+		gap: var(--base-gap);
+
+		h2 {
+			font-size: 1.5rem;
+			text-wrap: balance;
+		}
+
+		.buttons {
+			display: flex;
+			gap: calc(var(--base-gap) * 0.5);
+			justify-content: flex-end;
 		}
 	}
 </style>
