@@ -18,6 +18,7 @@
 	list-style: none;
 	background-color: var(--widgets-background-color-dim);
 	border-radius: calc(var(--widgets-border-base-radius) * 0.5);
+	width: 100%;
 
 	li {
 		border-bottom: var(--inputs-border-width) solid var(--widgets-border-color);
