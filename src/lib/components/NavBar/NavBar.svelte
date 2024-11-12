@@ -5,7 +5,9 @@
 	import NotificationsMenu from './NotificationsMenu.svelte';
 	import { clickoutside } from '@svelte-put/clickoutside';
 	import { enhance } from '$app/forms';
+	import AccountMenu from './AccountMenu.svelte';
 
+	let accountMenuOpen = $state(false);
 	let notificationsMenuOpen = $state(false);
 
 	let unreadNotifications = $derived($page.data.currentUser?.notifications.filter((n) => !n.read));
@@ -65,9 +67,23 @@
 			{#if !$page.data.currentUser}
 				<a href="/login"> Join Islands </a>
 			{:else}
-				<button aria-label="Profile" title="Profile">
-					<Avatar user={$page.data.currentUser} size="40px" />
-				</button>
+				<div
+					use:clickoutside
+					onclickoutside={() => (accountMenuOpen = false)}
+					class="account-menu-wrapper"
+				>
+					<button
+						use:clickoutside
+						onclick={() => (accountMenuOpen = !accountMenuOpen)}
+						aria-label="Profile"
+						title="Profile"
+					>
+						<Avatar user={$page.data.currentUser} size="40px" />
+					</button>
+					{#if accountMenuOpen}
+						<AccountMenu bind:menuOpen={accountMenuOpen} user={$page.data.currentUser} />
+					{/if}
+				</div>
 			{/if}
 		</div>
 	</nav>
@@ -106,21 +122,6 @@
 			&:hover {
 				background-color: var(--widgets-background-color-dim);
 			}
-
-			.badge {
-				position: absolute;
-				top: -2px;
-				right: -2px;
-				font-weight: bold;
-				background-color: var(--color-urgent);
-				color: var(--background);
-				border-radius: 99px;
-				display: grid;
-				place-items: center;
-				height: calc(var(--base-padding) * 1.25);
-				width: calc(var(--base-padding) * 1.25);
-				font-size: 14px;
-			}
 		}
 
 		.right {
@@ -128,6 +129,7 @@
 			gap: calc(var(--base-gap) * 0.5);
 			align-items: center;
 		}
+
 		ul {
 			display: contents;
 			list-style: none;
@@ -135,6 +137,24 @@
 			li[data-submenu='true'] {
 				position: relative;
 			}
+		}
+
+		.badge {
+			position: absolute;
+			top: -2px;
+			right: -2px;
+			font-weight: bold;
+			background-color: var(--color-urgent);
+			color: var(--background);
+			border-radius: 99px;
+			display: grid;
+			place-items: center;
+			height: calc(var(--base-padding) * 1.25);
+			width: calc(var(--base-padding) * 1.25);
+			font-size: 14px;
+		}
+		.account-menu-wrapper {
+			position: relative;
 		}
 	}
 </style>
