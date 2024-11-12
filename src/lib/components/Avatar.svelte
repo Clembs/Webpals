@@ -6,7 +6,7 @@
 		user,
 		size
 	}: {
-		user?: PublicUser;
+		user?: Partial<PublicUser>;
 		size?: string;
 	} = $props();
 </script>
