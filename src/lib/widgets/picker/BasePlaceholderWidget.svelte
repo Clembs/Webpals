@@ -4,15 +4,25 @@
 
 	let {
 		'widget-id': widgetId,
-		children
+		children,
+		showPicker = $bindable(false)
 	}: {
 		'widget-id': string;
 		children: Snippet;
+		showPicker: boolean;
 	} = $props();
 </script>
 
 <li class="placeholder-widget">
-	<form use:enhance action="/api/profile?/addWidget&id={widgetId}" method="post">
+	<form
+		use:enhance={() =>
+			({ update }) => {
+				showPicker = false;
+				update();
+			}}
+		action="/api/profile?/addWidget&id={widgetId}"
+		method="post"
+	>
 		<button class="widget-contents" type="submit">
 			{@render children()}
 		</button>
@@ -20,6 +30,10 @@
 </li>
 
 <style lang="scss">
+	.placeholder-widget {
+		margin-bottom: var(--base-gap);
+	}
+
 	.widget-contents {
 		display: flex;
 		flex-direction: column;

@@ -1,11 +1,17 @@
 <script lang="ts">
-	import { X, MusicNote, XLogo, Globe, ArrowSquareOut } from 'phosphor-svelte';
+	import { X } from 'phosphor-svelte';
 	import BasePlaceholderWidget from './BasePlaceholderWidget.svelte';
-	import AudioPlayer from '$lib/components/AudioPlayer.svelte';
+	import { defaultWidgets } from '../default-widgets';
+	import type { FullUser } from '$lib/db/schema/users';
+	import PlaceholderFriendsWidget from './PlaceholderFriendsWidget.svelte';
+	import PlaceholderMusicWidget from './PlaceholderMusicWidget.svelte';
+	import PlaceholderConnectionsWidgets from './PlaceholderConnectionsWidgets.svelte';
 
 	let {
+		user,
 		showPicker = $bindable(false)
 	}: {
+		user: FullUser | undefined | null;
 		showPicker: boolean;
 	} = $props();
 
@@ -37,56 +43,31 @@
 		onscroll={(ev) => (addWidgetMenuScroll = (ev.target as HTMLUListElement).scrollTop)}
 	>
 		<ul class="widgets">
-			<BasePlaceholderWidget widget-id="about-me">
-				<h3>About me</h3>
-				<p>Write a little bit about yourself.</p>
-			</BasePlaceholderWidget>
-			<BasePlaceholderWidget widget-id="music">
-				<div class="music-widget-heading">
-					<MusicNote />
-					<h3>Music <span class="subtext"> Artist </span></h3>
-				</div>
+			<!-- filter widgets that are not in a user's widgets
+			user.widgets is an array of arrays containing the widgets -->
+			{#if user}
+				{#each defaultWidgets.filter((e) => !user.widgets.find( (c) => c.find((w) => w.id === e.id) )) as widget}
+					{#if widget.id === 'about_me'}
+						<BasePlaceholderWidget bind:showPicker widget-id={widget.id}>
+							<h3>About me</h3>
+							<p>Write a little bit about yourself.</p>
+						</BasePlaceholderWidget>
+					{:else if widget.id === 'friends'}
+						<PlaceholderFriendsWidget bind:showPicker />
+					{:else if widget.id === 'music'}
+						<PlaceholderMusicWidget bind:showPicker />
+					{/if}
+				{/each}
+			{/if}
 
-				<!-- <AudioPlayer
-					file="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
-					type="audio/mpeg"
-				/> -->
-			</BasePlaceholderWidget>
-			<BasePlaceholderWidget widget-id="connections">
-				<h3>Connections</h3>
-
-				<ul class="connections-widget-list">
-					<li>
-						<a href="https://twitter.com">
-							<div class="left">
-								<XLogo weight="regular" />
-								<div class="text">
-									X/Twitter
-									<div class="subtext">@username</div>
-								</div>
-							</div>
-							<ArrowSquareOut />
-						</a>
-					</li>
-					<li>
-						<a href="https://twitter.com">
-							<div class="left">
-								<Globe />
-								<div class="text">
-									Website
-									<div class="subtext">example.com</div>
-								</div>
-							</div>
-							<ArrowSquareOut />
-						</a>
-					</li>
-				</ul>
-			</BasePlaceholderWidget>
+			<PlaceholderConnectionsWidgets bind:showPicker />
 		</ul>
 	</div>
 </dialog>
 
 <style lang="scss">
+	@use '../../../styles/mixins.scss';
+
 	#widget-picker {
 		bottom: var(--base-padding);
 		top: auto;
@@ -135,70 +116,14 @@
 		}
 
 		.widgets {
-			display: grid;
-			grid-template-columns: 1fr 1fr;
-			gap: var(--base-gap);
+			columns: 2;
 			list-style: none;
 			padding: calc(var(--base-padding) * 1.25);
 			padding-top: 0;
 			margin: 0;
 
 			@media (max-width: 950px) {
-				grid-template-columns: 1fr;
-			}
-
-			.music-widget-heading {
-				display: flex;
-				gap: calc(var(--base-gap) * 0.5);
-				align-items: center;
-
-				.subtext {
-					margin-left: calc(var(--base-gap) * 0.25);
-				}
-			}
-
-			.connections-widget-list {
-				display: flex;
-				flex-direction: column;
-				list-style: none;
-				padding: 0;
-				margin: 0;
-				width: 100%;
-
-				li {
-					a {
-						display: flex;
-						justify-content: space-between;
-						gap: var(--base-gap);
-						text-decoration: none;
-						background-color: var(--widgets-background-color-dim);
-						padding: calc(var(--base-padding) * 0.75);
-						// border: var(--widgets-border-width) solid var(--widgets-border-color);
-						border-top: var(--widgets-border-width) solid var(--widgets-border-color);
-
-						.left {
-							display: flex;
-							gap: calc(var(--base-gap) * 0.75);
-
-							.text {
-								display: flex;
-								flex-direction: column;
-								// gap: calc(var(--base-gap) * 0.25);
-							}
-						}
-					}
-
-					&:first-child a {
-						border-radius: calc(var(--widgets-border-base-radius) * 0.5)
-							calc(var(--widgets-border-base-radius) * 0.5) 0 0;
-						border-top: none;
-					}
-
-					&:last-child a {
-						border-radius: 0 0 calc(var(--widgets-border-base-radius) * 0.5)
-							calc(var(--widgets-border-base-radius) * 0.5);
-					}
-				}
+				columns: 1;
 			}
 		}
 
@@ -211,10 +136,6 @@
 
 		&::backdrop {
 			background: rgba(0, 0, 0, 0.5);
-			// display: none;
-
-			// @media (max-width: 800px) {
-			// }
 		}
 	}
 </style>
