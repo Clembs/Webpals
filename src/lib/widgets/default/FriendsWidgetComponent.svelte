@@ -10,7 +10,9 @@
 		editing
 	}: WidgetComponentProps<FriendsWidget> & {
 		user: PublicUser & {
-			initiatedRelationships: Relationship[];
+			initiatedRelationships: (Relationship & {
+				recipient: PublicUser;
+			})[];
 		};
 	} = $props();
 
