@@ -40,7 +40,9 @@
 		<ul class="notification-list">
 			{#each user.notifications as notification}
 				<li class="notification">
-					{#if notification.type === NotificationTypes.FriendRequest && notification.mentionedUsers.length}
+					{#if notification.type === NotificationTypes.Generic}
+						<GenericNotification {notification} />
+					{:else if notification.type === NotificationTypes.FriendRequest && notification.mentionedUsers.length}
 						<FriendRequestNotification {notification} />
 					{:else if notification.type === NotificationTypes.FriendRequestAccepted && notification.mentionedUsers.length}
 						<FriendRequestAcceptedNotification {notification} />

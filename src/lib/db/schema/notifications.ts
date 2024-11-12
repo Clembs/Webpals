@@ -3,6 +3,7 @@ import { users, type PublicUser } from './users';
 import { relations } from 'drizzle-orm';
 
 export enum NotificationTypes {
+	Generic,
 	FriendRequest,
 	FriendRequestAccepted,
 	PostLike,
