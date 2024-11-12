@@ -80,6 +80,8 @@
 			@include mixins.fancy-list;
 
 			.notification {
+				display: flex;
+				padding: calc(var(--base-padding) * 0.75);
 				justify-content: space-between;
 
 				&:last-child {
