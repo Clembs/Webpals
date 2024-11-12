@@ -11,3 +11,18 @@
 	box-shadow: var(--widgets-box-shadow-x) var(--widgets-box-shadow-y) var(--widgets-box-shadow-blur)
 		var(--widgets-box-shadow-color);
 }
+
+@mixin fancy-list {
+	display: flex;
+	flex-direction: column;
+	list-style: none;
+	background-color: var(--widgets-background-color-dim);
+	border-radius: calc(var(--widgets-border-base-radius) * 0.5);
+
+	li {
+		border-bottom: var(--inputs-border-width) solid var(--widgets-border-color);
+		&:last-child {
+			border-bottom: none;
+		}
+	}
+}

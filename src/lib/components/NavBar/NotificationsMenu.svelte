@@ -77,20 +77,10 @@
 		}
 
 		.notification-list {
-			display: flex;
-			flex-direction: column;
-			list-style: none;
-			background-color: var(--widgets-background-color-dim);
-			border-radius: calc(var(--widgets-border-base-radius) * 0.5);
+			@include mixins.fancy-list;
 
 			.notification {
-				display: flex;
-				align-items: center;
-				padding: calc(var(--base-padding) * 0.75);
-				gap: var(--base-gap);
 				justify-content: space-between;
-
-				border-bottom: var(--inputs-border-width) solid var(--widgets-border-color);
 
 				&:last-child {
 					border-bottom: none;
