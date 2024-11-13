@@ -1,12 +1,12 @@
 <script lang="ts">
 	import type { PublicUser } from '$lib/db/schema/users';
 	import type { AnyWidget } from '$lib/widgets/types';
-	import type { Snippet } from 'svelte';
+	import { type Snippet } from 'svelte';
 	import Card from '$lib/components/Card.svelte';
 	import { enhance } from '$app/forms';
 	import { PencilSimple, TrashSimple } from 'phosphor-svelte';
 	import Button from '$lib/components/Button.svelte';
-	import { dialogState } from '$lib/helpers/dialog.svelte';
+	import { dialogPortal } from '$lib/portals/dialog.svelte';
 
 	let {
 		editing,
@@ -115,21 +115,11 @@
 	});
 </script>
 
-{#if editing && editMenu}
-	<dialog aria-label="Edit widget" bind:this={widgetDialogEl} oncancel={closeDialog}>
-		<div class="menu" bind:this={widgetEditEl}>
-			{@render editMenu()}
-		</div>
-	</dialog>
-
-	<div inert aria-hidden={true} class:open={modalOpened} class="dialog-backdrop"></div>
-{/if}
-
 {#snippet confirmDeleteDialog()}
 	<form
 		use:enhance={() =>
 			({ update }) => {
-				dialogState.closeDialog();
+				dialogPortal.closeDialog();
 				update();
 			}}
 		action="/api/profile?/deleteWidget&id={widget!.id}"
@@ -144,7 +134,7 @@
 		</p>
 
 		<div class="buttons">
-			<Button inline type="button" variant="secondary" onclick={() => dialogState.closeDialog()}>
+			<Button inline type="button" variant="secondary" onclick={() => dialogPortal.closeDialog()}>
 				Cancel
 			</Button>
 			<Button inline type="submit" variant="urgent">Delete widget</Button>
@@ -152,38 +142,50 @@
 	</form>
 {/snippet}
 
-<div class="widget-wrapper" class:editing={modalOpened} bind:this={widgetWrapperEl}>
-	{#if editing}
-		<div class="hover-menu">
-			{#if editMenu}
-				<button aria-label="Edit widget" onclick={expandDialog}>
-					<PencilSimple size={20} />
-				</button>
-			{/if}
-			{#if widget}
-				<!-- if the menu is editable, open the dialog to confirm deletion -->
-				{#if editMenu}
-					<button
-						onclick={() => dialogState.openDialog(confirmDeleteDialog)}
-						aria-label="Delete widget"
-					>
-						<TrashSimple size={20} />
-					</button>
-					<!-- otherwise we dont really care and can delete right away -->
-				{:else}
-					<form use:enhance action="/api/profile?/deleteWidget&id={widget.id}" method="post">
-						<button aria-label="Delete widget">
-							<TrashSimple size={20} />
-						</button>
-					</form>
-				{/if}
-			{/if}
-		</div>
+<div class="widget-root">
+	{#if editing && editMenu}
+		<dialog aria-label="Edit widget" bind:this={widgetDialogEl} oncancel={closeDialog}>
+			<div class="menu" bind:this={widgetEditEl}>
+				{@render editMenu()}
+			</div>
+		</dialog>
+
+		<div inert aria-hidden={true} class:open={modalOpened} class="dialog-backdrop"></div>
 	{/if}
 
-	<Card>
-		{@render children()}
-	</Card>
+	<div class="widget-wrapper" class:editing={modalOpened} bind:this={widgetWrapperEl}>
+		{#if editing}
+			<div class="hover-menu">
+				{#if editMenu}
+					<button aria-label="Edit widget" onclick={expandDialog}>
+						<PencilSimple size={20} />
+					</button>
+				{/if}
+				{#if widget}
+					<!-- if the menu is editable, open the dialog to confirm deletion -->
+					{#if editMenu}
+						<button
+							onclick={() => dialogPortal.openDialog(confirmDeleteDialog)}
+							aria-label="Delete widget"
+						>
+							<TrashSimple size={20} />
+						</button>
+						<!-- otherwise we dont really care and can delete right away -->
+					{:else}
+						<form use:enhance action="/api/profile?/deleteWidget&id={widget.id}" method="post">
+							<button aria-label="Delete widget">
+								<TrashSimple size={20} />
+							</button>
+						</form>
+					{/if}
+				{/if}
+			</div>
+		{/if}
+
+		<Card inert={editing}>
+			{@render children()}
+		</Card>
+	</div>
 </div>
 
 <style lang="scss">

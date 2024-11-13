@@ -2,13 +2,13 @@
 <!-- TODO: lock the body when a dialog is opened -->
 
 <script lang="ts">
-	import { dialogState } from '$lib/helpers/dialog.svelte';
+	import { dialogPortal } from './dialog.svelte';
 </script>
 
 <svelte:window
 	onkeydown={(e) => {
 		if (e.key === 'Escape') {
-			dialogState.closeDialog();
+			dialogPortal.closeDialog();
 		}
 	}}
 />
@@ -16,21 +16,21 @@
 <dialog-portal>
 	<div
 		class="dialog-backdrop"
-		class:open={dialogState.current}
-		inert={!dialogState.current}
+		class:open={dialogPortal.current}
+		inert={!dialogPortal.current}
 		aria-hidden={true}
 	></div>
 
-	{#each dialogState.history as dialog, i}
+	{#each dialogPortal.history as dialog, i}
 		<!-- svelte-ignore a11y_autofocus -->
 		<!-- svelte-ignore a11y_click_events_have_key_events -->
 		<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 		<div
 			role="dialog"
 			class="dialog-window"
-			inert={i !== dialogState.history.length - 1}
-			aria-current={i === dialogState.history.length - 1}
-			style:--nested-level={dialogState.history.length - i}
+			inert={i !== dialogPortal.history.length - 1}
+			aria-current={i === dialogPortal.history.length - 1}
+			style:--nested-level={dialogPortal.history.length - i}
 			autofocus
 		>
 			{@render dialog.component(dialog.props)}

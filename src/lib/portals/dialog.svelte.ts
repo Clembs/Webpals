@@ -5,7 +5,7 @@ type DialogStateSnapshot = {
 	props?: Record<string, unknown>;
 };
 
-class DialogState {
+class DialogPortal {
 	current = $state<DialogStateSnapshot>();
 	history = $state<DialogStateSnapshot[]>([]);
 
@@ -32,4 +32,4 @@ class DialogState {
 	}
 }
 
-export const dialogState = new DialogState();
+export const dialogPortal = new DialogPortal();
