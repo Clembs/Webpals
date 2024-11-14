@@ -27,8 +27,7 @@
 	let widgetDialogEl = $state<HTMLDialogElement>();
 	let widgetEditEl = $state<HTMLDivElement>();
 
-	const animationDurationSeconds = 250;
-	const animationDuration = `${animationDurationSeconds}ms`;
+	const animationDurationMs = 250;
 
 	function expandDialog() {
 		if (!widgetWrapperEl || !widgetDialogEl) return;
@@ -39,34 +38,46 @@
 
 		modalOpened = true;
 		widgetDialogEl.showModal();
-		// get the dialog to take the dimensions of the widget
-		widgetDialogEl.style.transform = 'none';
-		widgetDialogEl.style.left = `${rect.x}px`;
-		widgetDialogEl.style.top = `${rect.y}px`;
-		widgetDialogEl.style.width = `${rect.width}px`;
-		widgetDialogEl.style.height = `${rect.height}px`;
-		// hide the widget
-		widgetWrapperEl.style.opacity = '0.01';
 
-		setTimeout(() => {
-			if (!widgetDialogEl) return;
-			widgetDialogEl.style.transition = `left ${animationDuration}, top ${animationDuration}, width ${animationDuration}, height ${animationDuration}, transform ${animationDuration}`;
+		// hide the original widget
+		widgetWrapperEl.style.visibility = 'hidden';
 
-			const widgetEditRect = widgetEditEl?.getBoundingClientRect();
+		// get the dimensions of the dialog's contents so we can animate to it
+		const widgetEditRect = widgetEditEl?.getBoundingClientRect();
 
-			// transition to center
-			widgetDialogEl.style.left = '50%';
-			widgetDialogEl.style.top = '50%';
-			widgetDialogEl.style.transform = 'translate(-50%, -50%)';
-			widgetDialogEl.style.height = `${(widgetEditRect?.height || 200) + (parseInt(window.getComputedStyle(widgetDialogEl)?.padding.replace('px', '')) || 16) * 2}px`;
-			widgetDialogEl.style.width = '700px';
-		}, 10);
+		const animation = widgetDialogEl.animate(
+			[
+				{
+					transformOrigin: 'top left',
+					left: '0%',
+					top: '0%',
+					transform: `translate(${rect.left}px, ${rect.top}px)`,
+					width: `${rect.width}px`,
+					height: `${rect.height}px`
+				},
+				{
+					transformOrigin: 'top left',
+					left: '50%',
+					top: '50%',
+					transform: 'translate(-50%, -50%)',
+					width: '700px',
+					// the widget's height plus the padding of the dialog
+					// we need to get the computed padding because it depends on the user's theme
+					height: `${(widgetEditRect?.height || 200) + (parseInt(window.getComputedStyle(widgetDialogEl)?.padding.replace('px', '')) || 16) * 2}px`
+				}
+			],
+			{
+				duration: animationDurationMs,
+				easing: 'ease-in-out',
+				fill: 'forwards'
+			}
+		);
 
-		setTimeout(() => {
-			// remove the transition
-			widgetDialogEl!.style.transition = 'none';
-			widgetDialogEl!.style.height = 'fit-content';
-		}, animationDurationSeconds + 10);
+		animation.finished.then(() => {
+			// set the dialog height to fit the content so that
+			// the dialog can be expanded (when there's a textarea, for example)
+			widgetDialogEl!.style.minHeight = 'fit-content';
+		});
 	}
 
 	function closeDialog(ev: Event) {
@@ -75,33 +86,48 @@
 
 		modalOpened = false;
 
-		// set dialog height to a value in px so it can animate
-		const dialogRect = widgetDialogEl.getBoundingClientRect();
-		widgetDialogEl.style.height = `${dialogRect.height}px`;
+		const rect = widgetWrapperEl.getBoundingClientRect();
 
-		// reset the dialog to the dimensions of the widget
-		setTimeout(() => {
-			if (!widgetDialogEl || !widgetWrapperEl) return;
-			// enable the transition on the dialog
-			widgetDialogEl.style.transition = `left ${animationDuration}, top ${animationDuration}, width ${animationDuration}, height ${animationDuration}, transform ${animationDuration}`;
+		if (!rect) return;
 
-			const wrapperRect = widgetWrapperEl.getBoundingClientRect();
+		// get the dimensions of the dialog's contents so we can animate to it
+		const widgetEditRect = widgetEditEl?.getBoundingClientRect();
 
-			widgetDialogEl.style.left = `${wrapperRect.x}px`;
-			widgetDialogEl.style.top = `${wrapperRect.y}px`;
-			widgetDialogEl.style.transform = 'none';
-			widgetDialogEl.style.width = `${wrapperRect.width}px`;
-			widgetDialogEl.style.height = `${wrapperRect.height}px`;
-		}, 10);
+		// reset min-height so the dialog can shrink
+		widgetDialogEl!.style.minHeight = 'auto';
 
-		setTimeout(() => {
-			// close the dialog
+		const animation = widgetDialogEl.animate(
+			[
+				{
+					transformOrigin: 'top left',
+					left: '50%',
+					top: '50%',
+					transform: 'translate(-50%, -50%)',
+					width: '700px',
+					height: `${(widgetEditRect?.height || 200) + (parseInt(window.getComputedStyle(widgetDialogEl)?.padding.replace('px', '')) || 16) * 2}px`
+				},
+				{
+					transformOrigin: 'top left',
+					left: '0%',
+					top: '0%',
+					transform: `translate(${rect.left}px, ${rect.top}px)`,
+					width: `${rect.width}px`,
+					height: `${rect.height}px`
+				}
+			],
+			{
+				duration: animationDurationMs,
+				easing: 'ease-in-out',
+				fill: 'forwards'
+			}
+		);
+
+		// wait for the animation to finish before closing the dialog
+		// or it brutally interrupts because of display: none;
+		animation.finished.then(() => {
 			widgetDialogEl!.close();
-			// show the widget
-			widgetWrapperEl!.style.opacity = '1';
-			// remove the transition and safely close the dialog
-			widgetDialogEl!.style.transition = 'none';
-		}, animationDurationSeconds + 10);
+			widgetWrapperEl!.style.visibility = '';
+		});
 	}
 
 	$effect(() => {
@@ -216,12 +242,13 @@
 		overflow: hidden;
 		/* will-change: transform, width, height, left, top; */
 		max-width: 100%;
+		// margin: auto;
 
 		&[open] {
 			// opacity: 1;
-			display: flex;
+			// display: flex;
 			flex-direction: column;
-			will-change: transform, width, height, left, top;
+			// will-change: transform, width, height, left, top;
 		}
 
 		&::backdrop {
