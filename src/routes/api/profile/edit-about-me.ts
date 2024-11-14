@@ -2,6 +2,7 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { RequestEvent } from './$types';
 import { db } from '$lib/db';
 import { users } from '$lib/db/schema/users';
+import { eq } from 'drizzle-orm';
 
 export async function editAboutMe({ locals: { getCurrentUser }, request }: RequestEvent) {
 	const user = await getCurrentUser();
@@ -17,19 +18,22 @@ export async function editAboutMe({ locals: { getCurrentUser }, request }: Reque
 		});
 	}
 
-	await db.update(users).set({
-		widgets: user.widgets.map((column) =>
-			column.map((w) => {
-				if (w.id === 'about_me') {
-					return {
-						...w,
-						content
-					};
-				}
-				return w;
-			})
-		)
-	});
+	await db
+		.update(users)
+		.set({
+			widgets: user.widgets.map((column) =>
+				column.map((w) => {
+					if (w.id === 'about_me') {
+						return {
+							...w,
+							content
+						};
+					}
+					return w;
+				})
+			)
+		})
+		.where(eq(users.id, user.id));
 
 	return {};
 }
