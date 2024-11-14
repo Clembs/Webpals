@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MusicNote } from 'phosphor-svelte';
+	import { MusicNote, PencilSimple, Warning } from 'phosphor-svelte';
 	import BaseWidget from '../BaseWidget.svelte';
 	import type { MusicWidget, WidgetComponentProps } from '../types';
 
@@ -42,7 +42,15 @@
 				Your browser does not support the audio element.
 			</audio>
 		{:else}
-			No content provided! Click here to setup.
+			<div class="error">
+				<p>
+					<Warning /> No content provided. The widget will not be visible.
+				</p>
+
+				<p>
+					Click <PencilSimple /> to setup.
+				</p>
+			</div>
 		{/if}
 	</div>
 </BaseWidget>
@@ -65,6 +73,13 @@
 			.subtext {
 				margin-left: calc(var(--base-gap) * 0.25);
 			}
+		}
+
+		.error p {
+			color: var(--color-urgent);
+			display: flex;
+			align-items: center;
+			gap: calc(var(--base-gap) * 0.25);
 		}
 
 		.spotify-embed {
