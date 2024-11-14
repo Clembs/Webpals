@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Button from '$lib/components/Button.svelte';
-	import { mergeThemes, plainTheme } from '$lib/themes/mergeThemes.js';
 	import ThemeEditor from '$lib/themes/ThemeEditor.svelte';
 	import ThemeProvider from '$lib/themes/ThemeProvider.svelte';
 	import CustomWidgetComponent from '$lib/widgets/blocks/CustomWidgetComponent.svelte';
@@ -19,6 +18,10 @@
 	let themeEditorOpen = $state(false);
 
 	let theme = $state(data.user.theme);
+
+	$effect(() => {
+		theme = data.user.theme;
+	});
 </script>
 
 {#if data.editing}
@@ -42,19 +45,17 @@
 {/snippet}
 
 <div id="root-profile">
-	<div id="profile">
-		<ThemeProvider {theme}>
-			<main>
-				<div class="column">
-					<ProfileWidgetComponent {...data} />
-					{@render widgets(data.user.widgets[0].sort((a, b) => a.position - b.position))}
-				</div>
-				<div class="column">
-					{@render widgets(data.user.widgets[1].sort((a, b) => a.position - b.position))}
-				</div>
-			</main>
-		</ThemeProvider>
-	</div>
+	<ThemeProvider {theme}>
+		<main>
+			<div class="column">
+				<ProfileWidgetComponent {...data} />
+				{@render widgets(data.user.widgets[0].sort((a, b) => a.position - b.position))}
+			</div>
+			<div class="column">
+				{@render widgets(data.user.widgets[1].sort((a, b) => a.position - b.position))}
+			</div>
+		</main>
+	</ThemeProvider>
 
 	{#if data.editing && themeEditorOpen}
 		<ThemeEditor bind:theme />
@@ -106,12 +107,6 @@
 		flex: 1;
 	}
 
-	#profile {
-		display: contents;
-		container-type: inline-size;
-		flex-grow: 1;
-	}
-
 	main {
 		background: var(--background);
 		display: grid;
@@ -129,10 +124,8 @@
 			flex-direction: column;
 			gap: var(--base-gap);
 		}
-	}
 
-	@container (max-width: 950px) {
-		main {
+		@media (max-width: 950px) {
 			grid-template-columns: 1fr;
 		}
 	}
