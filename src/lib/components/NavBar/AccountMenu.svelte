@@ -118,7 +118,7 @@
 </div>
 
 <style lang="scss">
-	@use '../../../styles/mixins';
+	@use '../../../styles/mixins.scss';
 
 	.account-menu {
 		@include mixins.card;

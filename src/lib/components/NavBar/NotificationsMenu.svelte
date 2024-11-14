@@ -60,7 +60,7 @@
 </div>
 
 <style lang="scss">
-	@use '../../../styles/mixins';
+	@use '../../../styles/mixins.scss';
 
 	.notifications-menu {
 		@include mixins.card;
