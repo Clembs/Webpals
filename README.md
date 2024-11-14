@@ -1,30 +1,54 @@
 # Islands
 
-fun highly customizable mini profiles for everyone :3
+Fun highly customizable mini profiles for everyone :3
 
 ## Description
 
-This project is a social network of profiles with plenty of customization options to make each one unique, sort of a modern equivalent to MySpace, or a mix of bento.me and a blog. Users can set up a profile, theme it using the graphical editor, add community-built widgets, friend other users, send posts, etc.
+This project is a social network of profiles with plenty of customization options to make each one unique, sort of a modern equivalent to MySpace, or a mix of bento.me and a blog.
 
-This doesn't aim to replace anything, just to have a fun and creative way to connect to other users. It's something I've wanted to make for a WHILE, so I hope you'll enjoy it <3
+Users will be able to set up a profile using a theme editor, add widgets, befriend other users, send posts, and more.
 
-## Feature roadmap
+This doesn't aim to replace any existing social media, just to have a fun and creative platform where people can show off their personality!
 
-- [x] Authentication (Login, Register, Logout)
+If you're interested in the project, consider following updates more visually via [Bluesky](https://bsky.app/profile/clembs.com), [Twitter](https://twitter.com/clembsv) or [Discord](https://clembs.com/discord).
+
+## Release roadmap
+
+Islands is still in development and will be released in multiple stages. The following is a rough roadmap of the features I plan to implement (subject to change).
+
+### Private alpha
+
+An invite-only release where only I issue invite codes. It will be a way for close relatives to test the base features. No account will be required to view profiles. Expected features:
+
+- [ ] Authentication (Login, Register, Logout)
+- [x] Friends[^1]
+- [ ] Some default widgets
+- [ ] Profile theming
+- [x] Notifications
+- [ ] Barebones mobile version
+
+### Public alpha
+
+Every user will be able to issue codes to invite more people to the app. Expected features:
+
+- [ ] Barebones posts & replies
+- [ ] Profile comments
+- [ ] Barebones profile search
+- [ ] All planned default widgets
+- [ ] Barebones user & privacy settings
+
+### Public beta
+
+A release where anyone can sign up, without an invite code. Expected features:
+
 - [ ] Onboarding
-- [ ] Customizing widgets (adding, removing, reordering)
-- [ ] Widget marketplace
-- [ ] Customizing profile theme
-- [x] User friending\*
-- [ ] Commenting on profiles
-- [ ] Sending posts
-- [ ] Commenting on posts
-- [x] Notifications\*
-- [ ] User settings
-- [ ] Search
-- [ ] Post feed
-- [ ] Profile feed
+- [ ] Post & profile feed
+- [ ] Virtual currency & badges
+- [ ] Advanced post features
+- [ ] Custom widget API
 
-\* Partly implemented
+### General availability
 
-I'm going to pre-release this project with an invitation system whenever the basics are covered. Let me know if you're interested via [Twitter](https://twitter.com/clembsv), [Bluesky](https://bsky.app/profile/clembs.com) or [Discord](https://clembs.com/discord) (I post updates on all three quite often!).
+This release should not include more features, but the interface should be refined and most issues should be addressed.
+
+[^1]: Partially implemented
