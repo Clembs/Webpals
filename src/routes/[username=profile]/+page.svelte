@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Button from '$lib/components/Button.svelte';
+	import Meta from '$lib/components/Meta.svelte';
 	import ThemeEditor from '$lib/themes/ThemeEditor.svelte';
 	import ThemeProvider from '$lib/themes/ThemeProvider.svelte';
 	import CustomWidgetComponent from '$lib/widgets/blocks/CustomWidgetComponent.svelte';
@@ -8,7 +9,7 @@
 	import MusicWidgetComponent from '$lib/widgets/default/MusicWidgetComponent.svelte';
 	import ProfileWidgetComponent from '$lib/widgets/default/ProfileWidgetComponent.svelte';
 	import WidgetPicker from '$lib/widgets/picker/WidgetPicker.svelte';
-	import type { AnyWidget } from '$lib/widgets/types';
+	import type { AboutMeWidget, AnyWidget } from '$lib/widgets/types';
 	import { Eye, PencilSimple, Plus, Palette } from 'phosphor-svelte';
 	import { fly, slide } from 'svelte/transition';
 
@@ -23,6 +24,15 @@
 		theme = data.user.theme;
 	});
 </script>
+
+<Meta
+	title={data.user.displayName || data.user.username}
+	description={(
+		data.user.widgets
+			.find((c) => c.find((w) => w.id === 'about_me'))
+			?.find((w) => w.id === 'about_me') as AboutMeWidget
+	)?.content}
+/>
 
 {#if data.editing}
 	<div id="top-info" transition:slide>
