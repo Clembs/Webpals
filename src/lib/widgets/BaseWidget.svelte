@@ -7,6 +7,7 @@
 	import { PencilSimple, TrashSimple } from 'phosphor-svelte';
 	import Button from '$lib/components/Button.svelte';
 	import { dialogPortal } from '$lib/portals/dialog.svelte';
+	import { fly } from 'svelte/transition';
 
 	let {
 		editing,
@@ -27,7 +28,7 @@
 	let widgetDialogEl = $state<HTMLDialogElement>();
 	let widgetEditEl = $state<HTMLDivElement>();
 
-	const animationDurationMs = 250;
+	const animationDurationMs = 350;
 
 	function expandDialog() {
 		if (!widgetWrapperEl || !widgetDialogEl) return;
@@ -68,7 +69,7 @@
 			],
 			{
 				duration: animationDurationMs,
-				easing: 'ease-in-out',
+				easing: 'cubic-bezier(0.75, -0.2, 0.15, 1.2)',
 				fill: 'forwards'
 			}
 		);
@@ -117,7 +118,7 @@
 			],
 			{
 				duration: animationDurationMs,
-				easing: 'ease-in-out',
+				easing: 'cubic-bezier(0.75, -0.2, 0.15, 1.2)',
 				fill: 'forwards'
 			}
 		);
@@ -181,7 +182,7 @@
 
 	<div class="widget-wrapper" class:editing={modalOpened} bind:this={widgetWrapperEl}>
 		{#if editing}
-			<div class="hover-menu">
+			<div class="hover-menu" transition:fly={{ duration: 150, y: -10 }}>
 				{#if editMenu}
 					<button aria-label="Edit widget" onclick={expandDialog}>
 						<PencilSimple size={20} />
@@ -260,22 +261,12 @@
 		position: relative;
 
 		.hover-menu {
-			opacity: 0;
 			display: flex;
-			transition:
-				opacity 150ms,
-				top 150ms;
 			position: absolute;
-			top: calc(0px - var(--base-padding) * 1.5);
-			left: 50%;
-			transform: translateX(-50%);
-			background: var(--widgets-background-color);
+			right: calc(var(--base-padding) * 0.25);
+			top: calc(var(--base-padding) * 0.25);
 			padding: calc(var(--base-padding) * 0.25);
 			gap: calc(var(--base-gap) * 0.25);
-			border: var(--widgets-border-width) solid var(--widgets-border-color);
-			border-radius: calc(var(--widgets-border-base-radius));
-			box-shadow: var(--widgets-box-shadow-x) var(--widgets-box-shadow-y)
-				var(--widgets-box-shadow-blur) var(--widgets-box-shadow-color);
 
 			button {
 				border: none;
@@ -286,16 +277,6 @@
 				color: var(--inputs-on-background-color);
 				cursor: pointer;
 			}
-		}
-
-		&:hover .hover-menu,
-		&:focus-visible .hover-menu,
-		&:active .hover-menu {
-			transition:
-				opacity 150ms,
-				top 150ms;
-			opacity: 1;
-			top: calc(0px - var(--base-padding));
 		}
 	}
 
