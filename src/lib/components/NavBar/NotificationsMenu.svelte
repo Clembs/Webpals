@@ -104,5 +104,14 @@
 				}
 			}
 		}
+
+		@media (max-width: 768px) {
+			width: 100%;
+			position: fixed;
+			bottom: 0;
+			top: 400px;
+			border-bottom: none;
+			border-radius: var(--widgets-border-base-radius) var(--widgets-border-base-radius) 0 0;
+		}
 	}
 </style>

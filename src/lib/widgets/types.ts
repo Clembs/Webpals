@@ -68,12 +68,23 @@ export type CommentsWidget = BaseDefaultWidget & {
 	id: 'comments';
 };
 
+export type ConnectionsWidget = BaseDefaultWidget & {
+	id: 'connections';
+	connections: {
+		provider: 'twitter' | 'bluesky' | 'discord' | 'email' | 'domain' | 'github';
+		identifiable: string;
+		verified: boolean;
+		url?: string;
+	}[];
+};
+
 export type AnyWidget =
 	| MusicWidget
 	| AboutMeWidget
 	| FriendsWidget
 	| PostsWidget
 	| CommentsWidget
+	| ConnectionsWidget
 	| CustomWidget;
 
 export type WidgetComponentProps<T extends AnyWidget> = {

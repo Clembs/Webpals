@@ -1,17 +1,17 @@
 <script lang="ts">
-	import Button from '$lib/components/Button.svelte';
 	import Meta from '$lib/components/Meta.svelte';
 	import ThemeEditor from '$lib/themes/ThemeEditor.svelte';
 	import ThemeProvider from '$lib/themes/ThemeProvider.svelte';
 	import CustomWidgetComponent from '$lib/widgets/blocks/CustomWidgetComponent.svelte';
 	import AboutMeWidgetComponent from '$lib/widgets/default/AboutMeWidgetComponent.svelte';
+	import ConnectionsWidgetComponent from '$lib/widgets/default/ConnectionsWidgetComponent.svelte';
 	import FriendsWidgetComponent from '$lib/widgets/default/FriendsWidgetComponent.svelte';
 	import MusicWidgetComponent from '$lib/widgets/default/MusicWidgetComponent.svelte';
 	import ProfileWidgetComponent from '$lib/widgets/default/ProfileWidgetComponent.svelte';
 	import WidgetPicker from '$lib/widgets/picker/WidgetPicker.svelte';
 	import type { AboutMeWidget, AnyWidget } from '$lib/widgets/types';
-	import { Eye, PencilSimple, Plus, Palette } from 'phosphor-svelte';
-	import { fly, slide } from 'svelte/transition';
+	import { Eye, PencilSimple, Plus, Palette, Gear } from 'phosphor-svelte';
+	import { fly } from 'svelte/transition';
 
 	let { data } = $props();
 
@@ -23,6 +23,58 @@
 	$effect(() => {
 		theme = data.user.theme;
 	});
+
+	let editBarEl = $state<HTMLDivElement>();
+	let editBarWrapperEl = $state<HTMLDivElement>();
+	let toggleModesButtonEl = $state<HTMLAnchorElement>();
+	let editModeButtonHover = $state(false);
+
+	// handles the fancy animation when toggling between view and edit mode
+	// if i ever need to change any of this i'm just gonna cry ;-;
+	function toggleMode() {
+		if (!editBarWrapperEl || !toggleModesButtonEl || !editBarEl) return;
+
+		if (!data.editing) {
+			// expand animation
+			const anim = editBarWrapperEl.animate(
+				[
+					{ width: `${toggleModesButtonEl.clientWidth}px` },
+					{ width: `${editBarEl.clientWidth}px` }
+				],
+				{
+					duration: 500,
+					easing: 'cubic-bezier(0.8, -0.3, 0.1, 1.3)'
+				}
+			);
+
+			editBarEl.style.transform = `none`;
+
+			anim.finished.then(() => {
+				if (!editBarWrapperEl) return;
+				editBarWrapperEl.style.width = `max-content`;
+			});
+		} else {
+			// collapse animation
+			const anim = editBarWrapperEl.animate(
+				[
+					{ width: `${editBarEl.clientWidth}px` },
+					{ width: `${toggleModesButtonEl.clientWidth}px` }
+				],
+				{
+					duration: 500,
+					easing: 'cubic-bezier(0.8, -0.3, 0.1, 1.3)'
+				}
+			);
+
+			editBarEl.style.transform = `translateX(calc(-100% + ${toggleModesButtonEl.clientWidth}px))`;
+
+			anim.finished.then(() => {
+				if (!editBarWrapperEl || !toggleModesButtonEl) return;
+				// enforce the width because idfk weird js bug i guess??????
+				editBarWrapperEl.style.width = `${toggleModesButtonEl.clientWidth}px`;
+			});
+		}
+	}
 </script>
 
 <Meta
@@ -34,12 +86,6 @@
 	)?.content}
 />
 
-{#if data.editing}
-	<div id="top-info" transition:slide>
-		You are in editing mode. Hover over a widget or click it to reveal more options.
-	</div>
-{/if}
-
 {#snippet widgets(widgets: AnyWidget[])}
 	{#each widgets as widget}
 		{#if widget.id === 'about_me' && 'content' in widget}
@@ -48,6 +94,8 @@
 			<MusicWidgetComponent {widget} {...data} />
 		{:else if widget.id === 'friends' && !('blocks' in widget)}
 			<FriendsWidgetComponent {widget} {...data} />
+		{:else if widget.id === 'connections' && 'connections' in widget}
+			<ConnectionsWidgetComponent {widget} {...data} />
 		{:else if 'blocks' in widget}
 			<CustomWidgetComponent {widget} {...data} />
 		{/if}
@@ -72,46 +120,103 @@
 	{/if}
 </div>
 
-{#if data.editable}
-	<div id="edit-button">
-		{#if !data.editing}
-			<Button href="?edit">
-				<PencilSimple />
-				Edit profile
-			</Button>
-		{:else}
-			<Button variant="secondary" href="/{data.user.username}">
-				<Eye />
-				View profile
-			</Button>
-		{/if}
-	</div>
-{/if}
-
 <WidgetPicker user={data.currentUser} bind:showPicker={widgetPickerOpen} />
 
-{#if data.editing}
-	<div id="edit-bar" transition:fly={{ y: 200 }}>
-		<button onclick={() => (widgetPickerOpen = true)} aria-label="Add widget">
-			<Plus weight="regular" size={30} />
-		</button>
-		<button onclick={() => (themeEditorOpen = !themeEditorOpen)} aria-label="Edit theme">
-			<Palette size={30} />
-		</button>
+{#if data.editable}
+	<div
+		id="edit-bar-wrapper"
+		transition:fly={{ y: 200 }}
+		bind:this={editBarWrapperEl}
+		class:viewing={!data.editing}
+	>
+		<div id="edit-bar" bind:this={editBarEl}>
+			{#if data.editing}
+				<!-- commands -->
+				<div id="edit-commands">
+					<button
+						class="edit-command"
+						onclick={() => (widgetPickerOpen = true)}
+						aria-label="Add widget"
+					>
+						<Plus weight="regular" />
+						<span class="label"> Add widget </span>
+					</button>
+					<button
+						class="edit-command"
+						onclick={() => (themeEditorOpen = !themeEditorOpen)}
+						aria-label="Theme settings"
+					>
+						<Palette />
+						<span class="label"> Theme settings </span>
+					</button>
+					<button class="edit-command" aria-label="Account settings">
+						<Gear />
+						<span class="label"> Account settings </span>
+					</button>
+				</div>
+
+				<!-- switch button -->
+				<!-- holy fuck thats a lot of props lmao -->
+				<a
+					href="?view"
+					data-sveltekit-replacestate
+					id="toggle-modes-button"
+					class:hovering={editModeButtonHover}
+					class="switch-to-view"
+					aria-label="Switch to view mode"
+					onmouseenter={() => (editModeButtonHover = true)}
+					onmouseleave={() => (editModeButtonHover = false)}
+					onfocus={() => (editModeButtonHover = true)}
+					onblur={() => (editModeButtonHover = false)}
+					onclick={() => toggleMode()}
+					bind:this={toggleModesButtonEl}
+				>
+					{#if editModeButtonHover}
+						<Eye />
+						<span class="label"> Switch to view mode </span>
+					{:else}
+						<PencilSimple />
+						<span class="label"> Currently in edit mode </span>
+					{/if}
+				</a>
+			{:else}
+				<!-- commands (they're inert so you dont focus into them or whatever) -->
+				<div id="edit-commands">
+					<button class="edit-command" aria-hidden={true} inert>
+						<Plus weight="regular" />
+						<span class="label"> Add widget </span>
+					</button>
+					<button class="edit-command" aria-hidden={true} inert>
+						<Palette />
+						<span class="label"> Theme settings </span>
+					</button>
+					<button class="edit-command" aria-hidden={true} inert>
+						<Gear />
+						<span class="label"> Account settings </span>
+					</button>
+				</div>
+
+				<!-- switch button -->
+				<a
+					href="/{data.user.username}"
+					data-sveltekit-replacestate
+					id="toggle-modes-button"
+					class="view"
+					aria-label="Switch to edit mode"
+					onclick={() => toggleMode()}
+					bind:this={toggleModesButtonEl}
+				>
+					<PencilSimple />
+					<span class="label">
+						<div class="label">Switch to edit mode</div>
+					</span>
+				</a>
+			{/if}
+		</div>
 	</div>
 {/if}
 
 <style lang="scss">
-	#top-info {
-		background-color: var(--color-success);
-		color: white;
-		border-bottom: 0px solid black;
-		font-weight: 500;
-		font-size: 1.25rem;
-		border-width: 1px;
-		padding: 1rem;
-	}
-
 	#root-profile {
 		display: flex;
 		flex: 1;
@@ -140,37 +245,119 @@
 		}
 	}
 
-	#edit-button {
-		position: fixed;
-		bottom: var(--base-padding);
-		right: var(--base-padding);
-		z-index: 5;
-	}
-
-	#edit-bar {
+	#edit-bar-wrapper {
 		display: flex;
+		background-color: var(--widgets-background-color);
+		border-radius: var(--widgets-border-base-radius);
+		box-shadow: var(--widgets-box-shadow-x) var(--widgets-box-shadow-y)
+			var(--widgets-box-shadow-blur) var(--widgets-box-shadow-color);
+		overflow: hidden;
+		border: var(--widgets-border-width) solid var(--widgets-border-color);
+
 		position: fixed;
 		bottom: var(--base-padding);
 		left: 50%;
 		transform: translateX(-50%);
 		z-index: 5;
-		gap: calc(var(--base-gap) * 0.5);
-		background-color: var(--widgets-background-color);
-		padding: calc(var(--base-padding) * 0.5);
-		border-radius: var(--widgets-border-base-radius);
-		box-shadow: var(--widgets-box-shadow-x) var(--widgets-box-shadow-y)
-			var(--widgets-box-shadow-blur) var(--widgets-box-shadow-color);
-		border: var(--widgets-border-width) solid var(--widgets-border-color);
+		width: max-content;
 
-		button {
-			background: var(--widgets-background-color-dim);
-			border: var(--inputs-border-width) solid var(--inputs-border-color);
-			border-radius: var(--inputs-border-base-radius);
-			padding: calc(var(--base-padding) * 0.25);
-			cursor: pointer;
+		--toggle-modes-button-width: 230px;
+
+		// the 24px is just the size of the icon
+		@media (max-width: 950px) {
+			--toggle-modes-button-width: calc(var(--base-padding) * 2 + 24px);
+		}
+
+		&.viewing {
+			width: var(--toggle-modes-button-width);
 
 			&:hover {
-				filter: brightness(0.9);
+				border-color: var(--buttons-primary-background-color);
+			}
+
+			#edit-bar {
+				transform: translateX(calc(-100% + var(--toggle-modes-button-width)));
+			}
+		}
+	}
+
+	#edit-bar {
+		display: flex;
+		transition: transform 500ms cubic-bezier(0.8, -0.3, 0.1, 1.3); // fancy ass cubic bézier
+		width: fit-content;
+
+		#edit-commands {
+			display: flex;
+			gap: calc(var(--base-gap) * 0.5);
+			padding: calc(var(--base-padding) * 0.5);
+			border-right: var(--widgets-border-width) solid var(--widgets-border-color);
+			flex-shrink: 0;
+			flex: 1;
+		}
+
+		.edit-command {
+			display: flex;
+			align-items: center;
+			background-color: transparent;
+			border: none;
+			gap: calc(var(--base-gap) * 0.5);
+			border-radius: var(--inputs-border-base-radius);
+			padding: calc(var(--base-padding) * 0.5);
+			cursor: pointer;
+			font-weight: 500;
+
+			// tbh css sucks big time
+			white-space: nowrap;
+			width: max-content;
+
+			:global(svg) {
+				flex-shrink: 0;
+			}
+
+			&:hover {
+				background: var(--widgets-background-color-dim);
+			}
+		}
+
+		#toggle-modes-button {
+			display: flex;
+			align-items: center;
+			padding: var(--base-padding);
+			gap: calc(var(--base-gap) * 0.5);
+			min-width: var(--toggle-modes-button-width);
+			max-width: var(--toggle-modes-button-width);
+			justify-content: center;
+			text-decoration: none;
+			white-space: nowrap;
+			flex: 1;
+			transition: background-color 150ms;
+
+			:global(svg) {
+				flex-shrink: 0;
+			}
+
+			&.switch-to-view {
+				background-color: var(--color-success);
+				color: var(--buttons-primary-on-background-color);
+
+				&.hovering {
+					background-color: var(--buttons-primary-background-color);
+					color: var(--buttons-primary-on-background-color);
+				}
+			}
+
+			&:hover {
+				background-color: var(--buttons-primary-background-color);
+				color: var(--buttons-primary-on-background-color);
+			}
+		}
+
+		.edit-command .label,
+		#toggle-modes-button .label {
+			display: contents;
+
+			@media (max-width: 950px) {
+				display: none;
 			}
 		}
 	}

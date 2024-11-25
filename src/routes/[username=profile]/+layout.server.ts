@@ -49,6 +49,6 @@ export const load: LayoutServerLoad = async ({ params: { username }, url, parent
 	return {
 		user: { ...user, theme: mergeThemes(plainTheme, user?.theme || {}) },
 		editable: isCurrentUser,
-		editing: url.searchParams.has('edit')
+		editing: !!(!url.searchParams.has('view') && isCurrentUser)
 	};
 };

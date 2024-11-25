@@ -19,6 +19,10 @@
 		class:open={dialogPortal.current}
 		inert={!dialogPortal.current}
 		aria-hidden={true}
+		onclick={() =>
+			dialogPortal.current &&
+			dialogPortal.current.options.allowClickOutside &&
+			dialogPortal.closeDialog()}
 	></div>
 
 	{#each dialogPortal.history as dialog, i}
@@ -112,8 +116,28 @@
 			}
 		}
 
+		@keyframes slideUp {
+			from {
+				transform: translateY(50vh);
+			}
+			to {
+				transform: translateY(0);
+			}
+		}
+
 		@media (prefers-reduced-motion: reduce) {
 			animation: none;
+		}
+
+		@media (max-width: 768px) {
+			width: 100%;
+			border-radius: var(--widgets-border-base-radius) var(--widgets-border-base-radius) 0 0;
+			max-width: 100%;
+			min-width: 100%;
+			top: auto;
+			bottom: -20px;
+			padding-bottom: 40px;
+			animation: slideUp 300ms cubic-bezier(0.25, -0.1, 0, 1.35);
 		}
 	}
 </style>
