@@ -7,7 +7,10 @@ const config = {
 	preprocess: [phosphorSvelteOptimize(), vitePreprocess()],
 
 	kit: {
-		adapter: adapter()
+		adapter: adapter(),
+		alias: {
+			$icons: 'src/icons'
+		}
 	}
 };
 
