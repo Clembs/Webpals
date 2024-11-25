@@ -24,121 +24,118 @@
 		children: Snippet;
 	} = $props();
 
-	let widgetWrapperEl = $state<HTMLDivElement>();
-	let widgetDialogEl = $state<HTMLDialogElement>();
-	let widgetEditEl = $state<HTMLDivElement>();
+	let wrapperEl = $state<HTMLDivElement>();
+	let dialogEl = $state<HTMLDialogElement>();
+	let dialogContentsEl = $state<HTMLDivElement>();
 
 	const animationDurationMs = 350;
 
 	function expandDialog() {
-		if (!widgetWrapperEl || !widgetDialogEl) return;
+		if (!wrapperEl || !dialogEl || !dialogContentsEl) return;
 
-		const rect = widgetWrapperEl.getBoundingClientRect();
-
-		if (!rect) return;
+		// get the dimensions of the widget wrapper & the dialog's contents so we can animate to it
+		const wrapperRect = wrapperEl.getBoundingClientRect();
 
 		modalOpened = true;
-		widgetDialogEl.showModal();
+		dialogEl.showModal();
 
 		// hide the original widget
-		widgetWrapperEl.style.visibility = 'hidden';
+		wrapperEl.style.visibility = 'hidden';
 
-		// get the dimensions of the dialog's contents so we can animate to it
-		const widgetEditRect = widgetEditEl?.getBoundingClientRect();
+		// set the dialog
+		dialogEl.style.transition = '';
+		dialogEl.style.left = `${wrapperRect.x}px`;
+		dialogEl.style.top = `${wrapperRect.y}px`;
+		dialogEl.style.width = `${wrapperRect.width}px`;
+		dialogEl.style.height = `${wrapperRect.height}px`;
 
-		const animation = widgetDialogEl.animate(
-			[
-				{
-					transformOrigin: 'top left',
-					left: '0%',
-					top: '0%',
-					transform: `translate(${rect.left}px, ${rect.top}px)`,
-					width: `${rect.width}px`,
-					height: `${rect.height}px`
-				},
-				{
-					transformOrigin: 'top left',
-					left: '50%',
-					top: '50%',
-					transform: 'translate(-50%, -50%)',
-					width: '700px',
-					// the widget's height plus the padding of the dialog
-					// we need to get the computed padding because it depends on the user's theme
-					height: `${(widgetEditRect?.height || 200) + (parseInt(window.getComputedStyle(widgetDialogEl)?.padding.replace('px', '')) || 16) * 2}px`
-				}
-			],
-			{
-				duration: animationDurationMs,
-				easing: 'cubic-bezier(0.75, -0.2, 0.15, 1.2)',
-				fill: 'forwards'
-			}
-		);
+		// wait for the next frame to animate
+		requestAnimationFrame(() => {
+			if (!dialogEl || !dialogContentsEl) return;
+			// the widget's height plus the padding of the dialog
+			// we need to get the computed padding because it depends on the user's theme (default to 1rem, aka 16px)
+			const dialogContentsRect = dialogContentsEl.getBoundingClientRect();
+			const dialogPadding =
+				parseInt(window.getComputedStyle(dialogEl).padding.replace('px', '')) || 16;
 
-		animation.finished.then(() => {
-			// set the dialog height to fit the content so that
-			// the dialog can be expanded (when there's a textarea, for example)
-			widgetDialogEl!.style.minHeight = 'fit-content';
+			dialogEl.style.transition = `all ${animationDurationMs}ms cubic-bezier(0.75, -0.2, 0.15, 1.2)`;
+
+			// transition to center
+			dialogEl.style.left = '50%';
+			dialogEl.style.top = '50%';
+			dialogEl.style.transform = 'translate(-50%, -50%)';
+			dialogEl.style.width = '700px';
+			// set a absolute height so it can be animated
+			dialogEl.style.height = `${dialogContentsRect.height + dialogPadding * 2}px`;
 		});
+
+		dialogEl.addEventListener(
+			'transitionend',
+			() => {
+				// set the dialog height to fit the content so that
+				// the dialog can be expanded (when there's a textarea, for example)
+				dialogEl!.style.height = 'fit-content';
+				// remove transition to avoid weird side-effects
+				dialogEl!.style.transition = '';
+			},
+			{ once: true }
+		);
 	}
 
 	function closeDialog(ev: Event) {
 		ev.preventDefault();
-		if (!widgetWrapperEl || !widgetDialogEl) return;
 
+		if (!wrapperEl || !dialogEl) return;
+
+		// we change the variable first so the background can darken at the same time
 		modalOpened = false;
 
-		const rect = widgetWrapperEl.getBoundingClientRect();
+		// set dialog height to a value in px so it can animate
+		const dialogRect = dialogEl.getBoundingClientRect();
+		if (!dialogRect) return;
 
-		if (!rect) return;
+		dialogEl.style.transition = '';
+		dialogEl.style.height = `${dialogRect.height}px`;
 
-		// get the dimensions of the dialog's contents so we can animate to it
-		const widgetEditRect = widgetEditEl?.getBoundingClientRect();
+		requestAnimationFrame(() => {
+			if (!wrapperEl || !dialogEl) return;
+			// enable transition
+			dialogEl.style.transition = `all ${animationDurationMs}ms cubic-bezier(0.75, -0.2, 0.15, 1.2)`;
 
-		// reset min-height so the dialog can shrink
-		widgetDialogEl!.style.minHeight = 'auto';
+			const wrapperRect = wrapperEl.getBoundingClientRect();
+			if (!wrapperRect) return;
 
-		const animation = widgetDialogEl.animate(
-			[
-				{
-					transformOrigin: 'top left',
-					left: '50%',
-					top: '50%',
-					transform: 'translate(-50%, -50%)',
-					width: '700px',
-					height: `${(widgetEditRect?.height || 200) + (parseInt(window.getComputedStyle(widgetDialogEl)?.padding.replace('px', '')) || 16) * 2}px`
-				},
-				{
-					transformOrigin: 'top left',
-					left: '0%',
-					top: '0%',
-					transform: `translate(${rect.left}px, ${rect.top}px)`,
-					width: `${rect.width}px`,
-					height: `${rect.height}px`
-				}
-			],
-			{
-				duration: animationDurationMs,
-				easing: 'cubic-bezier(0.75, -0.2, 0.15, 1.2)',
-				fill: 'forwards'
-			}
-		);
-
-		// wait for the animation to finish before closing the dialog
-		// or it brutally interrupts because of display: none;
-		animation.finished.then(() => {
-			widgetDialogEl!.close();
-			widgetWrapperEl!.style.visibility = '';
+			dialogEl.style.left = `${wrapperRect.x}px`;
+			dialogEl.style.top = `${wrapperRect.y}px`;
+			dialogEl.style.transform = 'none';
+			dialogEl.style.width = `${wrapperRect.width}px`;
+			dialogEl.style.height = `${wrapperRect.height}px`;
 		});
+
+		dialogEl.addEventListener(
+			'transitionend',
+			() => {
+				// wait for the animation to finish before closing the dialog
+				// or it brutally interrupts because of display: none;
+				dialogEl!.close();
+
+				// show the original widget
+				wrapperEl!.style.visibility = '';
+				// remove transition to avoid weird side-effects
+				dialogEl!.style.transition = '';
+			},
+			{ once: true }
+		);
 	}
 
 	$effect(() => {
 		if (!editMenu) return;
 
-		if (modalOpened) {
-			expandDialog();
-		} else {
-			closeDialog(new Event('cancel'));
-		}
+		// if (modalOpened) {
+		// 	expandDialog();
+		// } else {
+		// 	closeDialog(new Event('cancel'));
+		// }
 	});
 </script>
 
@@ -171,16 +168,22 @@
 
 <div class="widget-root">
 	{#if editing && editMenu}
-		<dialog aria-label="Edit widget" bind:this={widgetDialogEl} oncancel={closeDialog}>
-			<div class="menu" bind:this={widgetEditEl}>
+		<dialog aria-label="Edit widget" bind:this={dialogEl} oncancel={closeDialog}>
+			<div class="menu" bind:this={dialogContentsEl}>
 				{@render editMenu()}
 			</div>
 		</dialog>
 
-		<div inert aria-hidden={true} class:open={modalOpened} class="dialog-backdrop"></div>
+		<div
+			inert
+			aria-hidden={true}
+			class:open={modalOpened}
+			class="dialog-backdrop"
+			style:transition-duration="{animationDurationMs}ms"
+		></div>
 	{/if}
 
-	<div class="widget-wrapper" class:editing={modalOpened} bind:this={widgetWrapperEl}>
+	<div class="widget-wrapper" class:editing={modalOpened} bind:this={wrapperEl}>
 		{#if editing}
 			<div class="hover-menu" transition:fly={{ duration: 150, y: -10 }}>
 				{#if editMenu}
@@ -218,7 +221,7 @@
 <style lang="scss">
 	.dialog-backdrop {
 		background-color: transparent;
-		transition: background-color 200ms;
+		transition: background-color;
 		position: fixed;
 		inset: 0;
 		height: 100vh;
@@ -227,12 +230,10 @@
 
 		&.open {
 			background-color: #00000060;
-			// transition: background-color 100ms;
 		}
 	}
 
 	dialog {
-		// opacity: 0;
 		gap: var(--base-gap);
 		background-color: var(--widgets-background-color);
 		padding: var(--base-padding);
@@ -241,15 +242,11 @@
 		box-shadow: var(--widgets-box-shadow-x) var(--widgets-box-shadow-y)
 			var(--widgets-box-shadow-blur) var(--widgets-box-shadow-color);
 		overflow: hidden;
-		/* will-change: transform, width, height, left, top; */
 		max-width: 100%;
-		// margin: auto;
 
 		&[open] {
-			// opacity: 1;
-			// display: flex;
+			display: flex;
 			flex-direction: column;
-			// will-change: transform, width, height, left, top;
 		}
 
 		&::backdrop {
