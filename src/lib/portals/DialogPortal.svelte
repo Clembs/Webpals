@@ -19,6 +19,10 @@
 		class:open={dialogPortal.current}
 		inert={!dialogPortal.current}
 		aria-hidden={true}
+		onclick={() =>
+			dialogPortal.current &&
+			dialogPortal.current.options.allowClickOutside &&
+			dialogPortal.closeDialog()}
 	></div>
 
 	{#each dialogPortal.history as dialog, i}

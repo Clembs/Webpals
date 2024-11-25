@@ -3,14 +3,21 @@ import type { Snippet } from 'svelte';
 type DialogStateSnapshot = {
 	component: Snippet<[unknown]>;
 	props?: Record<string, unknown>;
+	options: {
+		allowClickOutside: boolean;
+	};
 };
 
 class DialogPortal {
 	current = $state<DialogStateSnapshot>();
 	history = $state<DialogStateSnapshot[]>([]);
 
-	openDialog(component: Snippet, props?: Record<string, unknown>) {
-		this.current = { component, props };
+	openDialog(
+		component: Snippet,
+		props?: Record<string, unknown>,
+		options: DialogStateSnapshot['options'] = { allowClickOutside: true }
+	) {
+		this.current = { component, props, options };
 		this.history = [...this.history, this.current];
 	}
 
