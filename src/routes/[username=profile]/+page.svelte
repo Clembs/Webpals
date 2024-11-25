@@ -4,6 +4,7 @@
 	import ThemeProvider from '$lib/themes/ThemeProvider.svelte';
 	import CustomWidgetComponent from '$lib/widgets/blocks/CustomWidgetComponent.svelte';
 	import AboutMeWidgetComponent from '$lib/widgets/default/AboutMeWidgetComponent.svelte';
+	import ConnectionsWidgetComponent from '$lib/widgets/default/ConnectionsWidgetComponent.svelte';
 	import FriendsWidgetComponent from '$lib/widgets/default/FriendsWidgetComponent.svelte';
 	import MusicWidgetComponent from '$lib/widgets/default/MusicWidgetComponent.svelte';
 	import ProfileWidgetComponent from '$lib/widgets/default/ProfileWidgetComponent.svelte';
@@ -93,6 +94,8 @@
 			<MusicWidgetComponent {widget} {...data} />
 		{:else if widget.id === 'friends' && !('blocks' in widget)}
 			<FriendsWidgetComponent {widget} {...data} />
+		{:else if widget.id === 'connections' && 'connections' in widget}
+			<ConnectionsWidgetComponent {widget} {...data} />
 		{:else if 'blocks' in widget}
 			<CustomWidgetComponent {widget} {...data} />
 		{/if}
@@ -267,6 +270,10 @@
 
 		&.viewing {
 			width: var(--toggle-modes-button-width);
+
+			&:hover {
+				border-color: var(--buttons-primary-background-color);
+			}
 
 			#edit-bar {
 				transform: translateX(calc(-100% + var(--toggle-modes-button-width)));

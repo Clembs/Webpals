@@ -1,4 +1,10 @@
-import type { AboutMeWidget, CommentsWidget, FriendsWidget, MusicWidget } from './types';
+import type {
+	AboutMeWidget,
+	CommentsWidget,
+	ConnectionsWidget,
+	FriendsWidget,
+	MusicWidget
+} from './types';
 
 export const defaultMusicWidget: MusicWidget = {
 	id: 'music',
@@ -25,9 +31,16 @@ export const defaultCommentsWidget: CommentsWidget = {
 	position: 3
 };
 
+export const defaultConnectionsWidget: ConnectionsWidget = {
+	id: 'connections',
+	connections: [],
+	position: 4
+};
+
 export const defaultWidgets = [
 	defaultMusicWidget,
 	defaultAboutMeWidget,
 	defaultFriendsWidget,
-	defaultCommentsWidget
+	defaultCommentsWidget,
+	defaultConnectionsWidget
 ];
