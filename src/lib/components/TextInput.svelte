@@ -71,6 +71,7 @@
 		.error {
 			font-weight: 600;
 			font-size: 0.815rem;
+			margin-left: calc(var(--base-padding) * 0.25);
 		}
 
 		.input {
