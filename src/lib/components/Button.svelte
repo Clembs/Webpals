@@ -88,17 +88,20 @@
 			border: var(--inputs-border-width) solid var(--buttons-primary-background-color);
 
 			&:hover {
-				opacity: 0.815;
+				filter: brightness(0.95);
+				// opacity: 0.815;
 			}
 		}
 
 		&.secondary {
-			background-color: var(--inputs-background-color);
+			background-color: transparent;
+			// background-color: var(--inputs-background-color);
 			color: var(--inputs-on-background-color);
 			border: var(--inputs-border-width) solid var(--inputs-border-color);
 
 			&:hover {
-				background-color: var(--widgets-background-color-dim);
+				backdrop-filter: brightness(0.9);
+				// background-color: var(--widgets-background-color-dim);
 			}
 		}
 
