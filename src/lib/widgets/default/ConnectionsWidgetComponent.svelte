@@ -3,13 +3,16 @@
 	import type { ConnectionsWidget, WidgetComponentProps } from '../types';
 	import { connectionProviders } from '../connections';
 	import { ArrowSquareOut, CopySimple, SealCheck, TextAlignLeft } from 'phosphor-svelte';
+	import ConnectionsWidgetEditComponent from '../default-edit-menus/ConnectionsWidgetEditComponent.svelte';
 
 	let { user, widget, editing }: WidgetComponentProps<ConnectionsWidget> = $props();
 
 	let modalOpened = $state(false);
 </script>
 
-{#snippet editMenu()}{/snippet}
+{#snippet editMenu()}
+	<ConnectionsWidgetEditComponent {widget} />
+{/snippet}
 
 {#snippet connectionContents(connection: ConnectionsWidget['connections'][0])}
 	{@const provider = connectionProviders[connection.provider]}
@@ -117,11 +120,5 @@
 	}
 	h2 {
 		font-size: 1.5rem;
-	}
-
-	.connections-edit {
-		display: flex;
-		flex-direction: column;
-		gap: var(--base-gap);
 	}
 </style>
