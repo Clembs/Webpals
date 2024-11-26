@@ -52,7 +52,7 @@
 			{#each widget.connections as connection}
 				<li>
 					{#if connection.url}
-						<a class="connection" href={connection.url}>
+						<a class="connection" href={connection.url} target="_blank" rel="noopener noreferrer">
 							{@render connectionContents(connection)}
 						</a>
 					{:else}
