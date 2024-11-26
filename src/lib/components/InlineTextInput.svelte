@@ -74,6 +74,7 @@
 			font-weight: 500;
 			color: inherit;
 			width: 100%;
+			background-color: transparent;
 
 			&.error {
 				border-bottom-color: var(--color-urgent);
