@@ -39,7 +39,7 @@ export const connectionProviders: Record<
 	bluesky: {
 		name: 'Bluesky',
 		icon: Butterfly,
-		// works for bsky.app URLs and did:plc: URLs. group 1 is the handle
+		// works for bsky.app URLs and did:plc: URLs. group 1 is the handle, group 2 is the DID
 		// this MIGHT not work as intended. if you're reading this because it doesn't work, please lmk through an issue.
 		matchingPattern:
 			/^(?:https?:\/\/)?bsky\.app\/profile\/((?:[a-zA-Z0-9-]+\.)+[a-zA-Z0-9-]+|did:(?:plc|web):[a-zA-Z0-9]+)$|^(did:(?:plc|web):[a-zA-Z0-9]+)$/,
@@ -84,10 +84,10 @@ export const connectionProviders: Record<
 	youtube: {
 		name: 'YouTube',
 		icon: YoutubeLogo,
-		// works for youtube.com URLs. group 1 is the channelId, handle or username
+		// works for youtube.com URLs. group 1 is the channelId. group 2 is the handle or username
 		// modified from https://stackoverflow.com/a/65726047 (ty)
 		matchingPattern:
-			/^https?:\/\/(?:www\.|m\.)?youtube\.com\/(?:channel\/(?<channelId>UC[\w-]{21}[AQgw])|(?:c\/|user\/)?(?<handle>[\w@-]+))$/,
+			/^(?:https?:\/\/)(?:www\.|m\.)?youtube\.com\/(?:channel\/(UC[\w-]{21}[AQgw])|(?:c\/|user\/)?([\w@-]+))$/,
 		verifiable: true
 	},
 	steam: {
@@ -110,3 +110,8 @@ export const connectionProviders: Record<
 		verifiable: true
 	}
 };
+
+export const connectionProvidersArray = Object.entries(connectionProviders).map(([id, rest]) => ({
+	id,
+	...rest
+}));
