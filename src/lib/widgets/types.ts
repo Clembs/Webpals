@@ -68,14 +68,29 @@ export type CommentsWidget = BaseDefaultWidget & {
 	id: 'comments';
 };
 
+export type ConnectionProvider =
+	| 'twitter'
+	| 'bluesky'
+	| 'discord'
+	| 'email'
+	| 'domain'
+	| 'github'
+	| 'islands'
+	| 'youtube'
+	| 'steam'
+	| 'pretendo'
+	| (string & {});
+
+export type Connection = {
+	provider: ConnectionProvider;
+	identifiable: string;
+	verified: boolean;
+	url?: string;
+};
+
 export type ConnectionsWidget = BaseDefaultWidget & {
 	id: 'connections';
-	connections: {
-		provider: 'twitter' | 'bluesky' | 'discord' | 'email' | 'domain' | 'github';
-		identifiable: string;
-		verified: boolean;
-		url?: string;
-	}[];
+	connections: Connection[];
 };
 
 export type AnyWidget =
