@@ -31,10 +31,12 @@
 
 	// handles the fancy animation when toggling between view and edit mode
 	// if i ever need to change any of this i'm just gonna cry ;-;
-	function toggleMode() {
+	function toggleMode(mode: 'editing' | 'viewing') {
 		if (!editBarWrapperEl || !toggleModesButtonEl || !editBarEl) return;
 
-		if (!data.editing) {
+		data.editing = mode === 'editing';
+
+		if (data.editing) {
 			// expand animation
 			const anim = editBarWrapperEl.animate(
 				[
@@ -168,7 +170,7 @@
 					onmouseleave={() => (editModeButtonHover = false)}
 					onfocus={() => (editModeButtonHover = true)}
 					onblur={() => (editModeButtonHover = false)}
-					onclick={() => toggleMode()}
+					onclick={() => toggleMode('viewing')}
 					bind:this={toggleModesButtonEl}
 				>
 					{#if editModeButtonHover}
@@ -203,7 +205,7 @@
 					id="toggle-modes-button"
 					class="view"
 					aria-label="Switch to edit mode"
-					onclick={() => toggleMode()}
+					onclick={() => toggleMode('editing')}
 					bind:this={toggleModesButtonEl}
 				>
 					<PencilSimple />
