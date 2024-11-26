@@ -1,80 +1,119 @@
 <script lang="ts">
 	import BaseWidget from '$lib/widgets/BaseWidget.svelte';
-	import Button from '$lib/components/Button.svelte';
 	import type { ConnectionsWidget, WidgetComponentProps } from '../types';
-	import { enhance } from '$app/forms';
 	import { connectionProviders } from '../connections';
-	import { SealCheck } from 'phosphor-svelte';
+	import { ArrowSquareOut, CopySimple, SealCheck, TextAlignLeft } from 'phosphor-svelte';
 
 	let { user, widget, editing }: WidgetComponentProps<ConnectionsWidget> = $props();
 
 	let modalOpened = $state(false);
 </script>
 
-{#snippet editMenu()}
-	<form
-		use:enhance={() =>
-			({ update }) => {
-				update({ reset: false });
-				modalOpened = false;
-			}}
-		class="connections-edit"
-		action="/api/profile?/editConnections"
-		method="post"
-	>
-		<h2>Connections</h2>
-
-		<Button>Save</Button>
-	</form>
-{/snippet}
+{#snippet editMenu()}{/snippet}
 
 {#snippet connectionContents(connection: ConnectionsWidget['connections'][0])}
 	{@const provider = connectionProviders[connection.provider]}
 
 	<div class="left">
 		<!-- svelte-ignore svelte_component_deprecated -->
-		<svelte:component this={provider.icon} {...provider.iconProps} />
+		{#if provider}
+			<svelte:component this={provider.icon} {...provider.iconProps} />
+		{:else}
+			<TextAlignLeft />
+		{/if}
 		<div class="text">
-			{#if connection.provider !== 'domain'}
-				<div class="heading">
-					{provider.name}
-				</div>
-			{/if}
+			<div class="heading">
+				{provider?.name || connection.provider}
+			</div>
 			<div class="subtext">
 				{connection.identifiable}
 				{#if connection.verified}
-					<SealCheck />
+					<SealCheck size={16} />
 				{/if}
 			</div>
 		</div>
 	</div>
+
+	{#if connection.url}
+		<ArrowSquareOut weight="regular" />
+	{:else}
+		<CopySimple />
+	{/if}
 {/snippet}
 
 <BaseWidget bind:modalOpened {editMenu} {user} {widget} {editing}>
 	<div class="connections">
 		<h2>Connections</h2>
 
-		{#each widget.connections as connection}
-			{#if connection.url}
+		<ul class="connections-list">
+			{#each widget.connections as connection}
 				<li>
-					<a class="connection" href={connection.url}>
-						{@render connectionContents(connection)}
-					</a>
+					{#if connection.url}
+						<a class="connection" href={connection.url}>
+							{@render connectionContents(connection)}
+						</a>
+					{:else}
+						<!-- TODO: show visual info to confirm copy -->
+						<button
+							class="connection"
+							onclick={() => navigator.clipboard.writeText(connection.identifiable)}
+						>
+							{@render connectionContents(connection)}
+						</button>
+					{/if}
 				</li>
-			{:else}
-				<li class="connection">
-					{@render connectionContents(connection)}
-				</li>
-			{/if}
-		{/each}
+			{/each}
+		</ul>
 	</div>
 </BaseWidget>
 
 <style lang="scss">
+	@use '../../../styles/mixins.scss';
+
 	.connections {
 		display: flex;
 		flex-direction: column;
 		gap: var(--base-gap);
+
+		.connections-list {
+			@include mixins.fancy-list;
+			overflow: hidden;
+
+			.connection {
+				display: flex;
+				padding: calc(var(--base-padding) * 0.75);
+				text-decoration: none;
+				color: var(--color-heading);
+				justify-content: space-between;
+				background-color: var(--widgets-background-color-dim);
+				border: none;
+				width: 100%;
+				cursor: pointer;
+
+				&:hover {
+					filter: brightness(0.95);
+				}
+
+				.left {
+					display: flex;
+					gap: calc(var(--base-gap) * 0.75);
+					align-items: center;
+				}
+
+				.text {
+					display: flex;
+					flex-direction: column;
+					gap: calc(var(--base-gap) * 0.125);
+
+					.heading,
+					.subtext {
+						display: flex;
+						align-items: center;
+						gap: calc(var(--base-gap) * 0.25);
+					}
+				}
+			}
+		}
 	}
 	h2 {
 		font-size: 1.5rem;
