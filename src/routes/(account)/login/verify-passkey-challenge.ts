@@ -5,7 +5,7 @@ import {
 	verifyAuthenticationResponse,
 	type VerifiedAuthenticationResponse
 } from '@simplewebauthn/server';
-import { type AuthenticationResponseJSON } from '@simplewebauthn/types';
+import { type AuthenticationResponseJSON } from '@simplewebauthn/browser';
 import { users } from '$lib/db/schema/users';
 import { eq } from 'drizzle-orm';
 import { createSession } from '$lib/helpers/sessions';

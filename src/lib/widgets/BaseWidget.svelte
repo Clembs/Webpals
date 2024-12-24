@@ -1,14 +1,13 @@
 <script lang="ts">
 	import type { PublicUser } from '$lib/db/schema/users';
 	import type { AnyWidget } from '$lib/widgets/types';
-	import { createRawSnippet, type Snippet } from 'svelte';
+	import { type Snippet } from 'svelte';
 	import Card from '$lib/components/Card.svelte';
 	import { enhance } from '$app/forms';
 	import { PencilSimple, TrashSimple } from 'phosphor-svelte';
 	import Button from '$lib/components/Button.svelte';
 	import { dialogPortal } from '$lib/portals/dialog.svelte';
 	import { fade, fly } from 'svelte/transition';
-	import { clickoutside } from '@svelte-put/clickoutside';
 
 	let {
 		editingMode,

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { Island, House, Palette, Bell, BellRinging } from 'phosphor-svelte';
 	import Avatar from '../Avatar.svelte';
 	import NotificationsMenu from './NotificationsMenu.svelte';
@@ -14,7 +14,7 @@
 	let accountMenuOpen = $state(false);
 	let notificationsMenuOpen = $state(false);
 
-	let unreadNotifications = $derived($page.data.currentUser?.notifications.filter((n) => !n.read));
+	let unreadNotifications = $derived(page.data.currentUser?.notifications.filter((n) => !n.read));
 
 	let supabaseChannel = $state<RealtimeChannel>();
 
@@ -28,7 +28,7 @@
 					table: 'notifications',
 					schema: 'public',
 					// TODO: figure out better security
-					filter: `user_id = ${$page.data.currentUser?.id}`
+					filter: `user_id = ${page.data.currentUser?.id}`
 				},
 				(payload) => invalidate('layout:user')
 			)
@@ -47,8 +47,8 @@
 		<div class="right">
 			<ul>
 				<li>
-					<a href="/" aria-label="Feeds" title="Feeds" aria-current={$page.url.pathname === '/'}>
-						<House weight={$page.url.pathname === '/' ? 'fill' : 'regular'} />
+					<a href="/" aria-label="Feeds" title="Feeds" aria-current={page.url.pathname === '/'}>
+						<House weight={page.url.pathname === '/' ? 'fill' : 'regular'} />
 					</a>
 				</li>
 				<li>
@@ -56,7 +56,7 @@
 						<Palette weight="regular" />
 					</button>
 				</li>
-				{#if $page.data.currentUser}
+				{#if page.data.currentUser}
 					<li
 						data-submenu="true"
 						use:clickoutside
@@ -83,13 +83,13 @@
 						{#if notificationsMenuOpen}
 							<NotificationsMenu
 								bind:menuOpen={notificationsMenuOpen}
-								user={$page.data.currentUser}
+								user={page.data.currentUser}
 							/>
 						{/if}
 					</li>
 				{/if}
 			</ul>
-			{#if !$page.data.currentUser}
+			{#if !page.data.currentUser}
 				<a href="/login"> Join Islands </a>
 			{:else}
 				<div
@@ -103,10 +103,10 @@
 						aria-label="Profile"
 						title="Profile"
 					>
-						<Avatar user={$page.data.currentUser} size="40px" />
+						<Avatar user={page.data.currentUser} size="40px" />
 					</button>
 					{#if accountMenuOpen}
-						<AccountMenu bind:menuOpen={accountMenuOpen} user={$page.data.currentUser} />
+						<AccountMenu bind:menuOpen={accountMenuOpen} user={page.data.currentUser} />
 					{/if}
 				</div>
 			{/if}

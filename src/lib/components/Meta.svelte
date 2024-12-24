@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 
 	type OGMediaProps = {
 		url: string;
@@ -44,8 +44,8 @@
 	<meta name="twitter:description" content={description} />
 
 	<!-- url -->
-	<link rel="canonical" href={$page.url.href} />
-	<meta property="og:url" content={$page.url.href} />
+	<link rel="canonical" href={page.url.href} />
+	<meta property="og:url" content={page.url.href} />
 
 	<!-- site name -->
 	<meta property="og:site_name" content="Islands" />

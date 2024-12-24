@@ -4,7 +4,6 @@
 	import Button from '$lib/components/Button.svelte';
 	import { slide } from 'svelte/transition';
 	import { enhance } from '$app/forms';
-	import { page } from '$app/stores';
 	import Spinner from '$icons/Spinner.svelte';
 
 	let identifiable = $state('');

@@ -18,7 +18,7 @@
 	import { enhance } from '$app/forms';
 	import InlineTextInput from '$lib/components/InlineTextInput.svelte';
 	import { HEARTBEAT_INTERVAL } from '$lib/helpers/constants';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import Avatar from '$lib/components/Avatar.svelte';
 	import { scale } from 'svelte/transition';
 
@@ -31,7 +31,7 @@
 	let modalOpened = $state(false);
 
 	let relationship = $derived(
-		$page.data.currentUser?.initiatedRelationships.find(
+		page.data.currentUser?.initiatedRelationships.find(
 			(relationship) => relationship.recipientId === user.id
 		)?.status
 	);
@@ -146,7 +146,7 @@
 
 	{@render nonInteractive()}
 
-	{#if $page.data.currentUser}
+	{#if page.data.currentUser}
 		<div class="buttons-wrapper">
 			<div class="buttons">
 				<!-- TODO: adding friends, more options menu -->
@@ -183,7 +183,7 @@
 						<Button
 							type="submit"
 							disabled={relationship === RelationshipTypes.FriendPending ||
-								$page.data.currentUser.id === user.id}
+								page.data.currentUser.id === user.id}
 						>
 							<UserPlus />
 							Add friend
@@ -191,9 +191,9 @@
 					</form>
 				{/if}
 			</div>
-			{#if $page.form?.message}
+			{#if page.form?.message}
 				<div transition:scale class="error">
-					{$page.form.message}
+					{page.form.message}
 				</div>
 			{/if}
 		</div>
