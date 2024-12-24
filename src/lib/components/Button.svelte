@@ -117,7 +117,7 @@
 
 		&.urgent {
 			background-color: var(--color-urgent);
-			color: var(--background);
+			color: var(--widgets-background-color);
 			border: var(--inputs-border-width) solid var(--color-urgent);
 
 			&:hover {
