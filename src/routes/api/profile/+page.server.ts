@@ -1,16 +1,27 @@
 import type { Actions } from './$types';
 import { addWidget } from './add-widget';
 import { createConnection } from './create-connection';
+import { deleteConnection } from './delete-connection';
 import { deleteWidget } from './delete-widget';
 import { editAboutMe } from './edit-about-me';
+import { editConnection } from './edit-connection';
 import { editCustomWidget } from './edit-custom-widget';
 import { editProfile } from './edit-profile';
 
 export const actions: Actions = {
-	editAboutMe,
+	// profile
 	editProfile,
-	createConnection,
-	editCustomWidget,
+
+	// basic widget stuff
+	addWidget,
 	deleteWidget,
-	addWidget
+
+	// edit widgets
+	editAboutMe,
+	editCustomWidget,
+
+	// connections
+	createConnection,
+	editConnection,
+	deleteConnection
 };
