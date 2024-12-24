@@ -20,6 +20,8 @@
 	let loading = $state(false);
 	let error = $state();
 
+	let showExpandedProvidersList = $state(false);
+
 	function resetInputs() {
 		predictedProvider = undefined;
 		showExpandedInputs = false;
@@ -173,21 +175,45 @@
 				name="connection-identifiable"
 				id="connection-identifiable"
 				bind:value={identifiable}
-				placeholder="Enter a link to a third-party account, username, friend code..."
+				placeholder="Enter a social media link, username, email, friend code..."
 				bind:this={combinedInputEl}
 				required
 			/>
 		{/if}
 
 		{#if !identifiable && !provider}
-			<span class="subtext hint">
-				Supports {#each connectionProvidersArray
-					.sort(() => Math.random() - 0.5)
-					.slice(0, 6) as { icon, iconProps }}
-					<!-- svelte-ignore svelte_component_deprecated -->
-					<svelte:component this={icon} {...iconProps} size={16} />
-				{/each} and more!
-			</span>
+			<button
+				onclick={() => (showExpandedProvidersList = !showExpandedProvidersList)}
+				class="subtext hint"
+				class:expanded={showExpandedProvidersList}
+				type="button"
+			>
+				{#if !showExpandedProvidersList}
+					Supports
+					{#each connectionProvidersArray
+						.toSorted(() => Math.random() - 0.5)
+						.slice(0, 6) as { icon, iconProps }}
+						<!-- svelte-ignore svelte_component_deprecated -->
+						<svelte:component this={icon} {...iconProps} size={16} />
+					{/each} and more! (click to expand)
+				{:else}
+					<ul class="subtext providers-list">
+						Supports
+						{#each connectionProvidersArray as { icon, iconProps, name }, i}
+							<li>
+								{#if i === connectionProvidersArray.length - 1}
+									and
+								{/if}
+								<!-- svelte-ignore svelte_component_deprecated -->
+								<svelte:component this={icon} {...iconProps} size={16} />
+								{name}{#if i < connectionProvidersArray.length - 2},{/if}
+								{' '}
+							</li>
+						{/each}
+						(click to minimize)
+					</ul>
+				{/if}
+			</button>
 		{/if}
 
 		{#if error}
@@ -282,5 +308,26 @@
 		gap: calc(var(--base-gap) * 0.25);
 		font-size: 12px;
 		margin: calc(var(--base-gap) * 0.5) 0;
+		background-color: transparent;
+		border: none;
+		cursor: zoom-in;
+
+		&.expanded {
+			cursor: zoom-out;
+		}
+	}
+
+	.providers-list {
+		display: inline-flex;
+		flex-wrap: wrap;
+		list-style: none;
+		font-size: 12px;
+		column-gap: calc(var(--base-gap) * 0.25);
+		row-gap: calc(var(--base-gap) * 0.25);
+
+		li {
+			display: flex;
+			gap: calc(var(--base-gap) * 0.125);
+		}
 	}
 </style>
