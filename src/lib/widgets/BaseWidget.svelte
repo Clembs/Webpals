@@ -1,23 +1,24 @@
 <script lang="ts">
 	import type { PublicUser } from '$lib/db/schema/users';
 	import type { AnyWidget } from '$lib/widgets/types';
-	import { type Snippet } from 'svelte';
+	import { createRawSnippet, type Snippet } from 'svelte';
 	import Card from '$lib/components/Card.svelte';
 	import { enhance } from '$app/forms';
 	import { PencilSimple, TrashSimple } from 'phosphor-svelte';
 	import Button from '$lib/components/Button.svelte';
 	import { dialogPortal } from '$lib/portals/dialog.svelte';
-	import { fly } from 'svelte/transition';
+	import { fade, fly } from 'svelte/transition';
+	import { clickoutside } from '@svelte-put/clickoutside';
 
 	let {
-		editing,
-		modalOpened = $bindable(false),
+		editingMode,
+		isWidgetEditing = $bindable(false),
 		widget,
 		editMenu,
 		children
 	}: {
-		editing?: boolean;
-		modalOpened?: boolean;
+		editingMode?: boolean;
+		isWidgetEditing?: boolean;
 		user: PublicUser;
 		widget?: AnyWidget;
 		editMenu?: Snippet;
@@ -25,8 +26,9 @@
 	} = $props();
 
 	let wrapperEl = $state<HTMLDivElement>();
-	let dialogEl = $state<HTMLDialogElement>();
+	let dialogEl = $state<HTMLDivElement>();
 	let dialogContentsEl = $state<HTMLDivElement>();
+	let dialogOpen = $state(false);
 
 	const animationDurationMs = 350;
 
@@ -36,8 +38,8 @@
 		// get the dimensions of the widget wrapper & the dialog's contents so we can animate to it
 		const wrapperRect = wrapperEl.getBoundingClientRect();
 
-		modalOpened = true;
-		dialogEl.showModal();
+		isWidgetEditing = true;
+		dialogOpen = true;
 
 		// hide the original widget
 		wrapperEl.style.visibility = 'hidden';
@@ -88,7 +90,7 @@
 		if (!wrapperEl || !dialogEl) return;
 
 		// we change the variable first so the background can darken at the same time
-		modalOpened = false;
+		isWidgetEditing = false;
 
 		// set dialog height to a value in px so it can animate
 		const dialogRect = dialogEl.getBoundingClientRect();
@@ -117,7 +119,7 @@
 			() => {
 				// wait for the animation to finish before closing the dialog
 				// or it brutally interrupts because of display: none;
-				dialogEl!.close();
+				dialogOpen = false;
 
 				// show the original widget
 				wrapperEl!.style.visibility = '';
@@ -130,14 +132,18 @@
 
 	$effect(() => {
 		if (!editMenu) return;
-
-		// if (modalOpened) {
-		// 	expandDialog();
-		// } else {
-		// 	closeDialog(new Event('cancel'));
-		// }
 	});
 </script>
+
+<svelte:window
+	onkeydown={(e) => {
+		console.log($state.snapshot(dialogPortal.current));
+
+		if (!$state.snapshot(dialogPortal.current) && e.key === 'Escape') {
+			closeDialog(e);
+		}
+	}}
+/>
 
 {#snippet confirmDeleteDialog()}
 	<form
@@ -167,24 +173,34 @@
 {/snippet}
 
 <div class="widget-root">
-	{#if editing && editMenu}
-		<dialog aria-label="Edit widget" bind:this={dialogEl} oncancel={closeDialog}>
+	{#if editingMode && editMenu}
+		<div
+			role="dialog"
+			aria-current={dialogOpen}
+			inert={!dialogOpen}
+			aria-label="Edit widget"
+			bind:this={dialogEl}
+		>
+			<!-- use:clickoutside -->
+			<!-- onclickoutside={closeDialog} -->
 			<div class="menu" bind:this={dialogContentsEl}>
 				{@render editMenu()}
 			</div>
-		</dialog>
+		</div>
 
-		<div
-			inert
-			aria-hidden={true}
-			class:open={modalOpened}
-			class="dialog-backdrop"
-			style:transition-duration="{animationDurationMs}ms"
-		></div>
+		{#if isWidgetEditing}
+			<div
+				inert={true}
+				aria-hidden={true}
+				transition:fade={{ duration: animationDurationMs }}
+				class="dialog-backdrop"
+			></div>
+			<!-- onclick={(ev) => closeDialog(ev)} -->
+		{/if}
 	{/if}
 
-	<div class="widget-wrapper" class:editing={modalOpened} bind:this={wrapperEl}>
-		{#if editing}
+	<div class="widget-wrapper" class:editing={isWidgetEditing} bind:this={wrapperEl}>
+		{#if editingMode}
 			<div class="hover-menu" transition:fly={{ duration: 150, y: -10 }}>
 				{#if editMenu}
 					<button aria-label="Edit widget" onclick={expandDialog}>
@@ -212,7 +228,7 @@
 			</div>
 		{/if}
 
-		<Card inert={editing}>
+		<Card inert={editingMode}>
 			{@render children()}
 		</Card>
 	</div>
@@ -227,13 +243,10 @@
 		height: 100vh;
 		width: 100vw;
 		z-index: 99;
-
-		&.open {
-			background-color: #00000060;
-		}
+		background-color: #00000060;
 	}
 
-	dialog {
+	[role='dialog'] {
 		gap: var(--base-gap);
 		background-color: var(--widgets-background-color);
 		padding: var(--base-padding);
@@ -243,10 +256,13 @@
 			var(--widgets-box-shadow-blur) var(--widgets-box-shadow-color);
 		overflow: hidden;
 		max-width: 100%;
+		display: none;
 
-		&[open] {
+		&[aria-current='true'] {
 			display: flex;
 			flex-direction: column;
+			position: fixed;
+			z-index: 999;
 		}
 
 		&::backdrop {
@@ -268,7 +284,7 @@
 			button {
 				border: none;
 				border: var(--inputs-border-width) solid var(--inputs-border-color);
-				border-radius: calc(var(--inputs-border-base-radius) + var(--base-padding) * 0.25);
+				border-radius: var(--inputs-border-base-radius);
 				background: var(--widgets-background-color-dim);
 				padding: calc(var(--base-padding) * 0.25);
 				color: var(--inputs-on-background-color);

@@ -27,7 +27,7 @@
 	</form>
 {/snippet}
 
-<BaseWidget bind:modalOpened {editMenu} {user} {widget} {editing}>
+<BaseWidget bind:isWidgetEditing={modalOpened} {editMenu} {user} {widget} editingMode={editing}>
 	<div class="about-me">
 		<h2>About me</h2>
 		{@html parseMarkdown(widget.content)}

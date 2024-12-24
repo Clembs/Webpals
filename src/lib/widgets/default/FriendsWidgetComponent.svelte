@@ -23,7 +23,7 @@
 	);
 </script>
 
-<BaseWidget {user} {widget} {editing}>
+<BaseWidget {user} {widget} editingMode={editing}>
 	<h2>Friends ({friends.length})</h2>
 
 	<ul class="friends">

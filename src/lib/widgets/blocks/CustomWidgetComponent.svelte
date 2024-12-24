@@ -31,7 +31,7 @@
 	</form>
 {/snippet}
 
-<BaseWidget bind:modalOpened {editMenu} {user} {widget} {editing}>
+<BaseWidget bind:isWidgetEditing={modalOpened} {editMenu} {user} {widget} editingMode={editing}>
 	<LayoutBlockComponent {user} block={widget} />
 </BaseWidget>
 

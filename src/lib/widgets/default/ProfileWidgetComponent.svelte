@@ -126,7 +126,7 @@
 	</form>
 {/snippet}
 
-<BaseWidget bind:modalOpened {editMenu} {user} {editing}>
+<BaseWidget bind:isWidgetEditing={modalOpened} {editMenu} {user} editingMode={editing}>
 	<div class="top-part">
 		<div class="important-stuff">
 			<Avatar {user} />
