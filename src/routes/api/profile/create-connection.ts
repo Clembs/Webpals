@@ -24,8 +24,6 @@ export async function createConnection({ locals: { getCurrentUser }, request }: 
 			id.toLowerCase() === provider.toLowerCase() || name.toLowerCase() === provider.toLowerCase()
 	);
 
-	console.log(knownProvider);
-
 	if (knownProvider) {
 		if (knownProvider.matchingPattern && !knownProvider.matchingPattern.test(rawIdentifiable)) {
 			return fail(400, {
@@ -41,7 +39,7 @@ export async function createConnection({ locals: { getCurrentUser }, request }: 
 			: rawIdentifiable;
 
 		// if the provider needs a URL, prepend https if not already present
-		const url = knownProvider.matchingPattern
+		const url = knownProvider.hasUrl
 			? rawIdentifiable.startsWith('http')
 				? rawIdentifiable
 				: `https://${rawIdentifiable}`

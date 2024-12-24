@@ -1,9 +1,18 @@
 <script lang="ts">
-	import { Check, PencilSimple, SealCheck, TextAlignLeft, TrashSimple, X } from 'phosphor-svelte';
+	import {
+		Check,
+		Globe,
+		PencilSimple,
+		SealCheck,
+		TextAlignLeft,
+		TrashSimple,
+		X
+	} from 'phosphor-svelte';
 	import { connectionProviders } from '../connections';
 	import type { Connection } from '../types';
 	import InlineTextInput from '$lib/components/InlineTextInput.svelte';
 	import Button from '$lib/components/Button.svelte';
+	import { enhance } from '$app/forms';
 
 	let {
 		selectedConnectionIndex = $bindable(),
@@ -17,29 +26,54 @@
 
 	let isEditing = $derived(selectedConnectionIndex === index);
 
-	let provider = $derived(connectionProviders[connection.provider]);
+	let knownProvider = $derived(connectionProviders[connection.provider]);
 </script>
+
+<svelte:window
+	onkeydown={(e) => {
+		if (e.key === 'Escape' && selectedConnectionIndex) {
+			e.preventDefault();
+			selectedConnectionIndex = undefined;
+		}
+	}}
+/>
 
 <li class="connection">
 	<!-- TODO: the endpoint -->
-	<form action="/api/profile?/editConnection&id={index}">
+	<form use:enhance action="/api/profile?/editConnection&index={index}" method="post">
 		<div class="left">
-			<!-- svelte-ignore svelte_component_deprecated -->
-			{#if provider}
-				<svelte:component this={provider.icon} {...provider.iconProps} />
+			{#if knownProvider}
+				<!-- svelte-ignore svelte_component_deprecated -->
+				<svelte:component this={knownProvider.icon} {...knownProvider.iconProps} />
+			{:else if connection.url}
+				<Globe />
 			{:else}
 				<TextAlignLeft />
 			{/if}
 			<div class="text">
-				{#if isEditing && !provider}
-					<InlineTextInput name="connection-{index}-provider" value={connection.provider} />
+				{#if isEditing && (!knownProvider || connection.url)}
+					<InlineTextInput
+						name="connection-provider"
+						value={knownProvider?.name || connection.provider}
+						placeholder="Service (e.g. Discord, Nintendo Network...)"
+						required
+					/>
 				{:else}
 					<div class="heading">
-						{provider?.name || connection.provider}
+						{knownProvider?.name || connection.provider}
 					</div>
 				{/if}
 				{#if isEditing}
-					<InlineTextInput name="connection-identifiable" value={connection.identifiable} />
+					<InlineTextInput
+						name="connection-identifiable"
+						value={connection.identifiable}
+						placeholder={connection.url
+							? 'Enter a valid URL'
+							: knownProvider && knownProvider.identifiableHint
+								? knownProvider.identifiableHint
+								: 'Enter your @, a friend'}
+						required
+					/>
 				{:else}
 					<div class="subtext">
 						{connection.identifiable}
@@ -69,7 +103,7 @@
 					<X weight="regular" />
 				</Button>
 			{:else}
-				{#if !connection.verified}
+				{#if !connection.verified && knownProvider && knownProvider.verifiable}
 					<Button
 						aria-label="Verify connection"
 						disabled
@@ -94,14 +128,14 @@
 				>
 					<PencilSimple />
 				</Button>
-				<!-- TODO: implement this -->
 				<Button
 					aria-label="Delete connection"
 					icon
 					size="small"
 					variant="secondary"
 					inline
-					type="button"
+					type="submit"
+					formaction="/api/profile?/deleteConnection&index={index}"
 				>
 					<TrashSimple />
 				</Button>

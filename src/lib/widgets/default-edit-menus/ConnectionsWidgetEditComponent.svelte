@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { connectionProviders } from '../connections';
 	import type { ConnectionsWidget } from '../types';
 	import ConnectionCreateField from './ConnectionCreateField.svelte';
 	import ConnectionEdit from './ConnectionEdit.svelte';
@@ -25,6 +24,8 @@
 			<ConnectionCreateField />
 		</li>
 	</ul>
+
+	<div class="subtext">Note: Connection verification is coming soon.</div>
 </div>
 
 <style lang="scss">

@@ -25,6 +25,7 @@ export const connectionProviders: Record<
 		iconProps?: IconContextProps['values'];
 		matchingPattern?: RegExp;
 		identifiableHint?: string;
+		hasUrl: boolean;
 		verifiable: boolean;
 	}
 > = {
@@ -34,6 +35,7 @@ export const connectionProviders: Record<
 		iconProps: { weight: 'regular' },
 		// works for twitter.com & x.com URLs. group 1 is the handle
 		matchingPattern: /^(?:https?:\/\/)?(?:x\.com|twitter\.com)\/([a-zA-Z0-9_]{1,15})(?:\?.*)?$/,
+		hasUrl: true,
 		verifiable: true
 	},
 	bluesky: {
@@ -43,18 +45,21 @@ export const connectionProviders: Record<
 		// this MIGHT not work as intended. if you're reading this because it doesn't work, please lmk through an issue.
 		matchingPattern:
 			/^(?:https?:\/\/)?bsky\.app\/profile\/((?:[a-zA-Z0-9-]+\.)+[a-zA-Z0-9-]+|did:(?:plc|web):[a-zA-Z0-9]+)$|^(did:(?:plc|web):[a-zA-Z0-9]+)$/,
+		hasUrl: true,
 		verifiable: true
 	},
 	discord: {
 		name: 'Discord',
 		icon: DiscordLogo,
 		identifiableHint: 'Enter your Discord username (e.g. clembs)',
+		hasUrl: false,
 		verifiable: true
 	},
 	pretendo: {
 		name: 'Pretendo Network ID',
 		icon: PretendoNetworkId,
 		identifiableHint: 'Enter your Pretendo Network ID (e.g. Clembs)',
+		hasUrl: false,
 		verifiable: false
 	},
 	email: {
@@ -62,6 +67,7 @@ export const connectionProviders: Record<
 		icon: Envelope,
 		// i trust valibot devs. their brains are bigger than mine
 		matchingPattern: EMAIL_REGEX,
+		hasUrl: false,
 		verifiable: true
 	},
 	github: {
@@ -70,6 +76,7 @@ export const connectionProviders: Record<
 		// works for github.com URLs. group 1 is the username
 		matchingPattern:
 			/^(?:https?:\/\/)?github\.com\/([a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)(?:\?.*)?$/,
+		hasUrl: true,
 		verifiable: true
 	},
 	islands: {
@@ -79,6 +86,7 @@ export const connectionProviders: Record<
 		// this should work unless i break smth. i'd be very dumb
 		matchingPattern:
 			/^(?:https?:\/\/)?(?:islands\.lol|islandslol\.vercel\.app|islands\.clembs\.com)\/([a-zA-Z0-9_]{2,24})(?:\?.*)?$/,
+		hasUrl: true,
 		verifiable: true
 	},
 	youtube: {
@@ -88,6 +96,7 @@ export const connectionProviders: Record<
 		// modified from https://stackoverflow.com/a/65726047 (ty)
 		matchingPattern:
 			/^(?:https?:\/\/)(?:www\.|m\.)?youtube\.com\/(?:channel\/(UC[\w-]{21}[AQgw])|(?:c\/|user\/)?([\w@-]+))$/,
+		hasUrl: true,
 		verifiable: true
 	},
 	steam: {
@@ -96,6 +105,7 @@ export const connectionProviders: Record<
 		// works for steamcommunity.com URLs. group 1 is the SteamID or profile URL
 		matchingPattern:
 			/^(?:https?:\/\/)?steamcommunity\.com\/(?:id|profiles)\/([a-zA-Z0-9_-]+)(?:\?.*)?$/,
+		hasUrl: true,
 		verifiable: true
 	},
 	// domains are last because they're supposed to be generic and the fallback pattern
@@ -107,6 +117,7 @@ export const connectionProviders: Record<
 		// modified from https://uibakery.io/regex-library/url to group the domain
 		matchingPattern:
 			/^(?:https?:\/\/)?((?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6})\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$/,
+		hasUrl: true,
 		verifiable: true
 	}
 };
