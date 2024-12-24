@@ -181,8 +181,6 @@
 			aria-label="Edit widget"
 			bind:this={dialogEl}
 		>
-			<!-- use:clickoutside -->
-			<!-- onclickoutside={closeDialog} -->
 			<div class="menu" bind:this={dialogContentsEl}>
 				{@render editMenu()}
 			</div>
@@ -190,12 +188,11 @@
 
 		{#if isWidgetEditing}
 			<div
-				inert={true}
 				aria-hidden={true}
 				transition:fade={{ duration: animationDurationMs }}
 				class="dialog-backdrop"
+				onclick={(ev) => closeDialog(ev)}
 			></div>
-			<!-- onclick={(ev) => closeDialog(ev)} -->
 		{/if}
 	{/if}
 
