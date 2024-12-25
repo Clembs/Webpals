@@ -83,8 +83,8 @@
 		);
 	}
 
-	function closeDialog(ev: Event) {
-		ev.preventDefault();
+	function closeDialog(ev?: Event) {
+		if (ev) ev.preventDefault();
 
 		if (!wrapperEl || !dialogEl) return;
 
@@ -135,11 +135,9 @@
 </script>
 
 <svelte:window
-	onkeydown={(e) => {
-		console.log($state.snapshot(dialogPortal.current));
-
-		if (!$state.snapshot(dialogPortal.current) && e.key === 'Escape') {
-			closeDialog(e);
+	onkeydown={(ev) => {
+		if (ev.key === 'Escape') {
+			closeDialog();
 		}
 	}}
 />

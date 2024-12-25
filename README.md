@@ -20,12 +20,13 @@ Islands is still in development and will be released in multiple stages. The fol
 
 An invite-only release where only I issue invite codes. It will be a way for close relatives to test the base features. No account will be required to view profiles. Expected features:
 
-- [ ] Authentication (Login, Register, Logout)
+- [x] Authentication (Login, Register, Logout)
 - [x] Friends[^1]
-- [ ] Some default widgets
+- [x] Some default widgets
 - [ ] Profile theming
 - [x] Notifications
 - [ ] Barebones mobile version
+- [ ] Invite system
 
 ### Public alpha
 
