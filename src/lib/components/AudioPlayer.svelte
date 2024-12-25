@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { Pause, Play } from 'phosphor-svelte';
-	import { Tween } from 'svelte/motion';
 
 	let {
 		src,
@@ -17,11 +16,6 @@
 	let rangeValue = $state(0);
 	let currentTime = $state(0);
 	let duration = $state(0);
-	let tween = new Tween(currentTime);
-
-	$effect(() => {
-		tween.target = currentTime;
-	});
 
 	function togglePlayback() {
 		if (paused) {
