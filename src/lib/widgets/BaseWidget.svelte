@@ -243,6 +243,7 @@
 	}
 
 	[role='dialog'] {
+		display: none;
 		gap: var(--base-gap);
 		background-color: var(--widgets-background-color);
 		padding: var(--base-padding);
@@ -252,7 +253,9 @@
 			var(--widgets-box-shadow-blur) var(--widgets-box-shadow-color);
 		overflow: hidden;
 		max-width: 100%;
-		display: none;
+		max-height: calc(100vh - var(--base-padding) * 2);
+		max-height: calc(100dvh - var(--base-padding) * 2);
+		overflow-y: auto;
 
 		&[aria-current='true'] {
 			display: flex;
