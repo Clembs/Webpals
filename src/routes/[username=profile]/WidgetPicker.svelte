@@ -62,7 +62,7 @@
 		});
 	}
 
-	export function closeSubMenu() {
+	export function closeMenu() {
 		if (!widgetPickerEl || !editBarEl || !editBarWrapperEl) return;
 
 		// get the dimensions of the edit bar wrapper so we can animate to it
@@ -114,7 +114,7 @@
 		<button
 			class="close-btn"
 			onclick={() => {
-				closeSubMenu();
+				closeMenu();
 			}}
 		>
 			<CaretLeft weight="regular" />
