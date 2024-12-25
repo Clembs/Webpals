@@ -8,7 +8,6 @@ import type {
 
 export const defaultMusicWidget: MusicWidget = {
 	id: 'music',
-	position: 1,
 	content_url: undefined,
 	content_type: undefined,
 	title: undefined,
@@ -18,24 +17,20 @@ export const defaultMusicWidget: MusicWidget = {
 
 export const defaultAboutMeWidget: AboutMeWidget = {
 	id: 'about_me',
-	content: 'Hello, Islands!',
-	position: 1
+	content: 'Hello, Islands!'
 };
 
 export const defaultFriendsWidget: FriendsWidget = {
-	id: 'friends',
-	position: 2
+	id: 'friends'
 };
 
 export const defaultCommentsWidget: CommentsWidget = {
-	id: 'comments',
-	position: 3
+	id: 'comments'
 };
 
 export const defaultConnectionsWidget: ConnectionsWidget = {
 	id: 'connections',
-	connections: [],
-	position: 4
+	connections: []
 };
 
 export const defaultWidgets = [

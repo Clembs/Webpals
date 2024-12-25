@@ -2,7 +2,6 @@ import type { PublicUser } from '$lib/db/schema/users';
 
 export type BaseDefaultWidget = {
 	id: string;
-	position: number;
 };
 
 export type CustomWidget = BaseDefaultWidget & {

@@ -19,8 +19,6 @@ export async function addWidget({ locals: { getCurrentUser }, url }: RequestEven
 		});
 	}
 
-	widget.position = user.widgets[1].length + 1;
-
 	await db
 		.update(users)
 		.set({
