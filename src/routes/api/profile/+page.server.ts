@@ -8,6 +8,7 @@ import { editConnection } from './edit-connection';
 import { editCustomWidget } from './edit-custom-widget';
 import { editMusic } from './edit-music';
 import { editProfile } from './edit-profile';
+import { updateWidgetPosition } from './update-widget-position';
 
 export const actions: Actions = {
 	// profile
@@ -15,6 +16,7 @@ export const actions: Actions = {
 
 	// basic widget stuff
 	addWidget,
+	updateWidgetPosition,
 	deleteWidget,
 
 	// edit widgets
