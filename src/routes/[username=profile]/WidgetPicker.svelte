@@ -158,14 +158,14 @@
 		flex-direction: column;
 		background-color: var(--widgets-background-color);
 		max-height: 40vh;
-		// width: max-content;
 		opacity: 0;
 		transition: opacity 500ms ease 200ms;
 		width: 100%;
+		min-width: 600px;
 
-		// &.open {
-		// 	display: flex;
-		// }
+		@media (max-width: 950px) {
+			min-width: 100%;
+		}
 
 		.close-btn {
 			background: none;
