@@ -11,6 +11,7 @@
 	import { flip } from 'svelte/animate';
 	import ProfileEditBar from './ProfileEditBar.svelte';
 	import { dndzone } from 'svelte-dnd-action';
+	import { invalidateAll } from '$app/navigation';
 
 	let { data } = $props();
 
@@ -19,6 +20,7 @@
 
 	$effect(() => {
 		theme = data.user.theme;
+		userWidgets = data.user.widgets;
 	});
 
 	async function updateWidgetPosition(widgetId: string) {
@@ -36,6 +38,8 @@
 				'Content-Type': 'multipart/form-data'
 			}
 		});
+
+		await invalidateAll();
 	}
 </script>
 
