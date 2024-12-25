@@ -35,20 +35,19 @@ export type AnyBlock = TextBlock | LayoutBlock | KeyValueBlock;
 
 export type MusicWidget = BaseDefaultWidget & {
 	id: 'music';
-	content_url: string | undefined | null;
-	content_type:
-		| 'spotify'
-		| 'youtube'
-		| 'soundcloud'
-		| 'tidal'
-		| 'apple-music'
-		| 'deezer'
-		| 'bandcamp'
-		| `audio/${string}`
-		| undefined
-		| null;
-	title: string | undefined | null;
-	artist: string | undefined | null;
+	content_url?: string;
+	content_type?: 'spotify';
+	// | 'youtube'
+	// | 'soundcloud'
+	// | 'tidal'
+	// | 'apple-music'
+	// | 'deezer'
+	// | 'bandcamp'
+	// | `audio/${string}`
+	title?: string;
+	artist?: string;
+	album_art_url?: string;
+	external_url?: string;
 };
 
 export type AboutMeWidget = BaseDefaultWidget & {

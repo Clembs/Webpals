@@ -1,23 +1,30 @@
 <script lang="ts">
-	import { MusicNote, PencilSimple, Warning } from 'phosphor-svelte';
+	import { MusicNote, PencilSimple, SpotifyLogo, Warning } from 'phosphor-svelte';
 	import BaseWidget from '../BaseWidget.svelte';
 	import type { MusicWidget, WidgetComponentProps } from '../types';
 	import MusicEditWidgetComponent from '../default-edit-menus/MusicWidgetEditComponent.svelte';
+	import AudioPlayer from '$lib/components/AudioPlayer.svelte';
 
-	let { user, widget, editing }: WidgetComponentProps<MusicWidget> = $props();
+	let { user, widget, editing }: WidgetComponentProps<Required<MusicWidget>> = $props();
+
+	let modalOpened = $state(false);
 </script>
 
 {#snippet editMenu()}
-	<MusicEditWidgetComponent />
+	<MusicEditWidgetComponent bind:modalOpened />
 {/snippet}
 
-<BaseWidget {editMenu} {widget} {user} editingMode={editing}>
+<BaseWidget bind:isWidgetEditing={modalOpened} {editMenu} {widget} {user} editingMode={editing}>
 	<div class="music-widget">
 		<div class="header">
 			<MusicNote />
 
 			<h2>
-				{widget.title || 'Music'}
+				{#if widget.title}
+					{widget.title.length > 40 ? widget.title.slice(0, 40) + '...' : widget.title}
+				{:else}
+					Music
+				{/if}
 
 				<span class="subtext">
 					{widget.artist || 'Artist'}
@@ -26,22 +33,29 @@
 		</div>
 
 		{#if widget.content_type === 'spotify'}
-			<iframe
-				title="Spotify embed"
-				src="https://open.spotify.com/embed/track/{widget.content_url}?utm_source=generator"
-				width="100%"
-				height="80"
-				frameBorder="0"
-				allowfullscreen
-				allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-				loading="eager"
-				class="spotify-embed"
-			></iframe>
-		{:else if widget.content_type?.startsWith('audio/')}
-			<audio controls>
-				<source src={widget.content_url} type={widget.content_type} />
-				Your browser does not support the audio element.
-			</audio>
+			<AudioPlayer
+				src={widget.content_url}
+				type="audio/mp3"
+				metadata={{
+					title: widget.title,
+					artist: widget.artist,
+					artwork: [
+						{
+							src: widget.album_art_url,
+							type: 'image/jpeg'
+						}
+					]
+				}}
+			/>
+
+			<a
+				class="external-url-cta subtext"
+				href={widget.external_url}
+				target="_blank"
+				rel="noopener noreferrer"
+			>
+				<SpotifyLogo size={20} /> Listen on Spotify
+			</a>
 		{:else}
 			<div class="error">
 				<p>
@@ -84,9 +98,19 @@
 			gap: calc(var(--base-gap) * 0.25);
 		}
 
-		.spotify-embed {
-			border-radius: 12px;
-			max-height: 80px;
+		.external-url-cta {
+			display: flex;
+			align-items: center;
+			align-self: flex-end;
+			gap: calc(var(--base-gap) * 0.25);
+			max-width: fit-content;
+			padding: 1rem;
+			margin: -1rem;
+			text-decoration: none;
+
+			&:hover {
+				text-decoration: underline;
+			}
 		}
 	}
 </style>

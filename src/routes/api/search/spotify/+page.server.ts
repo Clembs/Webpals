@@ -1,4 +1,5 @@
 import { fail, type Actions } from '@sveltejs/kit';
+import { getSpotifyToken } from '$lib/helpers/music';
 
 export const actions: Actions = {
 	async default({ request, fetch }) {
@@ -9,15 +10,7 @@ export const actions: Actions = {
 
 		try {
 			// anonymously fetch the Spotify search page to get a session
-			const re =
-				/<script id="session" data-testid="session" type="application\/json"[^>]*>(.*?)<\/script>/;
-			const sessionRes = await fetch('https://open.spotify.com/search')
-				.then((res) => res.text())
-				.then((str) => {
-					console.log(str.match(re));
-					return str.match(re)![1];
-				})
-				.then((json) => JSON.parse(json));
+			const accessToken = await getSpotifyToken();
 
 			const searchParams = new URLSearchParams();
 			searchParams.append('q', query);
@@ -26,7 +19,7 @@ export const actions: Actions = {
 
 			const searchRes = await fetch(`https://api.spotify.com/v1/search?${searchParams}`, {
 				headers: {
-					Authorization: `Bearer ${sessionRes.accessToken}`
+					Authorization: `Bearer ${accessToken}`
 				}
 			}).then((r) => r.json());
 

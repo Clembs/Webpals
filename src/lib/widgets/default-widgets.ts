@@ -9,10 +9,11 @@ import type {
 export const defaultMusicWidget: MusicWidget = {
 	id: 'music',
 	position: 1,
-	content_url: null,
-	content_type: null,
-	title: null,
-	artist: null
+	content_url: undefined,
+	content_type: undefined,
+	title: undefined,
+	artist: undefined,
+	album_art_url: undefined
 };
 
 export const defaultAboutMeWidget: AboutMeWidget = {

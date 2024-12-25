@@ -6,6 +6,7 @@ import { deleteWidget } from './delete-widget';
 import { editAboutMe } from './edit-about-me';
 import { editConnection } from './edit-connection';
 import { editCustomWidget } from './edit-custom-widget';
+import { editMusic } from './edit-music';
 import { editProfile } from './edit-profile';
 
 export const actions: Actions = {
@@ -18,6 +19,7 @@ export const actions: Actions = {
 
 	// edit widgets
 	editAboutMe,
+	editMusic,
 	editCustomWidget,
 
 	// connections

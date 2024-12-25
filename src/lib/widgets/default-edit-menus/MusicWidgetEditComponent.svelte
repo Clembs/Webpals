@@ -4,20 +4,16 @@
 	import Button from '$lib/components/Button.svelte';
 	import { enhance } from '$app/forms';
 	import AudioPlayer from '$lib/components/AudioPlayer.svelte';
+	import type { SpotifyTrack } from '$lib/helpers/music';
+
+	let {
+		modalOpened = $bindable(false)
+	}: {
+		modalOpened: boolean;
+	} = $props();
 
 	let selectedProvider = $state('spotify');
-
-	let songUrl = $state('');
-	let results = $state<
-		{
-			id: string;
-			name: string;
-			artists: { name: string; id: string }[];
-			album: { name: string; images: { url: string }[]; href: string };
-			external_urls: { spotify: string };
-			preview_url: string;
-		}[]
-	>();
+	let tracks = $state<SpotifyTrack[]>();
 </script>
 
 <div class="music-widget">
@@ -40,76 +36,79 @@
 				use:enhance={() =>
 					({ result, update }) => {
 						if (result.type === 'success' && result.data) {
-							results = result.data as any;
+							tracks = result.data as any;
 						}
 						update({ reset: false });
 					}}
 				action="/api/search/spotify?"
 				method="post"
 			>
-				<TextInput
-					bind:value={songUrl}
-					name="query"
-					label="Search Spotify"
-					suffixButton={searchBtn}
-				/>
+				<TextInput name="query" label="Search Spotify" suffixButton={searchBtn} />
 			</form>
 
-			{#if results}
-				<form action="" method="post">
-					<ul id="results">
-						{#each results as result (result.id)}
-							<li>
-								<div class="header">
-									<div class="text-image">
-										<img
-											height={52}
-											width={52}
-											src={result.album.images[0].url}
-											alt="Cover art for {result.album.name}"
-											draggable="false"
-										/>
+			{#if tracks}
+				<ul id="results">
+					{#each tracks as track (track.id)}
+						<li>
+							<div class="header">
+								<div class="text-image">
+									<img
+										height={52}
+										width={52}
+										src={track.album.images[0].url}
+										alt="Cover art for {track.album.name}"
+										draggable="false"
+									/>
 
-										<div class="text">
-											<h3>
-												{result.name}
-											</h3>
-											<p>{result.artists.map(({ name }) => name).join(', ')}</p>
-										</div>
-									</div>
-
-									<div class="buttons">
-										<Button inline size="small">Use</Button>
-										<Button
-											inline
-											size="small"
-											variant="secondary"
-											icon
-											href={result.external_urls.spotify}
-										>
-											<SpotifyLogo />
-										</Button>
+									<div class="text">
+										<h3>
+											{track.name}
+										</h3>
+										<p>{track.artists.map(({ name }) => name).join(', ')}</p>
 									</div>
 								</div>
-								<AudioPlayer
-									src={result.preview_url}
-									type="audio/mp3"
-									metadata={{
-										title: result.name,
-										artist: result.artists.map(({ name }) => name).join(', '),
-										album: result.album.name,
-										artwork: [
-											{
-												src: result.album.images[0].url,
-												type: 'image/jpeg'
-											}
-										]
-									}}
-								/>
-							</li>
-						{/each}
-					</ul>
-				</form>
+
+								<div class="buttons">
+									<form
+										use:enhance={() =>
+											({ update }) => {
+												update({ reset: false });
+												modalOpened = false;
+											}}
+										action="/api/profile?/editMusic&content-type={selectedProvider}&track-id={track.id}"
+										method="post"
+									>
+										<Button inline size="small">Use</Button>
+									</form>
+									<Button
+										inline
+										size="small"
+										variant="secondary"
+										icon
+										href={track.external_urls.spotify}
+									>
+										<SpotifyLogo />
+									</Button>
+								</div>
+							</div>
+							<AudioPlayer
+								src={track.preview_url}
+								type="audio/mp3"
+								metadata={{
+									title: track.name,
+									artist: track.artists.map(({ name }) => name).join(', '),
+									album: track.album.name,
+									artwork: [
+										{
+											src: track.album.images[0].url,
+											type: 'image/jpeg'
+										}
+									]
+								}}
+							/>
+						</li>
+					{/each}
+				</ul>
 			{/if}
 		</div>
 	{/if}
