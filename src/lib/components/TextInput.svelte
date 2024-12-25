@@ -3,13 +3,13 @@
 	import type { HTMLInputAttributes, HTMLTextareaAttributes } from 'svelte/elements';
 
 	let {
-		type,
 		label,
 		error,
 		name,
 		required = true,
 		multiline = false,
 		prefixIcon,
+		suffixButton,
 		value = $bindable(''),
 		...restProps
 	}: HTMLInputAttributes &
@@ -20,6 +20,7 @@
 			value?: string;
 			multiline?: boolean;
 			prefixIcon?: Snippet<[number]>;
+			suffixButton?: Snippet;
 		} = $props();
 </script>
 
@@ -37,9 +38,14 @@
 			</div>
 		{/if}
 		{#if !multiline}
-			<input {type} id={name} {name} {required} {...restProps} bind:value />
+			<input id={name} {name} {required} {...restProps} bind:value />
 		{:else}
 			<textarea id={name} {name} {required} {...restProps} bind:value></textarea>
+		{/if}
+		{#if suffixButton}
+			<div class="suffix-button">
+				{@render suffixButton()}
+			</div>
 		{/if}
 	</div>
 
@@ -66,6 +72,7 @@
 		display: flex;
 		flex-direction: column;
 		width: 100%;
+		position: relative;
 
 		.label-text,
 		.error {
@@ -95,6 +102,11 @@
 				background-color: var(--widgets-background-color-dim);
 				color: var(--inputs-on-background-color);
 				height: 3rem;
+			}
+
+			.suffix-button {
+				position: absolute;
+				right: 0;
 			}
 
 			input,
