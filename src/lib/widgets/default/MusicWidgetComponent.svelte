@@ -2,17 +2,18 @@
 	import { MusicNote, PencilSimple, Warning } from 'phosphor-svelte';
 	import BaseWidget from '../BaseWidget.svelte';
 	import type { MusicWidget, WidgetComponentProps } from '../types';
+	import MusicEditWidgetComponent from '../default-edit-menus/MusicWidgetEditComponent.svelte';
 
 	let { user, widget, editing }: WidgetComponentProps<MusicWidget> = $props();
 </script>
 
 {#snippet editMenu()}
-	hi
+	<MusicEditWidgetComponent />
 {/snippet}
 
-<BaseWidget {editMenu} {widget} {user} {editing}>
+<BaseWidget {editMenu} {widget} {user} editingMode={editing}>
 	<div class="music-widget">
-		<div class="heading">
+		<div class="header">
 			<MusicNote />
 
 			<h2>
@@ -60,8 +61,9 @@
 		display: flex;
 		flex-direction: column;
 		gap: calc(var(--base-gap) * 0.5);
+		color: var(--color-heading);
 
-		.heading {
+		.header {
 			display: flex;
 			gap: calc(var(--base-gap) * 0.5);
 			align-items: center;
