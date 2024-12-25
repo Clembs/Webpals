@@ -86,7 +86,7 @@
 	function closeDialog(ev?: Event) {
 		if (ev) ev.preventDefault();
 
-		if (!wrapperEl || !dialogEl) return;
+		if (!wrapperEl || !dialogEl || !isWidgetEditing || !dialogOpen) return;
 
 		// we change the variable first so the background can darken at the same time
 		isWidgetEditing = false;
@@ -131,6 +131,10 @@
 
 	$effect(() => {
 		if (!editMenu) return;
+
+		if (isWidgetEditing === false) {
+			closeDialog();
+		}
 	});
 </script>
 
