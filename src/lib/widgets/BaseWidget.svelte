@@ -173,6 +173,7 @@
 	</form>
 {/snippet}
 
+<!-- TODO!: fix bug where you can still drag the dialog when its open -->
 <div class="widget-root">
 	{#if editingMode && editMenu}
 		<div
