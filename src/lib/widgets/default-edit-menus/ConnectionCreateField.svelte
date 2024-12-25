@@ -127,8 +127,7 @@
 			{#if predictedProvider === 'text'}
 				<TextAlignLeft />
 			{:else}
-				<!-- svelte-ignore svelte_component_deprecated -->
-				<svelte:component this={predictedProvider.icon} {...predictedProvider.iconProps} />
+				<predictedProvider.icon {...predictedProvider.iconProps} />
 			{/if}
 		{:else}
 			<QuestionMark weight="regular" />
@@ -191,20 +190,18 @@
 					Supports
 					{#each connectionProvidersArray
 						.toSorted(() => Math.random() - 0.5)
-						.slice(0, 6) as { icon, iconProps }}
-						<!-- svelte-ignore svelte_component_deprecated -->
-						<svelte:component this={icon} {...iconProps} size={16} />
+						.slice(0, 6) as { icon: Icon, iconProps }}
+						<Icon {...iconProps} size={16} />
 					{/each} and more! (click to expand)
 				{:else}
 					<ul class="subtext providers-list">
 						Supports
-						{#each connectionProvidersArray as { icon, iconProps, name }, i}
+						{#each connectionProvidersArray as { icon: Icon, iconProps, name }, i}
 							<li>
 								{#if i === connectionProvidersArray.length - 1}
 									and
 								{/if}
-								<!-- svelte-ignore svelte_component_deprecated -->
-								<svelte:component this={icon} {...iconProps} size={16} />
+								<Icon {...iconProps} size={16} />
 								{name}{#if i < connectionProvidersArray.length - 2},{/if}
 								{' '}
 							</li>

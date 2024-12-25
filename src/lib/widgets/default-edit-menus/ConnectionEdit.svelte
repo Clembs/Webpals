@@ -74,8 +74,7 @@
 	>
 		<div class="left">
 			{#if knownProvider}
-				<!-- svelte-ignore svelte_component_deprecated -->
-				<svelte:component this={knownProvider.icon} {...knownProvider.iconProps} />
+				<knownProvider.icon {...knownProvider.iconProps} />
 			{:else if connection.url}
 				<Globe />
 			{:else}

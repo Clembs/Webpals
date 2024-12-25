@@ -18,9 +18,8 @@
 	{@const provider = connectionProviders[connection.provider]}
 
 	<div class="left">
-		<!-- svelte-ignore svelte_component_deprecated -->
 		{#if provider}
-			<svelte:component this={provider.icon} {...provider.iconProps} />
+			<provider.icon {...provider.iconProps} />
 		{:else}
 			<TextAlignLeft />
 		{/if}
