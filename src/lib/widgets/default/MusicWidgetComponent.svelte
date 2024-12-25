@@ -16,7 +16,7 @@
 
 <BaseWidget bind:isWidgetEditing={modalOpened} {editMenu} {widget} {user} editingMode={editing}>
 	<div class="music-widget">
-		<div class="header">
+		<div class="heading">
 			<MusicNote />
 
 			<h2>
@@ -77,13 +77,14 @@
 		gap: calc(var(--base-gap) * 0.5);
 		color: var(--color-heading);
 
-		.header {
+		.heading {
 			display: flex;
 			gap: calc(var(--base-gap) * 0.5);
 			align-items: center;
 
 			h2 {
 				font-size: 1.25rem;
+				flex: 1;
 			}
 
 			.subtext {
