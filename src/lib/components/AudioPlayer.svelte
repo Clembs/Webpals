@@ -1,28 +1,101 @@
 <script lang="ts">
-	import { Pause } from 'phosphor-svelte';
+	import { Pause, Play } from 'phosphor-svelte';
+	import { Tween } from 'svelte/motion';
 
 	let {
-		file,
-		type
+		src,
+		type,
+		metadata
 	}: {
-		file: string;
+		src: string;
 		type: string;
+		metadata?: MediaMetadataInit;
 	} = $props();
 
 	let audioEl = $state<HTMLAudioElement>();
+	let paused = $state<boolean>();
+	let rangeValue = $state(0);
+	let currentTime = $state(0);
+	let duration = $state(0);
+	let tween = new Tween(currentTime);
+
+	$effect(() => {
+		tween.target = currentTime;
+	});
+
+	function togglePlayback() {
+		if (paused) {
+			audioEl?.play();
+			createMediaSession();
+			// stop audio from all other players
+			document.querySelectorAll('audio').forEach((el) => {
+				if (el !== audioEl) el.pause();
+			});
+		} else {
+			audioEl?.pause();
+		}
+	}
+
+	function createMediaSession() {
+		if (!navigator.mediaSession || !metadata) return;
+		navigator.mediaSession.metadata = new MediaMetadata(metadata);
+
+		navigator.mediaSession.setActionHandler('play', () => audioEl?.play());
+		navigator.mediaSession.setActionHandler('pause', () => audioEl?.pause());
+		navigator.mediaSession.setActionHandler('seekbackward', () => {
+			currentTime -= 10;
+		});
+		navigator.mediaSession.setActionHandler('seekforward', () => {
+			currentTime += 10;
+		});
+		navigator.mediaSession.setActionHandler('previoustrack', () => {
+			currentTime = 0;
+		});
+		navigator.mediaSession.setActionHandler('nexttrack', () => {
+			currentTime = audioEl!.duration;
+		});
+		navigator.mediaSession.setActionHandler('stop', () => {
+			if (!audioEl) return;
+			audioEl.pause();
+			currentTime = 0;
+		});
+	}
 </script>
 
 <!-- TODO: link this to the actual audio player -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div class="audio-player">
-	<button class="toggle-playback">
-		<Pause />
+	<button type="button" onclick={togglePlayback} class="toggle-playback">
+		{#if paused}
+			<Play />
+		{:else}
+			<Pause />
+		{/if}
 	</button>
 
-	<input type="range" name="audio-track" />
+	<input
+		onchange={(ev) => {
+			if (!audioEl) return;
+			currentTime = (duration * rangeValue) / 100;
+		}}
+		onkeydown={(ev) => {
+			if (ev.key === ' ') togglePlayback();
+		}}
+		bind:value={rangeValue}
+		type="range"
+		name="audio-track"
+	/>
 </div>
 
-<audio bind:this={audioEl} controls>
-	<source src={file} {type} />
+<audio
+	bind:this={audioEl}
+	controls
+	bind:paused
+	bind:currentTime
+	bind:duration
+	ontimeupdate={() => (rangeValue = (currentTime / duration) * 100)}
+>
+	<source {src} {type} />
 	Your browser does not support the audio element.
 </audio>
 
@@ -33,6 +106,7 @@
 		// padding-left: calc(var(--base-padding) * 0.25);
 		padding-right: calc(var(--base-padding) * 0.75);
 		border-radius: var(--inputs-border-base-radius);
+		border: var(--inputs-border-width) solid var(--inputs-border-color);
 
 		width: 100%;
 		display: flex;
