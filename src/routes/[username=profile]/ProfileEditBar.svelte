@@ -106,7 +106,8 @@
 					<Plus weight="regular" />
 					<span class="label"> Add widget </span>
 				</button>
-				<button
+				<!-- TODO: reimplement theme & account settings -->
+				<!-- <button
 					class="edit-command"
 					onclick={() => (themeEditorOpen = !themeEditorOpen)}
 					aria-label="Theme settings"
@@ -117,7 +118,7 @@
 				<button class="edit-command" aria-label="Account settings">
 					<Gear />
 					<span class="label"> Account settings </span>
-				</button>
+				</button> -->
 			</div>
 
 			<!-- switch button -->
