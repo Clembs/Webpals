@@ -32,6 +32,8 @@
 		class:icon
 		class="{variant} {size}"
 		{href}
+		target={href.startsWith('http') ? '_blank' : undefined}
+		rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
 		aria-disabled={disabled}
 		{...restProps as HTMLAnchorAttributes}
 	>
@@ -131,7 +133,7 @@
 			padding: calc(var(--base-padding) * 0.5) calc(var(--base-padding) * 0.75);
 
 			&.icon {
-				padding: calc(var(--base-padding) * 0.25);
+				padding: calc(var(--base-padding) * 0.5);
 			}
 		}
 
