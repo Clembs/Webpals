@@ -79,6 +79,7 @@
 			font-weight: 600;
 			font-size: 0.815rem;
 			margin-left: calc(var(--base-padding) * 0.25);
+			margin-bottom: calc(var(--base-gap) * 0.5);
 		}
 
 		.input {
@@ -86,7 +87,6 @@
 			align-items: center;
 			border: var(--inputs-border-width) solid var(--inputs-border-color);
 			border-radius: var(--inputs-border-base-radius);
-			margin-top: calc(var(--base-gap) * 0.5);
 
 			&.error {
 				border-color: var(--color-urgent);
