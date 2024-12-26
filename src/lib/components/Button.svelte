@@ -59,7 +59,7 @@
 		display: flex;
 		gap: calc(var(--base-gap) * 0.5);
 
-		padding: calc(var(--base-padding) * 0.75) var(--base-padding);
+		padding: calc(var(--base-padding) * 0.625) var(--base-padding);
 		border-radius: var(--inputs-border-base-radius);
 
 		text-align: center;
@@ -75,7 +75,7 @@
 		&.icon {
 			display: grid;
 			place-items: center;
-			padding: calc(var(--base-padding) * 0.75);
+			padding: calc(var(--base-padding) * 0.625);
 		}
 
 		&.inline {
@@ -113,7 +113,7 @@
 			border: var(--inputs-border-width) solid var(--color-success);
 
 			&:hover {
-				opacity: 0.75;
+				filter: brightness(0.9);
 			}
 		}
 
@@ -123,7 +123,7 @@
 			border: var(--inputs-border-width) solid var(--color-urgent);
 
 			&:hover {
-				opacity: 0.75;
+				filter: brightness(0.9);
 			}
 		}
 
