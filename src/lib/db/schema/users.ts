@@ -1,15 +1,22 @@
 import type { PartialTheme } from '$lib/themes/mergeThemes';
 import type { AnyWidget } from '$lib/widgets/types';
 import { relations } from 'drizzle-orm';
-import { jsonb, pgTable, primaryKey, smallint, text, timestamp } from 'drizzle-orm/pg-core';
-import { passkeys, sessions, type Passkey, type Session } from './auth';
+import { index, jsonb, pgTable, primaryKey, smallint, text, timestamp } from 'drizzle-orm/pg-core';
+import {
+	inviteCodes,
+	passkeys,
+	sessions,
+	type InviteCode,
+	type Passkey,
+	type Session
+} from './auth';
 import { notifications, notificationsMentionedUsers, type Notification } from './notifications';
 import {
 	defaultAboutMeWidget,
 	defaultCommentsWidget,
 	defaultFriendsWidget,
 	defaultMusicWidget
-} from '$lib/widgets/default-widgets';
+} from '../../widgets/default-widgets';
 
 export const UserStatusTypes = ['online', 'dnd', 'offline'] as const;
 
@@ -53,7 +60,8 @@ export const usersRelations = relations(users, ({ many }) => ({
 	}),
 	receivedRelationships: many(relationships, {
 		relationName: 'received'
-	})
+	}),
+	inviteCodes: many(inviteCodes)
 }));
 
 type User = typeof users.$inferSelect;
@@ -82,6 +90,7 @@ export type FullUser = User & {
 	receivedRelationships: (Relationship & {
 		user: PublicUser;
 	})[];
+	inviteCodes: InviteCode[];
 };
 
 export enum RelationshipTypes {
@@ -98,11 +107,13 @@ export const relationships = pgTable(
 		status: smallint('status').notNull().$type<RelationshipTypes>(),
 		createdAt: timestamp('created_at').notNull().defaultNow()
 	},
-	({ userId, recipientId }) => ({
-		id: primaryKey({
-			columns: [userId, recipientId]
-		})
-	})
+	({ userId, recipientId }) => [
+		{
+			id: primaryKey({
+				columns: [userId, recipientId]
+			})
+		}
+	]
 );
 
 export const relationshipsRelations = relations(relationships, ({ one }) => ({

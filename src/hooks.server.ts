@@ -25,6 +25,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 			with: {
 				sessions: true,
 				passkeys: true,
+				inviteCodes: true,
 				notifications: {
 					with: {
 						mentionedUsers: {

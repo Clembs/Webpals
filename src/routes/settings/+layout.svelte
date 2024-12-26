@@ -2,11 +2,21 @@
 	import { page } from '$app/state';
 	import { aboutIslandsDialog } from '$lib/components/NavBar/AccountMenu.svelte';
 	import { dialogPortal } from '$lib/portals/dialog.svelte';
-	import { Bell, DoorOpen, EyeSlash, Island, Palette, User } from 'phosphor-svelte';
+	import { Bell, DoorOpen, EyeSlash, Island, Palette, Password, User } from 'phosphor-svelte';
+
+	let { data, children } = $props();
 
 	const settingCategories: {
 		name: string;
-		settings: { label: string; href: string; icon: typeof Island }[];
+		settings: {
+			label: string;
+			href: string;
+			icon: typeof Island;
+			badge?: {
+				label: string;
+				color?: string;
+			};
+		}[];
 	}[] = [
 		{
 			name: 'Account Settings',
@@ -37,10 +47,24 @@
 					icon: Palette
 				}
 			]
+		},
+		{
+			name: 'Tester Secrets',
+			settings: [
+				{
+					label: 'Invite Codes',
+					href: '/settings/invite-codes',
+					icon: Password,
+					badge: {
+						label: data.currentUser.inviteCodes
+							.filter(({ status }) => status !== 'claimed')
+							.length.toString(),
+						color: 'var(--color-heading)'
+					}
+				}
+			]
 		}
 	];
-
-	let { children } = $props();
 </script>
 
 <div id="settings">
@@ -50,16 +74,24 @@
 				<section>
 					<div class="category-label">{category.name}</div>
 					<ul>
-						{#each category.settings as { label, href, icon: Icon }}
-							{@const current = page.url.pathname.includes(href)}
+						{#each category.settings as setting}
+							{@const current = page.url.pathname.includes(setting.href)}
 							<li>
-								<a class="nav-item" {href} aria-current={current}>
-									<div class="icon">
-										<Icon weight={current ? 'fill' : 'regular'} />
+								<a class="nav-item" href={setting.href} aria-current={current}>
+									<div class="left">
+										<div class="icon">
+											<setting.icon weight={current ? 'fill' : 'regular'} />
+										</div>
+										<div class="label">
+											{setting.label}
+										</div>
 									</div>
-									<div class="label">
-										{label}
-									</div>
+
+									{#if setting.badge}
+										<div class="badge" style:--color={setting.badge.color}>
+											{setting.badge.label}
+										</div>
+									{/if}
 								</a>
 							</li>
 						{/each}
@@ -148,6 +180,7 @@
 				display: flex;
 				align-items: center;
 				gap: var(--base-gap);
+				justify-content: space-between;
 				padding: calc(var(--base-padding) * 0.625) calc(var(--base-padding) * 0.75);
 				border-radius: var(--inputs-border-base-radius);
 				color: var(--widgets-text-color);
@@ -166,13 +199,22 @@
 					color: var(--inputs-background-color);
 				}
 
-				.icon {
-					width: 24px;
-					height: 24px;
+				.left {
+					display: flex;
+					gap: var(--base-gap);
+					align-items: center;
 				}
 
-				.label {
-					font-size: 1rem;
+				.badge {
+					background-color: var(--color);
+					color: var(--widgets-background-color);
+					border-radius: 999px;
+					height: 24px;
+					width: 24px;
+					font-size: 0.75rem;
+					display: grid;
+					place-items: center;
+					border: 1px solid var(--widgets-background-color);
 				}
 			}
 		}
