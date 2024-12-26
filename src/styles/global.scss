@@ -80,4 +80,9 @@ p,
 
 a {
 	color: inherit;
+	text-decoration-color: color-mix(in srgb, var(--color-paragraph) 50%, transparent);
+
+	&:hover {
+		text-decoration-color: var(--color-paragraph);
+	}
 }
