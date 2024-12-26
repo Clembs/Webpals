@@ -51,11 +51,11 @@
 						<House weight={page.url.pathname === '/' ? 'fill' : 'regular'} />
 					</a>
 				</li>
-				<li>
+				<!-- <li>
 					<button aria-label="Theme settings" title="Theme settings">
 						<Palette weight="regular" />
 					</button>
-				</li>
+				</li> -->
 				{#if page.data.currentUser}
 					<li
 						data-submenu="true"
