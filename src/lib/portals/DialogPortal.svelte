@@ -1,4 +1,3 @@
-<!-- TODO: click outside closes dialog (optionally, maybe through an options object) -->
 <!-- TODO: lock the body when a dialog is opened -->
 
 <script lang="ts">
@@ -101,6 +100,23 @@
 			// - decrease scale by 0.05
 			filter: blur(calc(2px * var(--nested-level))) brightness(calc(1 - 0.1 * var(--nested-level)));
 			scale: calc(1 - 0.05 * var(--nested-level));
+		}
+
+		& :global(> form) {
+			display: flex;
+			flex-direction: column;
+			gap: var(--base-gap);
+
+			:global(h2) {
+				font-size: 1.5rem;
+				text-wrap: balance;
+			}
+
+			:global(.buttons) {
+				display: flex;
+				gap: calc(var(--base-gap) * 0.5);
+				justify-content: flex-end;
+			}
 		}
 
 		animation: fadeIn 200ms;

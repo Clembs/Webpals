@@ -83,10 +83,11 @@
 		);
 	}
 
-	function closeDialog(ev?: Event) {
+	export function closeDialog(ev?: Event, force = false) {
 		if (ev) ev.preventDefault();
 
-		if (!wrapperEl || !dialogEl || !isWidgetEditing || !dialogOpen) return;
+		// if the els aren't here, or that isWidgetEditing is already false, return (override isWidgetEditing with force)
+		if ((!force && !isWidgetEditing) || !dialogOpen || !wrapperEl || !dialogEl) return;
 
 		// we change the variable first so the background can darken at the same time
 		isWidgetEditing = false;
@@ -132,8 +133,8 @@
 	$effect(() => {
 		if (!editMenu) return;
 
-		if (isWidgetEditing === false) {
-			closeDialog();
+		if (!isWidgetEditing) {
+			closeDialog(new Event(''), true);
 		}
 	});
 </script>
@@ -292,23 +293,6 @@
 				color: var(--inputs-on-background-color);
 				cursor: pointer;
 			}
-		}
-	}
-
-	.confirm-delete {
-		display: flex;
-		flex-direction: column;
-		gap: var(--base-gap);
-
-		h2 {
-			font-size: 1.5rem;
-			text-wrap: balance;
-		}
-
-		.buttons {
-			display: flex;
-			gap: calc(var(--base-gap) * 0.5);
-			justify-content: flex-end;
 		}
 	}
 </style>
