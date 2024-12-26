@@ -282,16 +282,33 @@
 			right: calc(var(--base-padding) * 0.25);
 			top: calc(var(--base-padding) * 0.25);
 			padding: calc(var(--base-padding) * 0.25);
-			gap: calc(var(--base-gap) * 0.25);
 
 			button {
 				border: none;
 				border: var(--inputs-border-width) solid var(--inputs-border-color);
-				border-radius: var(--inputs-border-base-radius);
 				background: var(--widgets-background-color-dim);
-				padding: calc(var(--base-padding) * 0.25);
+				padding: calc(var(--base-padding) * 0.375);
 				color: var(--inputs-on-background-color);
 				cursor: pointer;
+
+				&:first-child {
+					border-radius: var(--inputs-border-base-radius) 0 0 var(--inputs-border-base-radius);
+					border-right: none;
+				}
+
+				&:last-child {
+					border-radius: 0 var(--inputs-border-base-radius) var(--inputs-border-base-radius) 0;
+				}
+
+				&:first-child:last-child {
+					border-radius: var(--inputs-border-base-radius);
+					border-right: 1px solid var(--inputs-border-color);
+				}
+
+				&:hover,
+				&:focus-within {
+					filter: brightness(0.9);
+				}
 			}
 		}
 	}
