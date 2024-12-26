@@ -1,3 +1,7 @@
+<script module>
+	export { aboutIslandsDialog };
+</script>
+
 <script lang="ts">
 	import DiscordLogo from '$icons/DiscordLogo.svelte';
 	import type { FullUser } from '$lib/db/schema/users';

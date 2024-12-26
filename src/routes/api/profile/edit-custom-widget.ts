@@ -21,9 +21,9 @@ function mutateObject(
 	let current = obj;
 	for (let i = 0; i < keys.length - 1; i++) {
 		const key = keys[i];
-		// If the key does not exist, throw an error
+		// If the key does not exist, create an empty object or array
 		if (!(key in current)) {
-			throw new Error(`Key "${key}" does not exist in the object`);
+			current[key] = /^\d+$/.test(keys[i + 1]) ? [] : {};
 		}
 		current = current[key] as { [key: string]: unknown };
 	}
