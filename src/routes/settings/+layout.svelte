@@ -109,18 +109,22 @@
 						}}
 						class="nav-item"
 					>
-						<div class="icon">
-							<Island />
+						<div class="left">
+							<div class="icon">
+								<Island />
+							</div>
+							<div class="label">About Islands</div>
 						</div>
-						<div class="label">About Islands</div>
 					</button>
 				</li>
 				<li>
 					<a href="/logout" class="nav-item">
-						<div class="icon">
-							<DoorOpen weight="regular" />
+						<div class="left">
+							<div class="icon">
+								<DoorOpen weight="regular" />
+							</div>
+							<div class="label">Logout</div>
 						</div>
-						<div class="label">Logout</div>
 					</a>
 				</li>
 			</ul>
