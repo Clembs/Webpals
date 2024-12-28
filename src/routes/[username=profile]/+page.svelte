@@ -115,7 +115,7 @@
 </div>
 
 {#if data.editable && data.currentUser}
-	<ProfileEditBar bind:editing={data.editing} user={data.currentUser} />
+	<ProfileEditBar bind:editing={data.editing} user={data.currentUser} bind:theme />
 {/if}
 
 <style lang="scss">

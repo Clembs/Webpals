@@ -1,17 +1,21 @@
 <script lang="ts">
 	import type { FullUser } from '$lib/db/schema/users';
-	import { Eye, PencilSimple, Plus, Gear } from 'phosphor-svelte';
+	import { Eye, PencilSimple, Plus, Gear, Palette } from 'phosphor-svelte';
 	import { fly } from 'svelte/transition';
 	import WidgetPicker from './WidgetPicker.svelte';
 	import AccountSettings from './AccountSettings.svelte';
 	import type { EditBarMenuMethods } from './BaseEditBarMenu.svelte';
+	import ThemeEditor from './ThemeEditor.svelte';
+	import type { Theme } from '$lib/themes/types';
 
 	let {
 		editing = $bindable(),
-		user
+		user = $bindable(),
+		theme = $bindable()
 	}: {
 		editing: boolean;
 		user: FullUser;
+		theme: Theme;
 	} = $props();
 
 	let widgetPickerOpen = $state(false);
@@ -93,6 +97,14 @@
 		bind:menuOpen={widgetPickerOpen}
 	/>
 
+	<ThemeEditor
+		bind:theme
+		{editBarEl}
+		{editBarWrapperEl}
+		bind:menu={themeEditor}
+		bind:menuOpen={themeEditorOpen}
+	/>
+
 	<AccountSettings
 		{user}
 		{editBarEl}
@@ -114,15 +126,16 @@
 				<Plus weight="regular" />
 				<span class="label"> Add widget </span>
 			</button>
-			<!-- TODO: reimplement theme & account settings -->
-			<!-- <button
-					class="edit-command"
-					onclick={() => (themeEditorOpen = !themeEditorOpen)}
-					aria-label="Theme settings"
-				>
-					<Palette />
-					<span class="label"> Theme settings </span>
-				</button> -->
+			<button
+				class="edit-command"
+				onclick={() => themeEditor?.open()}
+				aria-label="Theme settings"
+				inert={!editing}
+				aria-hidden={!editing}
+			>
+				<Palette />
+				<span class="label"> Theme settings </span>
+			</button>
 			<button
 				class="edit-command"
 				onclick={() => accountSettingsMethods?.open()}

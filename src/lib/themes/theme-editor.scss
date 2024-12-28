@@ -1,45 +1,5 @@
 section {
-	border-top: 1px solid var(--inputs-border-color);
 	color: var(--color-paragraph);
-
-	details {
-		gap: var(--base-gap);
-		padding: var(--base-padding) var(--base-padding) 0;
-
-		&[open] {
-			padding: var(--base-padding);
-
-			summary {
-				margin-bottom: calc(var(--base-gap) * 0.5);
-
-				.arrow-icon {
-					rotate: 180deg;
-				}
-			}
-		}
-	}
-
-	summary {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		cursor: pointer;
-		margin: calc(0px - var(--base-padding)) calc(0px - var(--base-padding)) 0;
-		padding: var(--base-padding);
-		position: relative;
-
-		.arrow-icon {
-			transition: rotate 200ms;
-		}
-	}
-
-	h2 {
-		font-size: 1.25rem;
-		color: var(--color-heading);
-		display: inline-flex;
-		align-items: center;
-		gap: calc(var(--base-gap) * 0.5);
-	}
 
 	label {
 		display: flex;
