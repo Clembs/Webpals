@@ -5,7 +5,7 @@
 	import MusicEditWidgetComponent from '../default-edit-menus/MusicWidgetEditComponent.svelte';
 	import AudioPlayer from '$lib/components/AudioPlayer.svelte';
 
-	let { user, widget, editing }: WidgetComponentProps<Required<MusicWidget>> = $props();
+	let { user, widget, editing }: WidgetComponentProps<MusicWidget> = $props();
 
 	let modalOpened = $state(false);
 </script>
@@ -34,14 +34,14 @@
 
 		{#if widget.content_type === 'spotify'}
 			<AudioPlayer
-				src={widget.content_url}
+				src={widget.content_url!}
 				type="audio/mp3"
 				metadata={{
 					title: widget.title,
 					artist: widget.artist,
 					artwork: [
 						{
-							src: widget.album_art_url,
+							src: widget.album_art_url!,
 							type: 'image/jpeg'
 						}
 					]
