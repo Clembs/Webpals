@@ -2,7 +2,7 @@
 	import { page } from '$app/state';
 	import { aboutIslandsDialog } from '$lib/components/NavBar/AccountMenu.svelte';
 	import { dialogPortal } from '$lib/portals/dialog.svelte';
-	import { Bell, DoorOpen, EyeSlash, Island, Palette, Password, User } from 'phosphor-svelte';
+	import { Bell, DoorOpen, EyeSlash, Island, Numpad, Palette, User } from 'phosphor-svelte';
 
 	let { data, children } = $props();
 
@@ -54,7 +54,7 @@
 				{
 					label: 'Invite Codes',
 					href: '/settings/invite-codes',
-					icon: Password,
+					icon: Numpad,
 					badge: {
 						label: data.currentUser.inviteCodes
 							.filter(({ status }) => status !== 'claimed')
