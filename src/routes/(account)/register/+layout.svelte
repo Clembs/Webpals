@@ -14,7 +14,7 @@
 	main {
 		display: grid;
 		place-items: center;
-		height: 100vh;
+		flex: 1;
 		padding: 0 calc(var(--base-padding) * 0.5);
 	}
 </style>

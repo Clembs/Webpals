@@ -6,6 +6,7 @@ import { db } from '$lib/db';
 import { users } from '$lib/db/schema/users';
 import { generateSnowflake } from '$lib/helpers/users';
 import { createSession } from '$lib/helpers/sessions';
+import { _getValidInviteCode } from '../verify-invite-code/+page.server';
 
 export const load: PageServerLoad = async ({ url }) => {
 	const username = url.searchParams.get('username')?.toString();
@@ -46,6 +47,14 @@ export const actions: Actions = {
 		if (!email || !EMAIL_REGEX.test(email)) {
 			return fail(400, {
 				message: 'Invalid email address. Check the requirements and try again.'
+			});
+		}
+
+		const inviteCodeCookie = cookies.get('invite-code');
+
+		if (!inviteCodeCookie || !_getValidInviteCode(inviteCodeCookie)) {
+			return fail(400, {
+				message: "Missing an invite code, or it's invalid. Go back and try again."
 			});
 		}
 

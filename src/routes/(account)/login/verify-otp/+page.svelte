@@ -9,11 +9,11 @@
 
 <main>
 	<Card min-width="500px">
-		<header>
+		<div class="header">
 			<h1>Log in using an email one-time password</h1>
 
 			<p>A 6-digit code has been sent to your inbox. Type it below to log in.</p>
-		</header>
+		</div>
 
 		<form
 			use:enhance={() =>

@@ -6,12 +6,21 @@ import { sendEmail } from '$lib/helpers/email';
 import { db } from '$lib/db';
 import { authCodes } from '$lib/db/schema/auth';
 import { randomInt } from 'crypto';
+import { _getValidInviteCode } from '../verify-invite-code/+page.server';
 
-export const load: PageServerLoad = async ({ url }) => {
+export const load: PageServerLoad = async ({ url, cookies }) => {
 	const username = url.searchParams.get('username')?.toString();
 
 	if (!username || !USERNAME_REGEX.test(username)) {
-		throw redirect(302, '/register');
+		redirect(302, '/register');
+	}
+
+	const inviteCodeCookie = cookies.get('invite-code');
+
+	console.log(await _getValidInviteCode(inviteCodeCookie));
+
+	if (!inviteCodeCookie || !_getValidInviteCode(inviteCodeCookie)) {
+		redirect(302, '/register');
 	}
 };
 
@@ -41,6 +50,16 @@ export const actions: Actions = {
 			});
 		}
 
+		const userWithEmail = await db.query.users.findFirst({
+			where: ({ email: dbEmail }, { eq }) => eq(dbEmail, email)
+		});
+
+		if (userWithEmail) {
+			return fail(400, {
+				message: `A user already exists with this email address. If you meant to login, please go back.`
+			});
+		}
+
 		const [{ code }] = await db
 			.insert(authCodes)
 			.values({
@@ -60,6 +79,6 @@ export const actions: Actions = {
 			fetch
 		});
 
-		throw redirect(302, `/register/verify-otp?username=${username}&email=${email}`);
+		redirect(302, `/register/verify-otp?username=${username}&email=${email}`);
 	}
 };

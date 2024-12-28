@@ -2,38 +2,51 @@
 	import { enhance } from '$app/forms';
 	import Button from '$lib/components/Button.svelte';
 	import TextInput from '$lib/components/TextInput.svelte';
+	import { Numpad } from 'phosphor-svelte';
 
 	let { data: initialData, form } = $props();
+	let isLoading = $state(false);
 
 	// do that so you can bind the value to the input
 	let data = $state(initialData);
 </script>
 
+{#snippet numpadIcon(size: number)}
+	<Numpad {size} weight="regular" />
+{/snippet}
+
 <div class="header">
-	<div class="eyebrow">Create an account - Step 3/3</div>
-	<h1>Verify your email address</h1>
+	<div class="eyebrow">Create an account - Step 2/3</div>
+	<h1>Enter your invite code</h1>
 
 	<p>
-		The verification code has been sent to your inbox. Type it below to verify your email address.
+		Before Islands releases, an invite code is required to register.<br />
+		Please enter the 5 characters-long code you were given.
 	</p>
 </div>
 
 <form
-	use:enhance={() =>
-		({ update }) => {
-			update({ reset: false });
-		}}
-	action="?/verifyOTP"
+	use:enhance={() => {
+		isLoading = true;
+
+		return ({ update }) => {
+			isLoading = false;
+
+			update({
+				reset: false
+			});
+		};
+	}}
+	action="?/validateInviteCode"
 	method="post"
 >
 	<TextInput
-		name="otp"
+		name="invite-code"
+		prefixIcon={numpadIcon}
+		label="Invite code"
 		inputmode="numeric"
-		autocomplete="one-time-code"
-		pattern="\d{6}"
-		minlength={6}
-		maxlength={6}
-		label="Verfiication code"
+		minlength={5}
+		maxlength={5}
 		tabindex={1}
 		autofocus
 		error={form?.message}
@@ -43,13 +56,15 @@
 		<Button
 			type="button"
 			variant="secondary"
-			href="/register/email-input?username={data.username}&email={data.email}"
+			href="/register?username={data.username}{data.email ? `&email=${data.email}` : ''}"
 			tabindex={3}
 		>
 			Back
 		</Button>
 
-		<Button type="submit" tabindex={2}>Verify email address</Button>
+		<Button disabled={isLoading} type="submit" tabindex={2}>
+			{isLoading ? 'Loading...' : 'Verify invite code'}
+		</Button>
 	</div>
 </form>
 

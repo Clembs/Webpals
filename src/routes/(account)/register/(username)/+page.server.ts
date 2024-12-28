@@ -2,9 +2,10 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { USERNAME_REGEX } from '$lib/helpers/constants';
 import { db } from '$lib/db';
+import { _getValidInviteCode } from '../verify-invite-code/+page.server';
 
 export const actions: Actions = {
-	async validateUsername({ request, url }) {
+	async validateUsername({ request, url, cookies }) {
 		const formData = await request.formData();
 
 		const username = formData.get('username')?.toString();
@@ -23,10 +24,19 @@ export const actions: Actions = {
 
 		if (userWithUsername) {
 			return fail(409, {
-				message: 'Username already in use.'
+				message: 'Username already in use. Please try something else!'
 			});
 		}
 
-		throw redirect(307, `/register/email-input?username=${username}${email && `&email=${email}`}`);
+		const inviteCodeCookie = cookies.get('invite-code');
+
+		if (inviteCodeCookie && !!_getValidInviteCode(inviteCodeCookie)) {
+			redirect(307, `/register/email-input?username=${username}${email ? `&email=${email}` : ''}`);
+		} else {
+			redirect(
+				307,
+				`/register/verify-invite-code?username=${username}${email ? `&email=${email}` : ''}`
+			);
+		}
 	}
 };
