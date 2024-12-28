@@ -2,19 +2,29 @@
 	import BaseWidget from '$lib/widgets/BaseWidget.svelte';
 	import type { ConnectionsWidget, WidgetComponentProps } from '../types';
 	import { connectionProviders } from '../connections';
-	import { ArrowSquareOut, CopySimple, SealCheck, TextAlignLeft } from 'phosphor-svelte';
+	import { ArrowSquareOut, Check, CopySimple, SealCheck, TextAlignLeft } from 'phosphor-svelte';
 	import ConnectionsWidgetEditComponent from '../default-edit-menus/ConnectionsWidgetEditComponent.svelte';
+	import { SvelteMap } from 'svelte/reactivity';
 
 	let { user, widget, editing }: WidgetComponentProps<ConnectionsWidget> = $props();
 
 	let modalOpened = $state(false);
+
+	let copiedConnection = new SvelteMap(widget.connections.map((_, index) => [index, false]));
+
+	function copyConnectionIdentifiable(index: number) {
+		const connection = widget.connections[index];
+		navigator.clipboard.writeText(connection.identifiable);
+		copiedConnection.set(index, true);
+		setTimeout(() => copiedConnection.set(index, false), 1000);
+	}
 </script>
 
 {#snippet editMenu()}
 	<ConnectionsWidgetEditComponent {widget} />
 {/snippet}
 
-{#snippet connectionContents(connection: ConnectionsWidget['connections'][0])}
+{#snippet connectionContents(connection: ConnectionsWidget['connections'][0], index: number)}
 	{@const provider = connectionProviders[connection.provider]}
 
 	<div class="left">
@@ -39,7 +49,13 @@
 	{#if connection.url}
 		<ArrowSquareOut weight="regular" />
 	{:else}
-		<CopySimple />
+		<div class="copy-icon" class:animate={copiedConnection.get(index)}>
+			{#if copiedConnection.get(index)}
+				<Check weight="regular" />
+			{:else}
+				<CopySimple />
+			{/if}
+		</div>
 	{/if}
 {/snippet}
 
@@ -48,19 +64,16 @@
 		<h2>Connections</h2>
 
 		<ul class="connections-list">
-			{#each widget.connections as connection}
+			{#each widget.connections as connection, index (index)}
 				<li>
 					{#if connection.url}
 						<a class="connection" href={connection.url} target="_blank" rel="noopener noreferrer">
-							{@render connectionContents(connection)}
+							{@render connectionContents(connection, index)}
 						</a>
 					{:else}
 						<!-- TODO: show visual info to confirm copy -->
-						<button
-							class="connection"
-							onclick={() => navigator.clipboard.writeText(connection.identifiable)}
-						>
-							{@render connectionContents(connection)}
+						<button class="connection" onclick={() => copyConnectionIdentifiable(index)}>
+							{@render connectionContents(connection, index)}
 						</button>
 					{/if}
 				</li>
@@ -112,6 +125,20 @@
 						display: flex;
 						align-items: center;
 						gap: calc(var(--base-gap) * 0.25);
+					}
+				}
+
+				&:hover:active .copy-icon {
+					transform: scale(0.95);
+				}
+
+				.copy-icon {
+					display: grid;
+					place-items: center;
+					transition: transform 200ms;
+
+					&.animate {
+						transform: scale(1.15);
 					}
 				}
 			}
