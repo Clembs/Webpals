@@ -1,8 +1,10 @@
 <script lang="ts">
 	import type { FullUser } from '$lib/db/schema/users';
-	import { Eye, PencilSimple, Plus, Palette, Gear } from 'phosphor-svelte';
+	import { Eye, PencilSimple, Plus, Gear } from 'phosphor-svelte';
 	import { fly } from 'svelte/transition';
 	import WidgetPicker from './WidgetPicker.svelte';
+	import AccountSettings from './AccountSettings.svelte';
+	import type { EditBarMenuMethods } from './BaseEditBarMenu.svelte';
 
 	let {
 		editing = $bindable(),
@@ -13,18 +15,18 @@
 	} = $props();
 
 	let widgetPickerOpen = $state(false);
-	let widgetPickerEl = $state<HTMLDivElement>();
+	let widgetPickerMethods = $state<EditBarMenuMethods>();
 
 	let themeEditorOpen = $state(false);
+	let themeEditor = $state<EditBarMenuMethods>();
+
+	let accountSettingsOpen = $state(false);
+	let accountSettingsMethods = $state<EditBarMenuMethods>();
 
 	let editBarEl = $state<HTMLDivElement>();
 	let editBarWrapperEl = $state<HTMLDivElement>();
 	let toggleModesButtonEl = $state<HTMLAnchorElement>();
 	let editModeButtonHover = $state(false);
-
-	let widgetPicker = $state<{
-		openMenu: () => void;
-	}>();
 
 	// handles the fancy animation when toggling between view and edit mode
 	// if i ever need to change any of this i'm just gonna cry ;-;
@@ -81,33 +83,31 @@
 	transition:fly={{ y: 200 }}
 	bind:this={editBarWrapperEl}
 	class:viewing={!editing}
-	class:expanded={themeEditorOpen || widgetPickerOpen}
+	class:expanded={themeEditorOpen || widgetPickerOpen || accountSettingsOpen}
 >
 	<WidgetPicker
-		bind:this={widgetPicker}
+		{user}
 		{editBarEl}
 		{editBarWrapperEl}
-		bind:widgetPickerEl
-		{user}
+		bind:menu={widgetPickerMethods}
 		bind:menuOpen={widgetPickerOpen}
 	/>
 
 	<div id="edit-bar" bind:this={editBarEl}>
-		{#if editing}
-			<!-- commands -->
-			<div id="edit-commands">
-				<button
-					class="edit-command"
-					onclick={() => {
-						widgetPicker && widgetPicker.openMenu();
-					}}
-					aria-label="Add widget"
-				>
-					<Plus weight="regular" />
-					<span class="label"> Add widget </span>
-				</button>
-				<!-- TODO: reimplement theme & account settings -->
-				<!-- <button
+		<!-- commands -->
+		<div id="edit-commands">
+			<button
+				class="edit-command"
+				onclick={() => widgetPickerMethods?.open()}
+				aria-label="Add widget"
+				inert={!editing}
+				aria-hidden={!editing}
+			>
+				<Plus weight="regular" />
+				<span class="label"> Add widget </span>
+			</button>
+			<!-- TODO: reimplement theme & account settings -->
+			<!-- <button
 					class="edit-command"
 					onclick={() => (themeEditorOpen = !themeEditorOpen)}
 					aria-label="Theme settings"
@@ -115,12 +115,19 @@
 					<Palette />
 					<span class="label"> Theme settings </span>
 				</button>
-				<button class="edit-command" aria-label="Account settings">
-					<Gear />
-					<span class="label"> Account settings </span>
-				</button> -->
-			</div>
+				<button
+				class="edit-command"
+				onclick={() => accountSettingsMethods?.open()}
+				aria-label="Account settings"
+				inert={!editing}
+				aria-hidden={!editing}
+			>
+				<Gear />
+				<span class="label"> Account settings </span>
+			</button> -->
+		</div>
 
+		{#if editing}
 			<!-- switch button -->
 			<!-- holy fuck thats a lot of props lmao -->
 			<a
@@ -146,23 +153,6 @@
 				{/if}
 			</a>
 		{:else}
-			<!-- commands (they're inert so you dont focus into them or whatever) -->
-			<div id="edit-commands">
-				<button class="edit-command" aria-hidden={true} inert>
-					<Plus weight="regular" />
-					<span class="label"> Add widget </span>
-				</button>
-				<button class="edit-command" aria-hidden={true} inert>
-					<Palette />
-					<span class="label"> Theme settings </span>
-				</button>
-				<button class="edit-command" aria-hidden={true} inert>
-					<Gear />
-					<span class="label"> Account settings </span>
-				</button>
-			</div>
-
-			<!-- switch button -->
 			<a
 				href="/{user.username}"
 				data-sveltekit-replacestate
