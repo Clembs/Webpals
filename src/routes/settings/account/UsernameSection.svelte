@@ -6,6 +6,8 @@
 	import { At } from 'phosphor-svelte';
 	import type { LayoutServerData } from '../$types';
 	import { enhance } from '$app/forms';
+	import { USERNAME_REGEX } from '$lib/helpers/constants';
+	import { goto } from '$app/navigation';
 
 	let { data }: { data: LayoutServerData } = $props();
 
@@ -18,7 +20,6 @@
 </script>
 
 {#snippet changeUsernameDialog()}
-	<!-- TODO: implement the endpoint -->
 	<form
 		use:enhance={() => {
 			isLoading = true;
@@ -28,13 +29,22 @@
 
 				if (result.type === 'success') {
 					dialogPortal.closeDialog();
-					await update({
-						reset: false
+				}
+				// in case the username change occurs on the profile page
+				// redirect to the new username
+				if (result.type === 'redirect') {
+					dialogPortal.closeDialog();
+					await goto(result.location, {
+						replaceState: true,
+						invalidateAll: true
 					});
 				}
+				await update({
+					reset: false
+				});
 			};
 		}}
-		action="/api/settings?/editUsername"
+		action="/api/settings?/updateUsername"
 		method="post"
 	>
 		<h2>Change username</h2>
@@ -47,19 +57,38 @@
 		{#snippet at(size: number)}
 			<At {size} weight="regular" />
 		{/snippet}
-		<TextInput name="username" bind:value={username} prefixIcon={at} error={page.form?.message} />
+		<TextInput
+			name="username"
+			bind:value={username}
+			prefixIcon={at}
+			pattern={USERNAME_REGEX.source}
+			minlength={2}
+			maxlength={24}
+			error={page.form?.message}
+		/>
 
 		<div class="buttons">
 			<Button type="button" onclick={() => dialogPortal.closeDialog()} variant="secondary" inline>
 				Cancel
 			</Button>
 
-			<Button inline>Save</Button>
+			<Button
+				type="submit"
+				inline
+				disabled={username === data.currentUser.username ||
+					isLoading ||
+					!username ||
+					username.length < 2 ||
+					username.length > 24 ||
+					!USERNAME_REGEX.test(username)}
+			>
+				Save
+			</Button>
 		</div>
 	</form>
 {/snippet}
 
-<section id="username">
+<section id="username" class="settings-section">
 	<h3>Username</h3>
 
 	<p>
