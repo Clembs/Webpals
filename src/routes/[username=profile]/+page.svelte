@@ -52,6 +52,20 @@
 	)?.content}
 />
 
+{#snippet widgetEl(widget: AnyWidget)}
+	{#if widget.id === 'about_me' && 'content' in widget}
+		<AboutMeWidgetComponent {widget} {...data} />
+	{:else if widget.id === 'music' && 'content_url' in widget && (!data.editing ? widget.content_url : true)}
+		<MusicWidgetComponent {widget} {...data} />
+	{:else if widget.id === 'friends' && !('blocks' in widget)}
+		<FriendsWidgetComponent {widget} {...data} />
+	{:else if widget.id === 'connections' && 'connections' in widget}
+		<ConnectionsWidgetComponent {widget} {...data} />
+	{:else if 'blocks' in widget}
+		<CustomWidgetComponent {widget} {...data} />
+	{/if}
+{/snippet}
+
 {#snippet widgetColumn(widgets: AnyWidget[], index: number)}
 	<div
 		class="column"
@@ -69,17 +83,7 @@
 	>
 		{#each widgets as widget (widget.id)}
 			<div class="widget-wrapper" animate:flip={{ duration: 200 }}>
-				{#if widget.id === 'about_me' && 'content' in widget}
-					<AboutMeWidgetComponent {widget} {...data} />
-				{:else if widget.id === 'music' && 'content_url' in widget && (!data.editing ? widget.content_url : true)}
-					<MusicWidgetComponent {widget} {...data} />
-				{:else if widget.id === 'friends' && !('blocks' in widget)}
-					<FriendsWidgetComponent {widget} {...data} />
-				{:else if widget.id === 'connections' && 'connections' in widget}
-					<ConnectionsWidgetComponent {widget} {...data} />
-				{:else if 'blocks' in widget}
-					<CustomWidgetComponent {widget} {...data} />
-				{/if}
+				{@render widgetEl(widget)}
 			</div>
 		{/each}
 	</div>
@@ -93,7 +97,17 @@
 					{#if index === 0}
 						<ProfileWidgetComponent {...data} />
 					{/if}
-					{@render widgetColumn(column, index)}
+					{#if data.editing}
+						{@render widgetColumn(column, index)}
+					{:else}
+						<div class="column">
+							{#each column as widget (widget.id)}
+								<div class="widget-wrapper">
+									{@render widgetEl(widget)}
+								</div>
+							{/each}
+						</div>
+					{/if}
 				</div>
 			{/each}
 		</main>
