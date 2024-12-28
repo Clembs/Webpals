@@ -3,6 +3,7 @@
 	import { aboutIslandsDialog } from '$lib/components/NavBar/AccountMenu.svelte';
 	import { dialogPortal } from '$lib/portals/dialog.svelte';
 	import { Bell, DoorOpen, EyeSlash, Island, Numpad, Palette, User } from 'phosphor-svelte';
+	import './layout.scss';
 
 	let { data, children } = $props();
 
@@ -231,13 +232,6 @@
 			border-radius: var(--widgets-border-base-radius);
 			overflow-y: auto;
 			width: 100%;
-
-			:global(section) {
-				display: flex;
-				flex-direction: column;
-				gap: calc(var(--base-gap) * 0.5);
-				padding: var(--base-padding);
-			}
 		}
 	}
 </style>

@@ -93,6 +93,14 @@
 		bind:menuOpen={widgetPickerOpen}
 	/>
 
+	<AccountSettings
+		{user}
+		{editBarEl}
+		{editBarWrapperEl}
+		bind:menu={accountSettingsMethods}
+		bind:menuOpen={accountSettingsOpen}
+	/>
+
 	<div id="edit-bar" bind:this={editBarEl}>
 		<!-- commands -->
 		<div id="edit-commands">
@@ -114,8 +122,8 @@
 				>
 					<Palette />
 					<span class="label"> Theme settings </span>
-				</button>
-				<button
+				</button> -->
+			<button
 				class="edit-command"
 				onclick={() => accountSettingsMethods?.open()}
 				aria-label="Account settings"
@@ -124,7 +132,7 @@
 			>
 				<Gear />
 				<span class="label"> Account settings </span>
-			</button> -->
+			</button>
 		</div>
 
 		{#if editing}

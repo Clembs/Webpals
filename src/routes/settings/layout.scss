@@ -1,0 +1,6 @@
+section {
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--base-gap) * 0.5);
+	padding: var(--base-padding);
+}
