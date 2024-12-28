@@ -23,10 +23,10 @@ An invite-only release where only I issue invite codes. It will be a way for clo
 - [x] Authentication (Login, Register, Logout)
 - [x] Friends[^1]
 - [x] Some default widgets
-- [ ] Profile theming
+- [ ] Barebones profile theming
 - [x] Notifications
 - [ ] Barebones mobile version
-- [ ] Invite system
+- [x] Invite system
 
 ### Public alpha
 
@@ -43,6 +43,7 @@ Every user will be able to issue codes to invite more people to the app. Expecte
 A release where anyone can sign up, without an invite code. Expected features:
 
 - [ ] Onboarding
+- [ ] Full profile theming
 - [ ] Post & profile feed
 - [ ] Virtual currency & badges
 - [ ] Advanced post features
