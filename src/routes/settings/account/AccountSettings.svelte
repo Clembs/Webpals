@@ -11,7 +11,7 @@
 
 <UsernameSection {data} />
 
-<section id="email">
+<section id="email" class="settings-section">
 	<h3>Email</h3>
 
 	{#snippet email(size: number)}
@@ -26,19 +26,19 @@
 	</p>
 </section>
 
-<section id="passkeys">
+<section id="passkeys" class="settings-section">
 	<h3>Passkeys</h3>
 
 	<p>TODO: when I implement passkeys, show them here and give options to edit/delete them.</p>
 </section>
 
-<section id="sessions">
+<section id="sessions" class="settings-section">
 	<h3>Sessions</h3>
 
 	<p>TODO: view a list of sessions and add controls to revoke them.</p>
 </section>
 
-<section id="delete-account">
+<section id="delete-account" class="settings-section">
 	<h3>Delete account</h3>
 
 	<p>

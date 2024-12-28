@@ -8,7 +8,7 @@
 	let generateStatus = $state<'loading' | 'success' | 'error' | null>(null);
 </script>
 
-<section>
+<section class="settings-section">
 	<h1>Invite codes</h1>
 
 	<p>
@@ -48,6 +48,7 @@
 								icon
 								size="small"
 								variant="secondary"
+								disabled={code.status !== 'available'}
 							>
 								<Clipboard weight="regular" size={18} />
 							</Button>

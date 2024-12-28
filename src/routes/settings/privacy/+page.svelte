@@ -1,4 +1,4 @@
-<section>
+<section class="settings-section">
 	<h1>TODO: privacy settings</h1>
 
 	<ul>
