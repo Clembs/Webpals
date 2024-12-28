@@ -2,6 +2,14 @@ import { db } from '$lib/db';
 import { inviteCodes } from '$lib/db/schema/auth';
 import { redirect, fail } from '@sveltejs/kit';
 
+export async function load({ locals: { getCurrentUser } }) {
+	const user = await getCurrentUser();
+
+	if (user?.username.toLowerCase() !== 'clembs') {
+		redirect(301, '/settings/account');
+	}
+}
+
 export const actions = {
 	async default({ locals: { getCurrentUser } }) {
 		const user = await getCurrentUser();

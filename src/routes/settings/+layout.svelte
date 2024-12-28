@@ -49,22 +49,27 @@
 				}
 			]
 		},
-		{
-			name: 'Tester Secrets',
-			settings: [
-				{
-					label: 'Invite Codes',
-					href: '/settings/invite-codes',
-					icon: Numpad,
-					badge: {
-						label: data.currentUser.inviteCodes
-							.filter(({ status }) => status !== 'claimed')
-							.length.toString(),
-						color: 'var(--color-heading)'
+		// hardcode this bc idrc lol
+		...(data.currentUser.username.toLowerCase() === 'clembs'
+			? [
+					{
+						name: 'Tester Secrets',
+						settings: [
+							{
+								label: 'Invite Codes',
+								href: '/settings/invite-codes',
+								icon: Numpad,
+								badge: {
+									label: data.currentUser.inviteCodes
+										.filter(({ status }) => status !== 'claimed')
+										.length.toString(),
+									color: 'var(--color-heading)'
+								}
+							}
+						]
 					}
-				}
-			]
-		}
+				]
+			: [])
 	];
 </script>
 
@@ -154,12 +159,6 @@
 			justify-content: space-between;
 			width: var(--aside-width);
 			flex-shrink: 0;
-
-			h1 {
-				font-size: 1.5rem;
-				margin-bottom: var(--base-gap);
-				margin-left: calc(var(--base-gap) * 0.75);
-			}
 
 			nav {
 				display: flex;
