@@ -101,7 +101,8 @@
 				border-right: var(--inputs-border-width) solid var(--inputs-border-color);
 				background-color: var(--widgets-background-color-dim);
 				color: var(--inputs-on-background-color);
-				height: 3rem;
+				height: calc(var(--base-padding) * 3);
+				width: calc(var(--base-padding) * 3);
 			}
 
 			.suffix-button {
@@ -116,6 +117,7 @@
 				width: 100%;
 				border: transparent;
 				background-color: var(--color-input);
+				font-weight: 400;
 			}
 
 			.prefix-icon + input {
