@@ -7,6 +7,8 @@ import { users } from '$lib/db/schema/users';
 import { generateSnowflake } from '$lib/helpers/users';
 import { createSession } from '$lib/helpers/sessions';
 import { _getValidInviteCode } from '../verify-invite-code/+page.server';
+import { inviteCodes } from '$lib/db/schema/auth';
+import { eq } from 'drizzle-orm';
 
 export const load: PageServerLoad = async ({ url }) => {
 	const username = url.searchParams.get('username')?.toString();
@@ -76,6 +78,14 @@ export const actions: Actions = {
 				username
 			})
 			.returning();
+
+		// mark the invite code as claimed
+		await db
+			.update(inviteCodes)
+			.set({
+				status: 'claimed'
+			})
+			.where(eq(inviteCodes.code, inviteCodeCookie));
 
 		const userAgent = request.headers.get('user-agent') || '';
 

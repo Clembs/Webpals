@@ -2,8 +2,6 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { USERNAME_REGEX } from '$lib/helpers/constants';
 import { db } from '$lib/db';
-import { inviteCodes } from '$lib/db/schema/auth';
-import { eq } from 'drizzle-orm';
 
 export const load: PageServerLoad = async ({ url }) => {
 	const username = url.searchParams.get('username')?.toString();
@@ -60,13 +58,6 @@ export const actions: Actions = {
 			path: '/',
 			httpOnly: true
 		});
-
-		await db
-			.update(inviteCodes)
-			.set({
-				status: 'claimed'
-			})
-			.where(eq(inviteCodes.code, inviteCode.code));
 
 		redirect(307, `/register/email-input?username=${username}${email ? `&email=${email}` : ''}`);
 	}
