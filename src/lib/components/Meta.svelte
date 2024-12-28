@@ -27,15 +27,15 @@
 <svelte:head>
 	<!-- title  -->
 	{#if title}
-		<title>{title} | Islands</title>
+		<title>{title} | Webpals</title>
 		<meta name="title" content={title} />
 		<meta property="og:title" content={title} />
 		<meta name="twitter:title" content={title} />
 	{:else}
-		<title>Islands</title>
-		<meta name="title" content="Islands" />
-		<meta property="og:title" content="Islands | Fun mini profiles for everyone" />
-		<meta name="twitter:title" content="Islands | Fun mini profiles for everyone" />
+		<title>Webpals</title>
+		<meta name="title" content="Webpals" />
+		<meta property="og:title" content="Webpals | Fun mini profiles for everyone" />
+		<meta name="twitter:title" content="Webpals | Fun mini profiles for everyone" />
 	{/if}
 
 	<!-- description -->
@@ -48,8 +48,8 @@
 	<meta property="og:url" content={page.url.href} />
 
 	<!-- site name -->
-	<meta property="og:site_name" content="Islands" />
-	<meta name="author" content="Islands" />
+	<meta property="og:site_name" content="Webpals" />
+	<meta name="author" content="Webpals" />
 
 	<!-- indexing -->
 	<!-- TODO: robots.txt -->

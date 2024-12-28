@@ -12,7 +12,7 @@
 	<h1>Invite codes</h1>
 
 	<p>
-		Registering on Islands is for now limited via invite codes. You may generate up to 10 invite
+		Registering on Webpals is for now limited via invite codes. You may generate up to 10 invite
 		codes to invite your friends over!
 	</p>
 

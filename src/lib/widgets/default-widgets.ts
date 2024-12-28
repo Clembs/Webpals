@@ -17,7 +17,7 @@ export const defaultMusicWidget: MusicWidget = {
 
 export const defaultAboutMeWidget: AboutMeWidget = {
 	id: 'about_me',
-	content: 'Hello, Islands!'
+	content: 'Hello, Webpals!'
 };
 
 export const defaultFriendsWidget: FriendsWidget = {

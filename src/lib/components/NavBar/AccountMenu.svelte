@@ -1,5 +1,5 @@
 <script module>
-	export { aboutIslandsDialog };
+	export { aboutWebpalsDialog };
 </script>
 
 <script lang="ts">
@@ -26,12 +26,12 @@
 	}}
 />
 
-{#snippet aboutIslandsDialog()}
-	<div class="about-islands">
+{#snippet aboutWebpalsDialog()}
+	<div class="about-webpals">
 		<Island size={64} />
 
 		<h1>
-			Islands
+			Webpals
 			<span class="label" aria-label="(developer preview)"> developer preview </span>
 		</h1>
 
@@ -61,7 +61,7 @@
 				</a>
 			</li>
 			<li>
-				<a href="https://github.com/Clembs/islands" target="_blank" rel="noopener noreferrer">
+				<a href="https://github.com/Clembs/webpals" target="_blank" rel="noopener noreferrer">
 					<Code weight="regular" />
 					Source code
 				</a>
@@ -97,11 +97,11 @@
 			<button
 				onclick={() => {
 					menuOpen = false;
-					dialogPortal.openDialog(aboutIslandsDialog);
+					dialogPortal.openDialog(aboutWebpalsDialog);
 				}}
 			>
 				<Island />
-				About Islands
+				About Webpals
 			</button>
 		</li>
 		<li class="option">
@@ -161,7 +161,7 @@
 		}
 	}
 
-	.about-islands {
+	.about-webpals {
 		display: flex;
 		flex-direction: column;
 		align-items: center;

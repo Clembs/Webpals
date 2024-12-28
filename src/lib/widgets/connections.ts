@@ -79,13 +79,13 @@ export const connectionProviders: Record<
 		hasUrl: true,
 		verifiable: true
 	},
-	islands: {
-		name: 'Islands',
+	webpals: {
+		name: 'Webpals',
 		icon: Island,
-		// works for islands.lol, islandslol.vercel.app, and islands.clembs.com URLs. group 1 is the handle
+		// works for webpals.me, webpals.vercel.com, and webpals.clembs.com URLs. group 1 is the handle
 		// this should work unless i break smth. i'd be very dumb
 		matchingPattern:
-			/^(?:https?:\/\/)?(?:islands\.lol|islandslol\.vercel\.app|islands\.clembs\.com)\/([a-zA-Z0-9_]{2,24})(?:\?.*)?$/,
+			/^(?:https?:\/\/)?(?:webpals\.me|webpals\.vercel\.app|webpals\.clembs\.com)\/([a-zA-Z0-9_]{2,24})(?:\?.*)?$/,
 		hasUrl: true,
 		verifiable: true
 	},

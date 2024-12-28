@@ -80,9 +80,9 @@ export async function handleAuthFlow({ request, url }: RequestEvent) {
 
 		await sendEmail({
 			address: user.email,
-			subject: 'Your Islands one-time password',
+			subject: 'Your Webpals one-time password',
 			bodyHTML: `
-				<p>Enter the code below on the website to login to Islands:</p>
+				<p>Enter the code below on the website to login to Webpals:</p>
 				<h1>${code}</h1>
 							`,
 			fetch

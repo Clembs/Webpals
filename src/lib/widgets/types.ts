@@ -73,7 +73,7 @@ export type ConnectionProvider =
 	| 'email'
 	| 'domain'
 	| 'github'
-	| 'islands'
+	| 'webpals'
 	| 'youtube'
 	| 'steam'
 	| 'pretendo'

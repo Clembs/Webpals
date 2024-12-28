@@ -90,7 +90,7 @@
 				{/if}
 			</ul>
 			{#if !page.data.currentUser}
-				<a href="/login"> Join Islands </a>
+				<a href="/login"> Join Webpals </a>
 			{:else}
 				<div
 					use:clickoutside

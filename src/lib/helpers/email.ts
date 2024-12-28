@@ -30,7 +30,7 @@ export async function sendEmail({
 			],
 			from: {
 				email: 'islands@clembs.com',
-				name: 'Islands'
+				name: 'Webpals'
 			},
 			content: [
 				{

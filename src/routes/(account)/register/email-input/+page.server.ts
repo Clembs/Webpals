@@ -71,7 +71,7 @@ export const actions: Actions = {
 
 		await sendEmail({
 			address: email,
-			subject: 'Islands Email Verification',
+			subject: 'Webpals Email Verification',
 			bodyHTML: `
 				<p>Enter the code below on the website to verify your email address and continue with your registration:</p>
 				<h1>${code}</h1>

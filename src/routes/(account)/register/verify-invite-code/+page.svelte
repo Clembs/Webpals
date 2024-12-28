@@ -20,7 +20,7 @@
 	<h1>Enter your invite code</h1>
 
 	<p>
-		Before Islands releases, an invite code is required to register.<br />
+		Before Webpals releases, an invite code is required to register.<br />
 		Please enter the 5 characters-long code you were given.
 	</p>
 </div>

@@ -1,4 +1,4 @@
-# Islands
+# Webpals
 
 Fun highly customizable mini profiles for everyone :3
 
@@ -14,7 +14,7 @@ If you're interested in the project, consider following updates more visually vi
 
 ## Release roadmap
 
-Islands is still in development and will be released in multiple stages. The following is a rough roadmap of the features I plan to implement (subject to change).
+Webpals is still in development and will be released in multiple stages. The following is a rough roadmap of the features I plan to implement (subject to change).
 
 ### Private alpha
 

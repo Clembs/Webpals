@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { aboutIslandsDialog } from '$lib/components/NavBar/AccountMenu.svelte';
+	import { aboutWebpalsDialog } from '$lib/components/NavBar/AccountMenu.svelte';
 	import { dialogPortal } from '$lib/portals/dialog.svelte';
 	import { Bell, DoorOpen, EyeSlash, Island, Numpad, Palette, User } from 'phosphor-svelte';
 	import './layout.scss';
@@ -106,7 +106,7 @@
 				<li>
 					<button
 						onclick={() => {
-							dialogPortal.openDialog(aboutIslandsDialog);
+							dialogPortal.openDialog(aboutWebpalsDialog);
 						}}
 						class="nav-item"
 					>
@@ -114,7 +114,7 @@
 							<div class="icon">
 								<Island />
 							</div>
-							<div class="label">About Islands</div>
+							<div class="label">About Webpals</div>
 						</div>
 					</button>
 				</li>
