@@ -208,12 +208,14 @@
 		transform: translateX(-50%);
 		z-index: 5;
 		width: max-content;
+		max-height: 40vh;
 
 		--toggle-modes-button-width: 230px;
 
 		// the 24px is just the size of the icon
 		@media (max-width: 950px) {
 			--toggle-modes-button-width: calc(var(--base-padding) * 2 + 24px);
+			max-height: 80vh;
 		}
 
 		&.viewing {
@@ -230,7 +232,7 @@
 
 		&.expanded {
 			@media (max-width: 950px) {
-				width: 100%;
+				width: 100% !important;
 				bottom: 0;
 				border-radius: var(--widgets-border-base-radius) var(--widgets-border-base-radius) 0 0;
 			}
@@ -242,7 +244,7 @@
 		transition:
 			transform 500ms cubic-bezier(0.8, -0.3, 0.1, 1.3),
 			// fancy ass cubic bézier
-			opacity 250ms ease 200ms;
+			opacity 250ms ease;
 		width: fit-content;
 
 		#edit-commands {

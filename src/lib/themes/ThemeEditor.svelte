@@ -71,22 +71,24 @@
 <style lang="scss">
 	#theme-editor {
 		display: flex;
-		padding: var(--base-padding);
 		gap: calc(var(--base-gap) * 1.5);
 		position: relative;
 		min-height: 200px;
+		border-top: var(--widgets-border-width) solid var(--widgets-border-color);
 
 		@media (max-width: 950px) {
 			flex-direction: column;
 			padding-top: 0;
+			gap: 0;
+			min-height: 500px;
 		}
 
 		aside {
 			max-width: 200px;
 			width: 100%;
 			flex-shrink: 0;
-			position: sticky;
-			inset: 0;
+			padding: var(--base-padding);
+			background-color: var(--widgets-background-color);
 
 			@media (max-width: 950px) {
 				max-width: none;
@@ -150,6 +152,16 @@
 						color: var(--inputs-background-color);
 					}
 				}
+			}
+		}
+
+		.component {
+			flex: 1;
+			padding: var(--base-padding);
+			overflow-y: auto;
+
+			@media (max-width: 950px) {
+				overflow: initial;
 			}
 		}
 	}

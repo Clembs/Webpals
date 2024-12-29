@@ -54,19 +54,32 @@
 
 			// animate the edit bar wrapper to the dimensions of the opened menu
 			editBarWrapperEl.style.transition = `all 500ms cubic-bezier(0.8, -0.3, 0.1, 1.3)`;
-			editBarWrapperEl.style.height = `${openedMenuRect.height}px`;
+			editBarWrapperEl.style.height =
+				// see whats taller between the opened menu and the max height of the window (80% on mobile, 40% on desktop)
+				`${Math.max(openedMenuRect.height, window.innerHeight * (mobile ? 0.8 : 0.4))}px`;
 			editBarWrapperEl.style.width = mobile ? `100%` : `${openedMenuRect.width}px`;
 
 			menuOpen = true;
 
 			// fade out the edit bar
-			editBarEl.style.top = `translateY(-100%)`;
 			editBarEl.style.opacity = '0';
 			editBarEl.style.pointerEvents = 'none';
 
 			// fade in the opened menu
 			menuEl.style.opacity = '1';
 		});
+
+		editBarWrapperEl.addEventListener(
+			'transitionend',
+			() => {
+				if (!editBarWrapperEl || !menuEl) return;
+
+				// set the dimensions of the edit bar wrapper to be lax
+				// editBarWrapperEl.style.height = '';
+				// editBarWrapperEl.style.width = '';
+			},
+			{ once: true }
+		);
 	}
 
 	export function close() {
@@ -76,7 +89,6 @@
 		const wrapperRect = editBarWrapperEl.getBoundingClientRect();
 
 		// animate the edit bar wrapper to the dimensions of the opened menu
-		editBarWrapperEl.style.transition = `all 500ms cubic-bezier(0.8, -0.3, 0.1, 1.3)`;
 		editBarWrapperEl.style.height = `${wrapperRect.height}px`;
 		editBarWrapperEl.style.width = `${wrapperRect.width}px`;
 
@@ -85,7 +97,6 @@
 		menuEl.style.opacity = '0';
 
 		// fade in the edit bar
-		editBarEl.style.top = `translateY(0)`;
 		editBarEl.style.opacity = '1';
 		editBarEl.style.pointerEvents = 'all';
 
@@ -95,6 +106,7 @@
 			const editBarRect = editBarEl.getBoundingClientRect();
 
 			// reset the dimensions of the edit bar wrapper
+			editBarWrapperEl.style.transition = `all 500ms cubic-bezier(0.8, -0.3, 0.1, 1.3)`;
 			editBarWrapperEl.style.height = `${editBarRect.height}px`;
 			editBarWrapperEl.style.width = `${editBarRect.width}px`;
 			menuOpen = false;
@@ -159,15 +171,12 @@
 		display: none;
 		flex-direction: column;
 		background-color: var(--widgets-background-color);
-		max-height: 40vh;
 		opacity: 0;
 		transition: opacity 500ms ease 200ms;
-		width: 100%;
-		min-width: 600px;
+		height: 100%;
 
 		@media (max-width: 950px) {
 			min-width: 100%;
-			max-height: 80vh;
 		}
 
 		.header {
@@ -201,6 +210,7 @@
 			display: flex;
 			flex-direction: column;
 			overflow-y: scroll;
+			flex: 1;
 		}
 	}
 </style>

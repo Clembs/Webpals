@@ -187,7 +187,7 @@
 				justify-content: space-between;
 				padding: calc(var(--base-padding) * 0.625) calc(var(--base-padding) * 0.75);
 				border-radius: var(--inputs-border-base-radius);
-				color: var(--widgets-text-color);
+				color: var(--inputs-on-background-color);
 				text-decoration: none;
 				background-color: transparent;
 				border: none;
