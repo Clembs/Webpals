@@ -167,6 +167,7 @@
 
 		@media (max-width: 950px) {
 			min-width: 100%;
+			max-height: 80vh;
 		}
 
 		.header {

@@ -55,7 +55,9 @@
 					aria-current={key === currentSection}
 				>
 					<Icon />
-					{label}
+					<span class="label">
+						{label}
+					</span>
 				</button>
 			{/each}
 		</nav>
@@ -71,6 +73,13 @@
 		display: flex;
 		padding: var(--base-padding);
 		gap: calc(var(--base-gap) * 1.5);
+		position: relative;
+		min-height: 200px;
+
+		@media (max-width: 950px) {
+			flex-direction: column;
+			padding-top: 0;
+		}
 
 		aside {
 			max-width: 200px;
@@ -79,11 +88,28 @@
 			position: sticky;
 			inset: 0;
 
+			@media (max-width: 950px) {
+				max-width: none;
+				width: calc(100% + var(--base-padding) * 2);
+				margin: 0px calc(0px - var(--base-padding));
+			}
+
 			nav {
 				display: flex;
 				flex-direction: column;
 				gap: calc(var(--base-gap) * 0.25);
-				// overflow-x: scroll;
+
+				@media (max-width: 950px) {
+					gap: calc(var(--base-gap) * 0.75);
+					flex-direction: row;
+					overflow-x: auto;
+					overflow-y: hidden;
+					scrollbar-width: none;
+					-webkit-overflow-scrolling: touch;
+					&::-webkit-scrollbar {
+						display: none;
+					}
+				}
 
 				button {
 					display: flex;
@@ -93,11 +119,30 @@
 					border-radius: var(--inputs-border-base-radius);
 					border: none;
 					cursor: pointer;
-
+					white-space: nowrap;
+					min-width: max-content;
 					background-color: transparent;
 
-					&:hover {
-						backdrop-filter: brightness(0.9);
+					@media (hover: hover) {
+						&:hover {
+							backdrop-filter: brightness(0.9);
+						}
+					}
+
+					.label {
+						white-space: nowrap;
+					}
+
+					@media (max-width: 950px) {
+						padding: calc(var(--base-padding) * 0.5);
+
+						&:first-child {
+							margin-left: var(--base-padding);
+						}
+
+						&:last-child {
+							margin-right: var(--base-padding);
+						}
 					}
 
 					&[aria-current='true'] {
