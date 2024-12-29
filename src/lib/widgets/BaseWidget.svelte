@@ -1,3 +1,21 @@
+<script lang="ts" module>
+	// this is very stupid but i have to use a class pattern to have global states work
+	// if anyone is reading this and knows svelte better than i do, tell me if there's a better way
+	class WidgetEditing {
+		private isAnyWidgetEditing = $state(false);
+
+		get value() {
+			return this.isAnyWidgetEditing;
+		}
+
+		set value(newValue: boolean) {
+			this.isAnyWidgetEditing = newValue;
+		}
+	}
+
+	export const isAnyWidgetEditing = new WidgetEditing();
+</script>
+
 <script lang="ts">
 	import type { PublicUser } from '$lib/db/schema/users';
 	import type { AnyWidget } from '$lib/widgets/types';
@@ -38,6 +56,7 @@
 		const wrapperRect = wrapperEl.getBoundingClientRect();
 
 		isWidgetEditing = true;
+		isAnyWidgetEditing.value = true;
 		dialogOpen = true;
 
 		// hide the original widget
@@ -91,6 +110,7 @@
 
 		// we change the variable first so the background can darken at the same time
 		isWidgetEditing = false;
+		isAnyWidgetEditing.value = false;
 
 		// set dialog height to a value in px so it can animate
 		const dialogRect = dialogEl.getBoundingClientRect();
@@ -174,7 +194,6 @@
 	</form>
 {/snippet}
 
-<!-- TODO!: fix bug where you can still drag the dialog when its open -->
 <div class="widget-root">
 	{#if editingMode && editMenu}
 		<div

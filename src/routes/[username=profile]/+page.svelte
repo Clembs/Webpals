@@ -12,6 +12,7 @@
 	import ProfileEditBar from './ProfileEditBar.svelte';
 	import { dndzone } from 'svelte-dnd-action';
 	import { invalidateAll } from '$app/navigation';
+	import { isAnyWidgetEditing } from '$lib/widgets/BaseWidget.svelte';
 
 	let { data } = $props();
 
@@ -71,7 +72,8 @@
 		class="column"
 		use:dndzone={{
 			items: widgets,
-			flipDurationMs: 200
+			flipDurationMs: 200,
+			dragDisabled: isAnyWidgetEditing.value
 		}}
 		onconsider={(ev) => {
 			userWidgets[index] = ev.detail.items;
