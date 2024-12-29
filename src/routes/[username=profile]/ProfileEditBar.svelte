@@ -1,12 +1,12 @@
 <script lang="ts">
 	import type { FullUser } from '$lib/db/schema/users';
+	import type { Theme } from '$lib/themes/types';
 	import { Eye, PencilSimple, Plus, Gear, Palette } from 'phosphor-svelte';
 	import { fly } from 'svelte/transition';
-	import WidgetPicker from './WidgetPicker.svelte';
-	import AccountSettings from './AccountSettings.svelte';
 	import type { EditBarMenuMethods } from './BaseEditBarMenu.svelte';
-	import ThemeEditor from './ThemeEditor.svelte';
-	import type { Theme } from '$lib/themes/types';
+	import WidgetPickerMenu from './WidgetPickerMenu.svelte';
+	import AccountSettingsMenu from './AccountSettingsMenu.svelte';
+	import ThemeEditorMenu from './ThemeEditorMenu.svelte';
 
 	let {
 		editing = $bindable(),
@@ -89,7 +89,7 @@
 	class:viewing={!editing}
 	class:expanded={themeEditorOpen || widgetPickerOpen || accountSettingsOpen}
 >
-	<WidgetPicker
+	<WidgetPickerMenu
 		{user}
 		{editBarEl}
 		{editBarWrapperEl}
@@ -97,7 +97,7 @@
 		bind:menuOpen={widgetPickerOpen}
 	/>
 
-	<ThemeEditor
+	<ThemeEditorMenu
 		bind:theme
 		{editBarEl}
 		{editBarWrapperEl}
@@ -105,7 +105,7 @@
 		bind:menuOpen={themeEditorOpen}
 	/>
 
-	<AccountSettings
+	<AccountSettingsMenu
 		{user}
 		{editBarEl}
 		{editBarWrapperEl}
