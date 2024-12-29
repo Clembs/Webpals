@@ -1,19 +1,11 @@
 <script lang="ts" module>
-	// this is very stupid but i have to use a class pattern to have global states work
-	// if anyone is reading this and knows svelte better than i do, tell me if there's a better way
-	class WidgetEditing {
-		private isAnyWidgetEditing = $state(false);
+	// thanks a LOT to @paolo.ricciuti.me for their help with figuring out this!!
+	// https://bsky.app/profile/paolo.ricciuti.me/post/3lehtcrthvc2i
+	let isAnyWidgetEditing = $state({
+		value: false
+	});
 
-		get value() {
-			return this.isAnyWidgetEditing;
-		}
-
-		set value(newValue: boolean) {
-			this.isAnyWidgetEditing = newValue;
-		}
-	}
-
-	export const isAnyWidgetEditing = new WidgetEditing();
+	export { isAnyWidgetEditing };
 </script>
 
 <script lang="ts">
