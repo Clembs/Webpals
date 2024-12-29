@@ -5,7 +5,7 @@ import { db } from '$lib/db';
 import { users } from '$lib/db/schema/users';
 import { eq } from 'drizzle-orm';
 import { parse } from 'valibot';
-import { CustomWidgetStructure } from '$lib/widgets/custom-structures/CustomWidget';
+import { CustomWidgetStructure } from '$lib/widgets/custom-widget-structure';
 
 function mutateObject(
 	obj: {

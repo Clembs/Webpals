@@ -9,7 +9,7 @@ import {
 	union,
 	type GenericSchema
 } from 'valibot';
-import type { AnyBlock } from '../types';
+import type { AnyBlock } from './types';
 
 export const BlockStructure: GenericSchema<AnyBlock> = union([
 	strictObject({
