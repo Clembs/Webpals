@@ -4,6 +4,7 @@ import { connectionProvidersArray } from '$lib/widgets/connections';
 import { db } from '$lib/db';
 import { users } from '$lib/db/schema/users';
 import type { ConnectionsWidget } from '$lib/widgets/types';
+import { eq } from 'drizzle-orm';
 
 export async function editConnection({ locals: { getCurrentUser }, request, url }: RequestEvent) {
 	const user = await getCurrentUser();
@@ -92,29 +93,32 @@ export async function editConnection({ locals: { getCurrentUser }, request, url 
 		}
 	} else {
 		try {
-			await db.update(users).set({
-				widgets: user.widgets.map((column) =>
-					column.map((w) => {
-						if (w.id === 'connections') {
-							const widget = w as ConnectionsWidget;
+			await db
+				.update(users)
+				.set({
+					widgets: user.widgets.map((column) =>
+						column.map((w) => {
+							if (w.id === 'connections') {
+								const widget = w as ConnectionsWidget;
 
-							return {
-								...w,
-								connections: widget.connections.map((c, i) =>
-									i === connectionIndex
-										? {
-												...c,
-												provider: provider || connection.provider,
-												identifiable: rawIdentifiable
-											}
-										: c
-								)
-							};
-						}
-						return w;
-					})
-				)
-			});
+								return {
+									...w,
+									connections: widget.connections.map((c, i) =>
+										i === connectionIndex
+											? {
+													...c,
+													provider: provider || connection.provider,
+													identifiable: rawIdentifiable
+												}
+											: c
+									)
+								};
+							}
+							return w;
+						})
+					)
+				})
+				.where(eq(users.id, user.id));
 		} catch (e) {
 			return fail(500, { message: String(e) });
 		}
