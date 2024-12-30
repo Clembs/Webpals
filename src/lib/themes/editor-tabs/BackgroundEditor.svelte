@@ -43,6 +43,6 @@
 	</div> -->
 
 	{#if theme.background.type === 'color'}
-		<ColorPicker bind:hex={theme.background.color} label="Background color" />
+		<ColorPicker isDialog={false} bind:hex={theme.background.color} label="Background color" />
 	{/if}
 </section>
