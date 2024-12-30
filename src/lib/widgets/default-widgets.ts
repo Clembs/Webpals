@@ -8,11 +8,12 @@ import type {
 
 export const defaultMusicWidget: MusicWidget = {
 	id: 'music',
-	content_url: undefined,
-	content_type: undefined,
-	title: undefined,
-	artist: undefined,
-	album_art_url: undefined
+	content_url: null,
+	content_type: null,
+	title: null,
+	artist: null,
+	album_art_url: null,
+	external_url: null
 };
 
 export const defaultAboutMeWidget: AboutMeWidget = {

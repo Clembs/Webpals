@@ -32,30 +32,32 @@
 			</h2>
 		</div>
 
-		{#if widget.content_type === 'spotify'}
-			<AudioPlayer
-				src={widget.content_url!}
-				type="audio/mp3"
-				metadata={{
-					title: widget.title,
-					artist: widget.artist,
-					artwork: [
-						{
-							src: widget.album_art_url!,
-							type: 'image/jpeg'
-						}
-					]
-				}}
-			/>
+		{#if widget.content_type && widget.content_url && widget.album_art_url && widget.title && widget.artist}
+			{#if widget.content_type === 'spotify'}
+				<AudioPlayer
+					src={widget.content_url}
+					type="audio/mp3"
+					metadata={{
+						title: widget.title,
+						artist: widget.artist,
+						artwork: [
+							{
+								src: widget.album_art_url,
+								type: 'image/jpeg'
+							}
+						]
+					}}
+				/>
 
-			<a
-				class="external-url-cta subtext"
-				href={widget.external_url}
-				target="_blank"
-				rel="noopener noreferrer"
-			>
-				<SpotifyLogo size={20} /> Listen on Spotify
-			</a>
+				<a
+					class="external-url-cta subtext"
+					href={widget.external_url}
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					<SpotifyLogo size={20} /> Listen on Spotify
+				</a>
+			{/if}
 		{:else}
 			<div class="error">
 				<p>

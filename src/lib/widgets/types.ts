@@ -34,19 +34,21 @@ export type AnyBlock = TextBlock | LayoutBlock | KeyValueBlock;
 
 export type MusicWidget = BaseDefaultWidget & {
 	id: 'music';
-	content_url?: string;
-	content_type?: 'spotify';
-	// | 'youtube'
-	// | 'soundcloud'
-	// | 'tidal'
-	// | 'apple-music'
-	// | 'deezer'
-	// | 'bandcamp'
-	// | `audio/${string}`
-	title?: string;
-	artist?: string;
-	album_art_url?: string;
-	external_url?: string;
+	content_url: string | null;
+	content_type:
+		| 'spotify'
+		// | 'youtube'
+		// | 'soundcloud'
+		// | 'tidal'
+		// | 'apple-music'
+		// | 'deezer'
+		// | 'bandcamp'
+		// | `audio/${string}`
+		| null;
+	title: string | null;
+	artist: string | null;
+	album_art_url: string | null;
+	external_url: string | null;
 };
 
 export type AboutMeWidget = BaseDefaultWidget & {
