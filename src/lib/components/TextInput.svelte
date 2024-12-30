@@ -90,7 +90,7 @@
 
 			&.error {
 				border-color: var(--color-urgent);
-				outline: 1px solid var(--color-urgent);
+				outline: var(--inputs-border-width) solid var(--color-urgent);
 			}
 
 			.prefix-icon {

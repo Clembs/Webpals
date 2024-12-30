@@ -31,7 +31,7 @@
 			place-items: center;
 			background-color: var(--widgets-background-color-dim);
 			color: var(--color-heading);
-			border: 1px solid var(--widgets-border-color);
+			border: var(--inputs-border-width) solid var(--widgets-border-color);
 
 			:global(svg) {
 				width: 50%;

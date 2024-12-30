@@ -64,8 +64,9 @@
 
 		text-align: center;
 		justify-content: center;
+		align-items: center;
 		width: 100%;
-		height: max-content;
+		// height: max-content;
 
 		font-weight: 500;
 		cursor: pointer;
@@ -87,7 +88,10 @@
 		&.primary {
 			background-color: var(--buttons-primary-background-color);
 			color: var(--buttons-primary-on-background-color);
-			border: var(--inputs-border-width) solid var(--buttons-primary-background-color);
+			border: var(--inputs-border-width) solid var(--buttons-primary-border-color);
+			box-shadow: var(--buttons-primary-box-shadow-x) var(--buttons-primary-box-shadow-y)
+				var(--buttons-primary-box-shadow-blur) var(--buttons-primary-box-shadow-spread)
+				var(--buttons-primary-box-shadow-color);
 
 			&:hover {
 				filter: brightness(0.95);
@@ -96,8 +100,7 @@
 		}
 
 		&.secondary {
-			background-color: transparent;
-			// background-color: var(--inputs-background-color);
+			background-color: var(--inputs-background-color);
 			color: var(--inputs-on-background-color);
 			border: var(--inputs-border-width) solid var(--inputs-border-color);
 

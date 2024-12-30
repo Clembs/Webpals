@@ -68,7 +68,7 @@
 		input,
 		textarea {
 			border: none;
-			border-bottom: 1px solid var(--inputs-border-color);
+			border-bottom: var(--inputs-border-width) solid var(--inputs-border-color);
 			outline: none;
 			font-size: var(--font-size, inherit);
 			font-weight: 500;
