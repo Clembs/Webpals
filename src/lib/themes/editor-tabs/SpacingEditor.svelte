@@ -5,15 +5,29 @@
 </script>
 
 <section>
-	<label for="padding">
+	<label for="spacing.padding">
 		Base padding
 
-		<input type="range" bind:value={theme.spacing.padding} min="0.125" max="2" step="0.125" />
+		<input
+			name="spacing.padding"
+			type="range"
+			bind:value={theme.spacing.padding}
+			min="0.25"
+			max="2"
+			step="0.125"
+		/>
 	</label>
 
-	<label for="padding">
+	<label for="spacing.gap">
 		Base spacing between elements
 
-		<input type="range" bind:value={theme.spacing.gap} min="0.125" max="2" step="0.125" />
+		<input
+			name="spacing.gap"
+			type="range"
+			bind:value={theme.spacing.gap}
+			min="0.25"
+			max="2"
+			step="0.125"
+		/>
 	</label>
 </section>

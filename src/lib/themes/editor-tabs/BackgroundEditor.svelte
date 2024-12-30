@@ -6,6 +6,8 @@
 </script>
 
 <section>
+	<h3>Color (more options coming soon)</h3>
+
 	<!-- <div>
 		<label for="color">
 			<input

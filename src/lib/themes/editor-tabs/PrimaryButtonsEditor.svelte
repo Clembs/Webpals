@@ -6,16 +6,49 @@
 </script>
 
 <section>
+	<h3>Colors</h3>
+
 	<ColorPicker
+		label="Background color"
+		name="primary_buttons.color_background"
 		bind:hex={theme.primary_buttons.color_background}
-		label="Primary buttons background"
 	/>
-	<!-- <ColorPicker bind:hex={theme.primary_buttons.color_on_background} label="Primary buttons text" /> -->
-	<!-- {#if theme.primary_buttons.border}
-		<ColorPicker
-			bind:hex={theme.primary_buttons.border.color}
-			label="Primary buttons border color"
+	<ColorPicker
+		label="Text & icons color"
+		name="primary_buttons.color_on_background"
+		bind:hex={theme.primary_buttons.color_on_background}
+	/>
+
+	<h3>Border</h3>
+
+	<ColorPicker
+		label="Border color"
+		name="primary_buttons.border.color"
+		bind:hex={theme.primary_buttons.border.color}
+	/>
+
+	<label for="secondary_inputs.border.width">
+		Corner radius (synced with all controls)
+
+		<input
+			type="range"
+			name="secondary_inputs.border.radius"
+			bind:value={theme.secondary_inputs.border.radius}
+			min="0"
+			max="3"
+			step="0.125"
 		/>
-		<input type="range" bind:value={theme.primary_buttons.border.width} min="0" max="10" />
-	{/if} -->
+	</label>
+
+	<label for="secondary_inputs.border.width">
+		Border width (synced with all controls)
+
+		<input
+			type="range"
+			name="secondary_inputs.border.width"
+			bind:value={theme.secondary_inputs.border.width}
+			min="0"
+			max="10"
+		/>
+	</label>
 </section>

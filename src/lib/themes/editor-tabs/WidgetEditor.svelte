@@ -6,15 +6,49 @@
 </script>
 
 <section>
-	<ColorPicker bind:hex={theme.widgets.color_background} label="Widgets background color" />
+	<h3>Colors</h3>
 
-	<!-- <ColorPicker bind:hex={theme.widgets.border.color} label="Border color" />
-	<label for="widgets-border-width">
-		Border width
-		<input type="range" bind:value={theme.widgets.border.width} min="0" max="10" />
+	<ColorPicker
+		label="Background color"
+		name="widgets.color_background"
+		bind:hex={theme.widgets.color_background}
+	/>
+
+	<ColorPicker
+		label="Background color (dimmed)"
+		name="widgets.color_background_dim"
+		bind:hex={theme.widgets.color_background_dim}
+	/>
+
+	<h3>Border</h3>
+
+	<ColorPicker
+		name="widgets.border.color"
+		label="Border color"
+		bind:hex={theme.widgets.border.color}
+	/>
+
+	<label for="widgets.border.radius">
+		Corner radius
+
+		<input
+			name="widgets.border.radius"
+			type="range"
+			bind:value={theme.widgets.border.radius}
+			min="0"
+			max="3"
+			step="0.125"
+		/>
 	</label>
-	<label for="border-radius">
-		Border radius
-		<input type="range" bind:value={theme.widgets.border.radius} min="0" max="5" />
-	</label> -->
+
+	<label for="widgets.border.width">
+		Border width
+		<input
+			name="widgets.border.width"
+			type="range"
+			bind:value={theme.widgets.border.width}
+			min="0"
+			max="10"
+		/>
+	</label>
 </section>
