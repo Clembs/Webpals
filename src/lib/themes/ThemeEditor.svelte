@@ -64,7 +64,7 @@
 	</aside>
 
 	<div class="component">
-		<CurrentSectionComponent {theme} />
+		<CurrentSectionComponent bind:theme />
 	</div>
 </div>
 
@@ -75,6 +75,7 @@
 		position: relative;
 		min-height: 200px;
 		border-top: var(--widgets-border-width) solid var(--widgets-border-color);
+		height: 100%;
 
 		@media (max-width: 950px) {
 			flex-direction: column;

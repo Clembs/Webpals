@@ -1,10 +1,10 @@
-type BorderProps = {
+type ThemeBorder = {
 	radius: `${number}%` | number;
 	width: number;
 	color: string;
 };
 
-type ShadowProps = {
+type ThemeShadow = {
 	color: string;
 	x: number;
 	y: number;
@@ -12,30 +12,30 @@ type ShadowProps = {
 	spread: number;
 };
 
-type BackgroundGradientProps = {
+type GradientBackground = {
 	type: 'gradient';
 	gradient_colors: string[];
-	gradient_direction?: number;
+	gradient_direction: number | null;
 	gradient_type: 'linear' | 'radial' | 'conic';
 };
 
-type BackgroundImageProps = {
+type ImageBackground = {
 	type: 'image';
 	image_url: string;
 	image_position: 'center' | 'top' | 'bottom' | 'left' | 'right';
 	image_size: 'cover' | 'contain';
 };
 
-type BackgroundColorProps = {
+type ColorBackground = {
 	type: 'color';
 	color: string;
 };
 
 export type Theme = {
-	background: BackgroundGradientProps | BackgroundImageProps | BackgroundColorProps;
+	background: GradientBackground | ImageBackground | ColorBackground;
 	avatar: {
 		size: number;
-		border: BorderProps | null;
+		border: ThemeBorder | null;
 	};
 	font: {
 		family: string;
@@ -49,19 +49,19 @@ export type Theme = {
 	widgets: {
 		color_background: string;
 		color_background_dim: string;
-		border: BorderProps;
-		shadow: ShadowProps | null;
+		border: ThemeBorder;
+		shadow: ThemeShadow | null;
 	};
 	primary_buttons: {
 		color_background: string;
 		color_on_background: string;
-		border: BorderProps;
-		shadow: ShadowProps | null;
+		border: ThemeBorder;
+		shadow: ThemeShadow | null;
 	};
 	secondary_inputs: {
 		color_background: string;
 		color_on_background: string;
-		border: BorderProps;
-		shadow: ShadowProps | null;
+		border: ThemeBorder;
+		shadow: ThemeShadow | null;
 	};
 };
