@@ -18,7 +18,7 @@
 		"@std/collections": "npm:@jsr/std__collections@^1.0.8",
 		"@supabase/supabase-js": "^2.46.1",
 		"@svelte-put/clickoutside": "^4.0.0",
-		"@sveltejs/adapter-auto": "^3.2.5",
+		"@sveltejs/adapter-vercel": "^5.5.0",
 		"@sveltejs/kit": "^2.15.0",
 		"@sveltejs/vite-plugin-svelte": "^5.0.3",
 		"@types/eslint": "^9.6.1",
