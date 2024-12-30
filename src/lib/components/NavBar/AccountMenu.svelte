@@ -32,7 +32,7 @@
 
 		<h1>
 			Webpals
-			<span class="label" aria-label="(developer preview)"> developer preview </span>
+			<span class="label" aria-label="(private alpha)"> private alpha </span>
 		</h1>
 
 		<p>Developed by Clembs</p>
@@ -55,7 +55,7 @@
 				</a>
 			</li>
 			<li>
-				<a href="https://clembs.com/discord" target="_blank" rel="noopener noreferrer">
+				<a href="https://discord.com/Mauurzxvrp" target="_blank" rel="noopener noreferrer">
 					<DiscordLogo />
 					Discord
 				</a>
@@ -172,14 +172,15 @@
 			display: flex;
 
 			.label {
-				font-size: 0.75rem;
+				font-size: 0.625rem;
 				background-color: #987fff;
-				padding: calc(var(--base-padding) * 0.25) calc(var(--base-padding) * 0.5);
+				padding: calc(var(--base-padding) * 0.125) calc(var(--base-padding) * 0.375);
 				align-items: center;
 				height: fit-content;
 				margin-left: calc(var(--base-gap) * 0.25);
 				border-radius: 99px;
 				color: var(--inputs-background-color);
+				transform: translateY(-4px);
 			}
 		}
 
