@@ -44,7 +44,6 @@
 		name="invite-code"
 		prefixIcon={numpadIcon}
 		label="Invite code"
-		inputmode="numeric"
 		minlength={5}
 		maxlength={5}
 		tabindex={1}
