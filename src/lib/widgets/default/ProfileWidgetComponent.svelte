@@ -30,6 +30,8 @@
 
 	let modalOpened = $state(false);
 
+	let addFriendState = $state<null | 'loading' | 'error'>(null);
+
 	let relationship = $derived(
 		page.data.currentUser?.initiatedRelationships.find(
 			(relationship) => relationship.recipientId === user.id
@@ -155,7 +157,7 @@
 				</Button>
 				{#if relationship === RelationshipTypes.FriendPending}
 					<!-- TODO: remove request -->
-					<Button variant="secondary">
+					<Button variant="secondary" disabled>
 						<Clock />
 						Requested
 					</Button>
@@ -173,17 +175,23 @@
 					</Button>
 				{:else}
 					<form
-						use:enhance={() =>
-							async ({ result }) =>
-								console.log(result)}
+						use:enhance={() => {
+							addFriendState = 'loading';
+							return async ({ result, update }) => {
+								addFriendState = null;
+								await update();
+								if (result.type === 'error' || result.type === 'failure') {
+									addFriendState = 'error';
+								}
+							};
+						}}
 						style="display: contents;"
 						action="/api/relationships?/sendFriendRequest&id={user.id}"
 						method="post"
 					>
 						<Button
 							type="submit"
-							disabled={relationship === RelationshipTypes.FriendPending ||
-								page.data.currentUser.id === user.id}
+							disabled={page.data.currentUser.id === user.id || addFriendState !== null}
 						>
 							<UserPlus />
 							Add friend
@@ -205,15 +213,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: var(--base-gap);
-
-		.pro-tip {
-			opacity: 0;
-			transition: opacity 200ms;
-
-			&.open {
-				opacity: 1;
-			}
-		}
 
 		input#avatar {
 			position: fixed;
