@@ -11,7 +11,7 @@ export const plainTheme: Theme = {
 		border: {
 			radius: '50%',
 			width: 0,
-			color: 'transparent'
+			color: '#ffffff00'
 		}
 	},
 	font: {
@@ -32,7 +32,7 @@ export const plainTheme: Theme = {
 			color: '#999'
 		},
 		shadow: {
-			color: 'rgba(0, 0, 0, 0.1)',
+			color: '#00000001',
 			x: 0,
 			y: 0,
 			blur: 10,
