@@ -53,20 +53,20 @@
   --widgets-border-width: {theme.widgets.border.width}px;
   --widgets-border-color: {theme.widgets.border.color};
   --widgets-border-base-radius: {theme.widgets.border.radius}rem;
-  --widgets-box-shadow-x: {theme.widgets.shadow?.x}px;
-  --widgets-box-shadow-y: {theme.widgets.shadow?.y}px;
-  --widgets-box-shadow-blur: {theme.widgets.shadow?.blur}px;
-  --widgets-box-shadow-spread: {theme.widgets.shadow?.spread}px;
-  --widgets-box-shadow-color: {theme.widgets.shadow?.color};
+  --widgets-box-shadow-x: {theme.widgets.shadow?.x || 0}px;
+  --widgets-box-shadow-y: {theme.widgets.shadow?.y || 0}px;
+  --widgets-box-shadow-blur: {theme.widgets.shadow?.blur || 0}px;
+  --widgets-box-shadow-spread: {theme.widgets.shadow?.spread || 0}px;
+  --widgets-box-shadow-color: {theme.widgets.shadow?.color || 'transparent'};
 	
 	--buttons-primary-background-color: {theme.primary_buttons.color_background};
 	--buttons-primary-on-background-color: {theme.primary_buttons.color_on_background};
-	--buttons-prumary-border-color: {theme.primary_buttons.border.color}
-	--buttons-primary-box-shadow-x: {theme.primary_buttons.shadow?.x}px;
-	--buttons-primary-box-shadow-y: {theme.primary_buttons.shadow?.y}px;
-	--buttons-primary-box-shadow-blur: {theme.primary_buttons.shadow?.blur}px;
-	--buttons-primary-box-shadow-spread: {theme.primary_buttons.shadow?.spread}px;
-	--buttons-primary-box-shadow-color: {theme.primary_buttons.shadow?.color};
+	--buttons-primary-border-color: {theme.primary_buttons.border.color};
+	--buttons-primary-box-shadow-x: {theme.primary_buttons.shadow?.x || 0}px;
+	--buttons-primary-box-shadow-y: {theme.primary_buttons.shadow?.y || 0}px;
+	--buttons-primary-box-shadow-blur: {theme.primary_buttons.shadow?.blur || 0}px;
+	--buttons-primary-box-shadow-spread: {theme.primary_buttons.shadow?.spread || 0}px;
+	--buttons-primary-box-shadow-color: {theme.primary_buttons.shadow?.color || 'transparent'};
 	
 	--inputs-border-width: {theme.secondary_inputs.border.width}px;
 	--inputs-border-base-radius: {theme.secondary_inputs.border.radius}rem;
@@ -74,11 +74,11 @@
 	--inputs-background-color: {theme.secondary_inputs.color_background};
 	--inputs-on-background-color: {theme.secondary_inputs.color_on_background};
 	--inputs-border-color: {theme.secondary_inputs.border.color};
-	--inputs-box-shadow-x: {theme.secondary_inputs.shadow?.x}px;
-	--inputs-box-shadow-y: {theme.secondary_inputs.shadow?.y}px;
-	--inputs-box-shadow-blur: {theme.secondary_inputs.shadow?.blur}px;
-	--inputs-box-shadow-spread: {theme.secondary_inputs.shadow?.spread}px;
-	--inputs-box-shadow-color: {theme.secondary_inputs.shadow?.color};
+	--inputs-box-shadow-x: {theme.secondary_inputs.shadow?.x || 0}px;
+	--inputs-box-shadow-y: {theme.secondary_inputs.shadow?.y || 0}px;
+	--inputs-box-shadow-blur: {theme.secondary_inputs.shadow?.blur || 0}px;
+	--inputs-box-shadow-spread: {theme.secondary_inputs.shadow?.spread || 0}px;
+	--inputs-box-shadow-color: {theme.secondary_inputs.shadow?.color || 'transparent'};
   "
 >
 	{@render children()}
