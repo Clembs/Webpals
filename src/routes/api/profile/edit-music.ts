@@ -41,7 +41,7 @@ export async function editMusic({ locals: { getCurrentUser }, url }: RequestEven
 		});
 	}
 
-	const [newUser] = await db
+	await db
 		.update(users)
 		.set({
 			widgets: user.widgets.map((column) =>
@@ -61,10 +61,7 @@ export async function editMusic({ locals: { getCurrentUser }, url }: RequestEven
 				})
 			)
 		})
-		.where(eq(users.id, user.id))
-		.returning();
-
-	console.log(newUser);
+		.where(eq(users.id, user.id));
 
 	return {};
 }
