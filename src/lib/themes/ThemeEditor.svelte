@@ -31,7 +31,6 @@
 </script>
 
 <script lang="ts">
-	import './theme-editor.scss';
 	import type { Theme } from './types';
 	import type { Component } from 'svelte';
 	import { ArrowsInLineHorizontal, Gradient, RadioButton, Palette, Cards } from 'phosphor-svelte';
@@ -54,7 +53,7 @@
 					onclick={() => (currentSection = key as keyof typeof sections)}
 					aria-current={key === currentSection}
 				>
-					<Icon />
+					<Icon weight={key === currentSection ? 'fill' : 'regular'} />
 					<span class="label">
 						{label}
 					</span>
@@ -71,7 +70,6 @@
 <style lang="scss">
 	#theme-editor {
 		display: flex;
-		gap: calc(var(--base-gap) * 1.5);
 		position: relative;
 		min-height: 200px;
 		border-top: var(--widgets-border-width) solid var(--widgets-border-color);
@@ -80,15 +78,13 @@
 		@media (max-width: 950px) {
 			flex-direction: column;
 			padding-top: 0;
-			gap: 0;
 			min-height: 500px;
 		}
 
 		aside {
-			max-width: 200px;
+			max-width: max-content;
 			width: 100%;
 			flex-shrink: 0;
-			padding: var(--base-padding);
 			background-color: var(--widgets-background-color);
 
 			@media (max-width: 950px) {
@@ -100,18 +96,22 @@
 			nav {
 				display: flex;
 				flex-direction: column;
-				gap: calc(var(--base-gap) * 0.25);
+				gap: calc(var(--base-gap) * 0.125);
+				overflow-y: auto;
+				padding: var(--base-padding);
+				height: 100%;
+				scrollbar-width: none;
+				-webkit-overflow-scrolling: touch;
+				&::-webkit-scrollbar {
+					display: none;
+				}
 
 				@media (max-width: 950px) {
-					gap: calc(var(--base-gap) * 0.75);
+					height: auto;
+					gap: calc(var(--base-gap) * 0.5);
 					flex-direction: row;
 					overflow-x: auto;
 					overflow-y: hidden;
-					scrollbar-width: none;
-					-webkit-overflow-scrolling: touch;
-					&::-webkit-scrollbar {
-						display: none;
-					}
 				}
 
 				button {
@@ -123,7 +123,6 @@
 					border: none;
 					cursor: pointer;
 					white-space: nowrap;
-					min-width: max-content;
 					background-color: transparent;
 
 					@media (hover: hover) {
@@ -137,7 +136,8 @@
 					}
 
 					@media (max-width: 950px) {
-						padding: calc(var(--base-padding) * 0.5);
+						padding: calc(var(--base-padding) * 0.5) calc(var(--base-padding) * 0.625);
+						min-width: max-content;
 
 						&:first-child {
 							margin-left: var(--base-padding);
@@ -163,6 +163,28 @@
 
 			@media (max-width: 950px) {
 				overflow: initial;
+			}
+
+			:global(section) {
+				display: flex;
+				flex-direction: column;
+				gap: var(--base-gap);
+
+				color: var(--color-paragraph);
+
+				:global(label) {
+					display: flex;
+					flex-direction: column;
+				}
+
+				:global(.color-picker label) {
+					display: flex;
+					flex-direction: row;
+				}
+
+				:global(.color-picker .color) {
+					border: var(--inputs-border-width) solid var(--inputs-border-color);
+				}
 			}
 		}
 	}
