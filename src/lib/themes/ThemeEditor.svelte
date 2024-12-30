@@ -10,10 +10,20 @@
 			icon: Cards,
 			component: WidgetEditor
 		},
+		font: {
+			label: 'Font',
+			icon: TextAa,
+			component: FontEditor
+		},
 		primaryButtons: {
 			label: 'Primary Buttons',
 			icon: RadioButton,
 			component: PrimaryButtonsEditor
+		},
+		secondaryInputs: {
+			label: 'Secondary Inputs',
+			icon: Textbox,
+			component: SecondaryInputsEditor
 		},
 		spacing: {
 			label: 'Spacing',
@@ -33,16 +43,26 @@
 <script lang="ts">
 	import type { Theme } from './types';
 	import type { Component } from 'svelte';
-	import { ArrowsInLineHorizontal, Gradient, RadioButton, Palette, Cards } from 'phosphor-svelte';
+	import {
+		ArrowsInLineHorizontal,
+		Gradient,
+		RadioButton,
+		Palette,
+		Cards,
+		TextAa,
+		Textbox
+	} from 'phosphor-svelte';
 	import BackgroundEditor from './editor-tabs/BackgroundEditor.svelte';
 	import WidgetEditor from './editor-tabs/WidgetEditor.svelte';
 	import SpacingEditor from './editor-tabs/SpacingEditor.svelte';
 	import PrimaryButtonsEditor from './editor-tabs/PrimaryButtonsEditor.svelte';
+	import FontEditor from './editor-tabs/FontEditor.svelte';
+	import SecondaryInputsEditor from './editor-tabs/SecondaryInputsEditor.svelte';
 
 	let { theme = $bindable() }: { theme: Theme } = $props();
 
 	let currentSection = $state<keyof typeof sections>('background');
-	let CurrentSectionComponent = $derived(sections[currentSection].component);
+	let CurrentSectionEditor = $derived(sections[currentSection].component);
 </script>
 
 <div id="theme-editor">
@@ -62,8 +82,8 @@
 		</nav>
 	</aside>
 
-	<div class="component">
-		<CurrentSectionComponent bind:theme />
+	<div class="editor">
+		<CurrentSectionEditor bind:theme />
 	</div>
 </div>
 
@@ -156,7 +176,7 @@
 			}
 		}
 
-		.component {
+		.editor {
 			flex: 1;
 			padding: var(--base-padding);
 			overflow-y: auto;
