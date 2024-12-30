@@ -1,7 +1,7 @@
 import type { PartialTheme } from '$lib/themes/mergeThemes';
 import type { AnyWidget } from '$lib/widgets/types';
 import { relations } from 'drizzle-orm';
-import { index, jsonb, pgTable, primaryKey, smallint, text, timestamp } from 'drizzle-orm/pg-core';
+import { jsonb, pgTable, primaryKey, smallint, text, timestamp } from 'drizzle-orm/pg-core';
 import {
 	inviteCodes,
 	passkeys,

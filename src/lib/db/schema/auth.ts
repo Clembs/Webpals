@@ -1,5 +1,5 @@
 import { relations, sql } from 'drizzle-orm';
-import { pgTable, timestamp, text, integer, primaryKey } from 'drizzle-orm/pg-core';
+import { pgTable, timestamp, text, integer } from 'drizzle-orm/pg-core';
 import { users } from './users';
 
 export const passkeys = pgTable('passkeys', {
@@ -57,28 +57,21 @@ export const sessionsRelations = relations(sessions, ({ one }) => ({
 
 export type Session = typeof sessions.$inferSelect;
 
-export const inviteCodes = pgTable(
-	'invite_codes',
-	{
-		code: text('code').notNull(),
-		userId: text('user_id')
-			.notNull()
-			.references(() => users.id),
-		status: text('status', {
-			enum: ['available', 'claimed']
-		})
-			.notNull()
-			.default('available'),
-		createdAt: timestamp('created_at').notNull().defaultNow()
-	},
-	({ code, userId }) => [
-		{
-			id: primaryKey({
-				columns: [code, userId]
-			})
-		}
-	]
-);
+export const inviteCodes = pgTable('invite_codes', {
+	id: text('id')
+		.primaryKey()
+		.default(sql`gen_random_uuid()`),
+	userId: text('user_id')
+		.notNull()
+		.references(() => users.id),
+	status: text('status', {
+		enum: ['available', 'claimed']
+	})
+		.notNull()
+		.default('available'),
+	code: text('code').notNull(),
+	createdAt: timestamp('created_at').notNull().defaultNow()
+});
 
 export const inviteCodesRelations = relations(inviteCodes, ({ one }) => ({
 	user: one(users, {
