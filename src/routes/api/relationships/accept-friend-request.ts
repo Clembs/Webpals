@@ -25,6 +25,18 @@ export async function acceptFriendRequest({ locals: { getCurrentUser }, url }: R
 		});
 	}
 
+	if (relationship.status === RelationshipTypes.Friend) {
+		return fail(400, {
+			message: 'You are already friends with this user.'
+		});
+	}
+
+	if (relationship.status !== RelationshipTypes.FriendPending) {
+		return fail(400, {
+			message: 'This user did not send you a friend request.'
+		});
+	}
+
 	// update the received relationship to be a friend
 	await db
 		.update(relationships)
