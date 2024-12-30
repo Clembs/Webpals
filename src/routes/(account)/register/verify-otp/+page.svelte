@@ -7,6 +7,8 @@
 
 	// do that so you can bind the value to the input
 	let data = $state(initialData);
+
+	let isLoading = $state(false);
 </script>
 
 <div class="header">
@@ -19,10 +21,13 @@
 </div>
 
 <form
-	use:enhance={() =>
-		({ update }) => {
+	use:enhance={() => {
+		isLoading = true;
+		return ({ update }) => {
+			isLoading = false;
 			update({ reset: false });
-		}}
+		};
+	}}
 	action="?/verifyOTP"
 	method="post"
 >
@@ -30,7 +35,7 @@
 		name="otp"
 		inputmode="numeric"
 		autocomplete="one-time-code"
-		pattern="\d{6}"
+		pattern={`\\d\{6\}`}
 		minlength={6}
 		maxlength={6}
 		label="Verfiication code"
@@ -49,7 +54,9 @@
 			Back
 		</Button>
 
-		<Button type="submit" tabindex={2}>Verify email address</Button>
+		<Button type="submit" tabindex={2} disabled={isLoading}>
+			{isLoading ? 'Loading...' : 'Verify email address'}
+		</Button>
 	</div>
 </form>
 

@@ -9,6 +9,8 @@
 
 	// do that so you can bind the value to the input
 	let data = $state(initialData);
+
+	let isLoading = $state(false);
 </script>
 
 {#snippet emailIcon(size: number)}
@@ -23,10 +25,13 @@
 </div>
 
 <form
-	use:enhance={() =>
-		({ update }) => {
+	use:enhance={() => {
+		isLoading = true;
+		return ({ update }) => {
+			isLoading = false;
 			update({ reset: false });
-		}}
+		};
+	}}
 	action="?/validateEmail"
 	method="post"
 >
@@ -53,7 +58,9 @@
 			Back
 		</Button>
 
-		<Button type="submit" tabindex={2}>Send verification code</Button>
+		<Button type="submit" tabindex={2} disabled={isLoading}>
+			{isLoading ? 'Sending code...' : 'Send verification code'}
+		</Button>
 	</div>
 </form>
 

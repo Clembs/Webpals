@@ -5,6 +5,8 @@
 	import TextInput from '$lib/components/TextInput.svelte';
 
 	let { data, form } = $props();
+
+	let isLoading = $state(false);
 </script>
 
 <main>
@@ -16,10 +18,13 @@
 		</div>
 
 		<form
-			use:enhance={() =>
-				({ update }) => {
+			use:enhance={() => {
+				isLoading = true;
+				return ({ update }) => {
+					isLoading = false;
 					update({ reset: false });
-				}}
+				};
+			}}
 			action="?/verifyOTP"
 			method="post"
 		>
@@ -41,7 +46,9 @@
 					Back
 				</Button>
 
-				<Button type="submit" tabindex={2}>Log in</Button>
+				<Button type="submit" tabindex={2} disabled={isLoading}>
+					{isLoading ? 'Loading...' : 'Log in'}
+				</Button>
 			</div>
 		</form>
 	</Card>

@@ -10,6 +10,8 @@
 	let { data } = $props();
 	let browserSupportsPasskeys = $state(false);
 
+	let isLoading = $state(false);
+
 	onMount(() => {
 		browserSupportsPasskeys = !!(navigator.credentials && navigator.credentials.create);
 	});
@@ -19,8 +21,11 @@
 	<Card min-width="500px">
 		<h1>Create an account or log in</h1>
 		<form
-			use:enhance={() =>
-				async ({ result, update }) => {
+			use:enhance={() =>{
+				isLoading = true;
+				return async ({ result, update }) => {
+					isLoading = false;
+
 					if (result.type === 'success' && result.data && result.data.authType === 'webauthn') {
 						const resultValidation = object({
 							authType: literal('webauthn'),
@@ -67,7 +72,7 @@
 							invalidateAll: false
 						});
 					}
-				}}
+				}}}
 			action="?/handleAuthFlow"
 			method="post"
 		>
@@ -80,7 +85,9 @@
 				bind:value={data.login}
 			/>
 
-			<Button type="submit">Continue</Button>
+			<Button disabled={isLoading} type="submit">
+				{isLoading ? 'Loading...' : 'Continue'}
+			</Button>
 		</form>
 	</Card>
 </main>
