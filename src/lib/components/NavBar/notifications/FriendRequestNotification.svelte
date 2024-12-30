@@ -11,6 +11,9 @@
 		notification: Notification;
 	} = $props();
 
+	let acceptIsLoading = $state(false);
+	let declineIsLoading = $state(false);
+
 	let recipient = $derived(notification.mentionedUsers[0].user!);
 </script>
 
@@ -29,7 +32,13 @@
 
 <div class="right">
 	<form
-		use:enhance
+		use:enhance={() => {
+			acceptIsLoading = true;
+			return ({ update }) => {
+				acceptIsLoading = false;
+				update();
+			};
+		}}
 		action="/api/relationships?/acceptFriendRequest&id={recipient.id}"
 		method="post"
 	>
@@ -40,12 +49,19 @@
 			variant="success"
 			aria-label="Accept friend request"
 			title="Accept friend request"
+			disabled={acceptIsLoading}
 		>
 			<Check weight="regular" />
 		</Button>
 	</form>
 	<form
-		use:enhance
+		use:enhance={() => {
+			declineIsLoading = true;
+			return ({ update }) => {
+				declineIsLoading = false;
+				update();
+			};
+		}}
 		action="/api/notifications?/deleteNotification&id={notification.id}"
 		method="post"
 	>
@@ -57,6 +73,7 @@
 			aria-label="Decline friend request"
 			title="Decline friend request"
 			type="submit"
+			disabled={declineIsLoading}
 		>
 			<X weight="regular" />
 		</Button>
