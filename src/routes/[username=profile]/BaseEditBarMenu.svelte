@@ -140,26 +140,32 @@
 
 <div bind:this={menuEl} class="bar-menu" class:open={menuOpen}>
 	<div class="header" class:scrolling={addWidgetMenuScroll}>
-		<button
-			class="btn"
-			onclick={() => {
-				close();
-			}}
-		>
-			<CaretLeft weight="regular" />
-		</button>
+		<div class="third">
+			<button
+				class="btn"
+				onclick={() => {
+					close();
+				}}
+			>
+				<CaretLeft weight="regular" />
+			</button>
+		</div>
 
-		<h2>{name}</h2>
+		<div class="third">
+			<h2>{name}</h2>
+		</div>
 
-		{#if expandHref}
-			<a aria-label="Expand settings" class="btn" href="/settings/account">
-				<ArrowsOutSimple weight="regular" />
-			</a>
-		{:else if rightButton}
-			{@render rightButton()}
-		{:else}
-			<div></div>
-		{/if}
+		<div class="third">
+			{#if expandHref}
+				<a aria-label="Expand settings" class="btn" href="/settings/account">
+					<ArrowsOutSimple weight="regular" />
+				</a>
+			{:else if rightButton}
+				{@render rightButton()}
+			{:else}
+				<div></div>
+			{/if}
+		</div>
 	</div>
 
 	<div
@@ -191,6 +197,25 @@
 			padding: calc(var(--base-padding) * 1.25);
 			border-bottom: var(--widgets-border-width) solid transparent;
 			transition: border-color 200ms;
+
+			.third {
+				width: 100%;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+
+				&:first-child {
+					justify-content: flex-start;
+				}
+
+				&:last-child {
+					justify-content: flex-end;
+				}
+			}
+
+			h2 {
+				text-align: center;
+			}
 
 			&.scrolling {
 				border-bottom: var(--widgets-border-width) solid var(--widgets-border-color);
