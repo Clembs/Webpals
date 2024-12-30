@@ -87,6 +87,11 @@ export const actions: Actions = {
 			})
 			.where(eq(inviteCodes.code, inviteCodeCookie));
 
+		// delete the invite code cookie
+		cookies.delete('invite-code', {
+			path: '/'
+		});
+
 		const userAgent = request.headers.get('user-agent') || '';
 
 		await createSession(cookies, userAgent, newUser.id);
