@@ -64,30 +64,33 @@ export async function editConnection({ locals: { getCurrentUser }, request, url 
 			: undefined;
 
 		try {
-			await db.update(users).set({
-				widgets: user.widgets.map((column) =>
-					column.map((w) => {
-						if (w.id === 'connections') {
-							const widget = w as ConnectionsWidget;
+			await db
+				.update(users)
+				.set({
+					widgets: user.widgets.map((column) =>
+						column.map((w) => {
+							if (w.id === 'connections') {
+								const widget = w as ConnectionsWidget;
 
-							return {
-								...w,
-								connections: widget.connections.map((c, i) =>
-									i === connectionIndex
-										? {
-												...c,
-												provider: knownProvider.id || connection.provider,
-												identifiable,
-												url
-											}
-										: c
-								)
-							};
-						}
-						return w;
-					})
-				)
-			});
+								return {
+									...w,
+									connections: widget.connections.map((c, i) =>
+										i === connectionIndex
+											? {
+													...c,
+													provider: knownProvider.id || connection.provider,
+													identifiable,
+													url
+												}
+											: c
+									)
+								};
+							}
+							return w;
+						})
+					)
+				})
+				.where(eq(users.id, user.id));
 		} catch (e) {
 			return fail(500, { message: String(e) });
 		}
