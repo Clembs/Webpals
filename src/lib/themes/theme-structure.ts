@@ -11,14 +11,17 @@ import {
 	nullable,
 	picklist,
 	regex,
-	optional
+	optional,
+	omit,
+	minValue,
+	maxValue
 } from 'valibot';
 
 const HexColorStructure = pipe(string(), hexColor());
 
 const BorderStructure = strictObject({
-	radius: union([pipe(string(), regex(/^(\d+)%$/)), number()]),
-	width: number(),
+	radius: union([pipe(string(), regex(/^(\d+)%$/)), pipe(number(), minValue(0), maxValue(3))]),
+	width: pipe(number(), minValue(0), maxValue(10)),
 	color: HexColorStructure
 });
 
@@ -33,7 +36,7 @@ const ShadowStructure = strictObject({
 const BackgroundGradientStructure = union([
 	strictObject({
 		type: literal('gradient'),
-		gradient_colors: array(string()),
+		gradient_colors: array(HexColorStructure),
 		gradient_direction: nullable(number()),
 		gradient_type: picklist(['linear', 'radial', 'conic']),
 
@@ -46,7 +49,7 @@ const BackgroundGradientStructure = union([
 		type: literal('color'),
 		color: HexColorStructure,
 
-		gradient_colors: optional(array(string())),
+		gradient_colors: optional(array(HexColorStructure)),
 		gradient_direction: optional(nullable(number())),
 		gradient_type: optional(picklist(['linear', 'radial', 'conic'])),
 		image_url: optional(pipe(string(), url())),
@@ -59,7 +62,7 @@ const BackgroundGradientStructure = union([
 		image_position: picklist(['center', 'top', 'bottom', 'left', 'right']),
 		image_size: picklist(['cover', 'contain']),
 
-		gradient_colors: optional(array(string())),
+		gradient_colors: optional(array(HexColorStructure)),
 		gradient_direction: optional(nullable(number())),
 		gradient_type: optional(picklist(['linear', 'radial', 'conic'])),
 		color: optional(HexColorStructure)
@@ -78,9 +81,8 @@ export const ThemeStructure = strictObject({
 		color_heading: HexColorStructure
 	}),
 	spacing: strictObject({
-		// TODO: min/max values
-		padding: number(),
-		gap: number()
+		padding: pipe(number(), minValue(0.25), maxValue(2)),
+		gap: pipe(number(), minValue(0.25), maxValue(2))
 	}),
 	widgets: strictObject({
 		color_background: HexColorStructure,
@@ -91,7 +93,7 @@ export const ThemeStructure = strictObject({
 	primary_buttons: strictObject({
 		color_background: HexColorStructure,
 		color_on_background: HexColorStructure,
-		border: BorderStructure,
+		border: omit(BorderStructure, ['radius', 'width']),
 		shadow: nullable(ShadowStructure)
 	}),
 	secondary_inputs: strictObject({

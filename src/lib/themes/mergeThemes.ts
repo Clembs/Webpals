@@ -43,8 +43,6 @@ export const plainTheme: Theme = {
 		color_background: '#000',
 		color_on_background: '#fff',
 		border: {
-			radius: 0.5,
-			width: 1,
 			color: '#000'
 		},
 		shadow: null

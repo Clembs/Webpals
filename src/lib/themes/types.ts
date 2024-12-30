@@ -55,7 +55,7 @@ export type Theme = {
 	primary_buttons: {
 		color_background: string;
 		color_on_background: string;
-		border: ThemeBorder;
+		border: Omit<ThemeBorder, 'radius' | 'width'>;
 		shadow: ThemeShadow | null;
 	};
 	secondary_inputs: {
