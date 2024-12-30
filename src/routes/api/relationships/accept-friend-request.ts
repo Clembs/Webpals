@@ -17,8 +17,6 @@ export async function acceptFriendRequest({ locals: { getCurrentUser }, url }: R
 
 	const recipientId = url.searchParams.get('id');
 
-	console.log(recipientId);
-
 	const relationship = currentUser.receivedRelationships.find((r) => r.userId === recipientId);
 
 	if (!recipientId || !relationship) {

@@ -45,13 +45,16 @@ export async function sendFriendRequest({ locals: { getCurrentUser }, request }:
 		(relationship) => relationship.recipientId === recipientUser.id
 	);
 
-	if (existingFriendship && existingFriendship.status === RelationshipTypes.FriendPending) {
+	// console.log(currentUser.initiatedRelationships);
+	// console.log(currentUser.receivedRelationships);
+
+	if (existingFriendship?.status === RelationshipTypes.FriendPending) {
 		return fail(400, {
 			message: 'You already sent a friend request to this user.'
 		});
 	}
 
-	if (existingFriendship && existingFriendship.status === RelationshipTypes.Friend) {
+	if (existingFriendship?.status === RelationshipTypes.Friend) {
 		return fail(400, {
 			message: 'You are already friends with this user.'
 		});
@@ -64,8 +67,8 @@ export async function sendFriendRequest({ locals: { getCurrentUser }, request }:
 
 	// if either user has blocked the other
 	if (
-		(existingFriendship && existingFriendship.status === RelationshipTypes.Blocked) ||
-		(receivedFriendship && receivedFriendship.status === RelationshipTypes.Blocked)
+		existingFriendship?.status === RelationshipTypes.Blocked ||
+		receivedFriendship?.status === RelationshipTypes.Blocked
 	) {
 		return fail(400, {
 			message: 'You cannot send a friend request to this user.'
@@ -73,7 +76,7 @@ export async function sendFriendRequest({ locals: { getCurrentUser }, request }:
 	}
 
 	// if the recipient has already sent a friend request, directly accept it
-	if (receivedFriendship && receivedFriendship.status === RelationshipTypes.FriendPending) {
+	if (receivedFriendship?.status === RelationshipTypes.FriendPending) {
 		// update the recevied relationship to be a friend
 		await db
 			.update(relationships)
