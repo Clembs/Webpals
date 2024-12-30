@@ -313,7 +313,7 @@
 
 				&:first-child:last-child {
 					border-radius: var(--inputs-border-base-radius);
-					border-right: 1px solid var(--inputs-border-color);
+					border-right: var(--inputs-border-width) solid var(--inputs-border-color);
 				}
 
 				&:hover,
