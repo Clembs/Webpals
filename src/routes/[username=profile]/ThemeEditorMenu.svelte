@@ -4,6 +4,8 @@
 	import type { Theme } from '$lib/themes/types';
 	import { enhance } from '$app/forms';
 	import Button from '$lib/components/Button.svelte';
+	import { page } from '$app/state';
+	import { ArrowClockwise } from 'phosphor-svelte';
 
 	let {
 		theme = $bindable(),
@@ -42,7 +44,25 @@
 		method="post"
 	>
 		<input type="hidden" name="theme" value={JSON.stringify(theme)} />
-		<Button size="small" type="submit" disabled={formState === 'loading'}>
+
+		<Button
+			inline
+			size="small"
+			icon
+			variant="secondary"
+			type="button"
+			onclick={() => {
+				console.log('hi');
+				console.log(page.data.user.theme);
+				theme = page.data.user.theme;
+			}}
+			disabled={formState === 'loading'}
+			aria-label="Undo all"
+		>
+			<ArrowClockwise />
+		</Button>
+
+		<Button inline size="small" type="submit" disabled={formState === 'loading'}>
 			{#if formState === 'loading'}
 				Saving...
 			{:else if formState === 'success'}
@@ -64,3 +84,11 @@
 >
 	<ThemeEditor bind:theme />
 </BaseEditBarMenu>
+
+<style lang="scss">
+	form {
+		display: flex;
+		align-items: center;
+		gap: calc(var(--base-gap) * 0.5);
+	}
+</style>
