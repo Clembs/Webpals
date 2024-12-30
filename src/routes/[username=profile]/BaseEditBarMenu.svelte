@@ -13,6 +13,7 @@
 	let {
 		name,
 		expandHref,
+		rightButton,
 		menuOpen = $bindable(false),
 		editBarEl,
 		editBarWrapperEl,
@@ -20,6 +21,7 @@
 	}: {
 		name: string;
 		expandHref?: string;
+		rightButton?: Snippet;
 		menuOpen: boolean;
 		editBarEl: HTMLDivElement | undefined;
 		editBarWrapperEl: HTMLDivElement | undefined;
@@ -130,7 +132,7 @@
 
 <svelte:window
 	onkeydown={(ev) => {
-		if (ev.key === 'Escape' && !dialogPortal.wasOpened()) {
+		if (ev.key === 'Escape' && !dialogPortal.wasOpened() && menuOpen) {
 			close();
 		}
 	}}
@@ -153,6 +155,8 @@
 			<a aria-label="Expand settings" class="btn" href="/settings/account">
 				<ArrowsOutSimple weight="regular" />
 			</a>
+		{:else if rightButton}
+			{@render rightButton()}
 		{:else}
 			<div></div>
 		{/if}
