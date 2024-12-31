@@ -125,7 +125,7 @@
 </section>
 
 <style lang="scss">
-	@use '../../../styles/mixins.scss';
+	@use '../../../../styles/mixins.scss';
 
 	table {
 		@include mixins.fancy-table;
