@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { FullUser } from '$lib/db/schema/users';
-	import AccountSettings from '../settings/account/AccountSettings.svelte';
+	import AccountSettings from '../(root)/settings/account/AccountSettings.svelte';
 	import BaseEditBarMenu, { type EditBarMenuMethods } from './BaseEditBarMenu.svelte';
 
 	let {

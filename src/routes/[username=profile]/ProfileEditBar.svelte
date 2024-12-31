@@ -7,6 +7,8 @@
 	import WidgetPickerMenu from './WidgetPickerMenu.svelte';
 	import AccountSettingsMenu from './AccountSettingsMenu.svelte';
 	import ThemeEditorMenu from './ThemeEditorMenu.svelte';
+	import ThemeProvider from '$lib/themes/ThemeProvider.svelte';
+	import { plainTheme } from '$lib/themes/mergeThemes';
 
 	let {
 		editing = $bindable(),
@@ -82,115 +84,117 @@
 	}
 </script>
 
-<div
-	id="edit-bar-wrapper"
-	transition:fly={{ y: 200 }}
-	bind:this={editBarWrapperEl}
-	class:viewing={!editing}
-	class:expanded={themeEditorOpen || widgetPickerOpen || accountSettingsOpen}
->
-	<WidgetPickerMenu
-		{user}
-		{editBarEl}
-		{editBarWrapperEl}
-		bind:menu={widgetPickerMethods}
-		bind:menuOpen={widgetPickerOpen}
-	/>
+<ThemeProvider theme={plainTheme}>
+	<div
+		id="edit-bar-wrapper"
+		transition:fly={{ y: 200 }}
+		bind:this={editBarWrapperEl}
+		class:viewing={!editing}
+		class:expanded={themeEditorOpen || widgetPickerOpen || accountSettingsOpen}
+	>
+		<WidgetPickerMenu
+			{user}
+			{editBarEl}
+			{editBarWrapperEl}
+			bind:menu={widgetPickerMethods}
+			bind:menuOpen={widgetPickerOpen}
+		/>
 
-	<ThemeEditorMenu
-		bind:theme
-		{editBarEl}
-		{editBarWrapperEl}
-		bind:menu={themeEditor}
-		bind:menuOpen={themeEditorOpen}
-	/>
+		<ThemeEditorMenu
+			bind:theme
+			{editBarEl}
+			{editBarWrapperEl}
+			bind:menu={themeEditor}
+			bind:menuOpen={themeEditorOpen}
+		/>
 
-	<AccountSettingsMenu
-		{user}
-		{editBarEl}
-		{editBarWrapperEl}
-		bind:menu={accountSettingsMethods}
-		bind:menuOpen={accountSettingsOpen}
-	/>
+		<AccountSettingsMenu
+			{user}
+			{editBarEl}
+			{editBarWrapperEl}
+			bind:menu={accountSettingsMethods}
+			bind:menuOpen={accountSettingsOpen}
+		/>
 
-	<div id="edit-bar" bind:this={editBarEl}>
-		<!-- commands -->
-		<div id="edit-commands">
-			<button
-				class="edit-command"
-				onclick={() => widgetPickerMethods?.open()}
-				aria-label="Add widget"
-				inert={!editing}
-				aria-hidden={!editing}
-			>
-				<Plus weight="regular" />
-				<span class="label"> Add widget </span>
-			</button>
-			<button
-				class="edit-command"
-				onclick={() => themeEditor?.open()}
-				aria-label="Theme settings"
-				inert={!editing}
-				aria-hidden={!editing}
-			>
-				<Palette />
-				<span class="label"> Theme settings </span>
-			</button>
-			<button
-				class="edit-command"
-				onclick={() => accountSettingsMethods?.open()}
-				aria-label="Account settings"
-				inert={!editing}
-				aria-hidden={!editing}
-			>
-				<Gear />
-				<span class="label"> Account settings </span>
-			</button>
-		</div>
+		<div id="edit-bar" bind:this={editBarEl}>
+			<!-- commands -->
+			<div id="edit-commands">
+				<button
+					class="edit-command"
+					onclick={() => widgetPickerMethods?.open()}
+					aria-label="Add widget"
+					inert={!editing}
+					aria-hidden={!editing}
+				>
+					<Plus weight="regular" />
+					<span class="label"> Add widget </span>
+				</button>
+				<button
+					class="edit-command"
+					onclick={() => themeEditor?.open()}
+					aria-label="Theme settings"
+					inert={!editing}
+					aria-hidden={!editing}
+				>
+					<Palette />
+					<span class="label"> Theme settings </span>
+				</button>
+				<button
+					class="edit-command"
+					onclick={() => accountSettingsMethods?.open()}
+					aria-label="Account settings"
+					inert={!editing}
+					aria-hidden={!editing}
+				>
+					<Gear />
+					<span class="label"> Account settings </span>
+				</button>
+			</div>
 
-		{#if editing}
-			<!-- switch button -->
-			<!-- holy fuck thats a lot of props lmao -->
-			<a
-				href="?view"
-				data-sveltekit-replacestate
-				id="toggle-modes-button"
-				class:hovering={editModeButtonHover}
-				class="switch-to-view"
-				aria-label="Switch to view mode"
-				onmouseenter={() => (editModeButtonHover = true)}
-				onmouseleave={() => (editModeButtonHover = false)}
-				onfocus={() => (editModeButtonHover = true)}
-				onblur={() => (editModeButtonHover = false)}
-				onclick={() => toggleMode('viewing')}
-				bind:this={toggleModesButtonEl}
-			>
-				{#if editModeButtonHover}
-					<Eye />
-					<span class="label"> Switch to view mode </span>
-				{:else}
+			{#if editing}
+				<!-- switch button -->
+				<!-- holy fuck thats a lot of props lmao -->
+				<a
+					href="?view"
+					data-sveltekit-replacestate
+					id="toggle-modes-button"
+					class:hovering={editModeButtonHover}
+					class="switch-to-view"
+					aria-label="Switch to view mode"
+					onmouseenter={() => (editModeButtonHover = true)}
+					onmouseleave={() => (editModeButtonHover = false)}
+					onfocus={() => (editModeButtonHover = true)}
+					onblur={() => (editModeButtonHover = false)}
+					onclick={() => toggleMode('viewing')}
+					bind:this={toggleModesButtonEl}
+				>
+					{#if editModeButtonHover}
+						<Eye />
+						<span class="label"> Switch to view mode </span>
+					{:else}
+						<PencilSimple />
+						<span class="label"> Currently in edit mode </span>
+					{/if}
+				</a>
+			{:else}
+				<a
+					href="/{user.username}"
+					data-sveltekit-replacestate
+					id="toggle-modes-button"
+					class="view"
+					aria-label="Switch to edit mode"
+					onclick={() => toggleMode('editing')}
+					bind:this={toggleModesButtonEl}
+				>
 					<PencilSimple />
-					<span class="label"> Currently in edit mode </span>
-				{/if}
-			</a>
-		{:else}
-			<a
-				href="/{user.username}"
-				data-sveltekit-replacestate
-				id="toggle-modes-button"
-				class="view"
-				aria-label="Switch to edit mode"
-				onclick={() => toggleMode('editing')}
-				bind:this={toggleModesButtonEl}
-			>
-				<PencilSimple />
-				<span class="label">
-					<div class="label">Switch to edit mode</div>
-				</span>
-			</a>
-		{/if}
+					<span class="label">
+						<div class="label">Switch to edit mode</div>
+					</span>
+				</a>
+			{/if}
+		</div>
 	</div>
-</div>
+</ThemeProvider>
 
 <style lang="scss">
 	#edit-bar-wrapper {

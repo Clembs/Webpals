@@ -13,6 +13,7 @@
 	import { dndzone } from 'svelte-dnd-action';
 	import { invalidateAll } from '$app/navigation';
 	import { isAnyWidgetEditing } from '$lib/widgets/BaseWidget.svelte';
+	import NavBar from '$lib/components/NavBar/NavBar.svelte';
 
 	let { data } = $props();
 
@@ -91,41 +92,36 @@
 	</div>
 {/snippet}
 
-<div id="root-profile">
-	<ThemeProvider {theme}>
-		<main>
-			{#each userWidgets as column, index}
-				<div class="column-outer">
-					{#if index === 0}
-						<ProfileWidgetComponent {...data} />
-					{/if}
-					{#if data.editing}
-						{@render widgetColumn(column, index)}
-					{:else}
-						<div class="column">
-							{#each column as widget (widget.id)}
-								<div class="widget-wrapper">
-									{@render widgetEl(widget)}
-								</div>
-							{/each}
-						</div>
-					{/if}
-				</div>
-			{/each}
-		</main>
-	</ThemeProvider>
-</div>
+<ThemeProvider {theme}>
+	<NavBar />
+
+	<main>
+		{#each userWidgets as column, index}
+			<div class="column-outer">
+				{#if index === 0}
+					<ProfileWidgetComponent {...data} />
+				{/if}
+				{#if data.editing}
+					{@render widgetColumn(column, index)}
+				{:else}
+					<div class="column">
+						{#each column as widget (widget.id)}
+							<div class="widget-wrapper">
+								{@render widgetEl(widget)}
+							</div>
+						{/each}
+					</div>
+				{/if}
+			</div>
+		{/each}
+	</main>
+</ThemeProvider>
 
 {#if data.editable && data.currentUser}
 	<ProfileEditBar bind:editing={data.editing} user={data.currentUser} bind:theme />
 {/if}
 
 <style lang="scss">
-	#root-profile {
-		display: flex;
-		flex: 1;
-	}
-
 	main {
 		background: var(--background);
 		display: grid;

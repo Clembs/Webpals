@@ -27,7 +27,5 @@
 >
 	<DialogPortal />
 
-	<NavBar />
-
 	{@render children()}
 </IconContext>
