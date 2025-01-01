@@ -12,7 +12,14 @@
 </script>
 
 {#if user?.avatar}
-	<img style:--size={size} class="avatar" src={user.avatar} alt="@{user.username}'s avatar" />
+	<img
+		height={size}
+		width={size}
+		style:--size={size}
+		class="avatar"
+		src={user.avatar}
+		alt="@{user.username}'s avatar"
+	/>
 {:else}
 	<div style:--size={size} class="avatar fallback">
 		<Island />
