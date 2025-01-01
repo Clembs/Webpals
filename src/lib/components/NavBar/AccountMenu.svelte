@@ -1,12 +1,7 @@
-<script module>
-	export { aboutWebpalsDialog };
-</script>
-
 <script lang="ts">
-	import DiscordLogo from '$icons/DiscordLogo.svelte';
 	import type { FullUser } from '$lib/db/schema/users';
 	import { dialogPortal } from '$lib/portals/dialog.svelte';
-	import { Butterfly, Code, DoorOpen, Gear, Island, UserSquare, XLogo } from 'phosphor-svelte';
+	import { DoorOpen, Gear, Island, UserSquare } from 'phosphor-svelte';
 	import { fly } from 'svelte/transition';
 
 	let {
@@ -16,6 +11,53 @@
 		menuOpen: boolean;
 		user: FullUser;
 	} = $props();
+
+	// Define the snippet first
+	export function aboutWebpalsDialog() {
+		return `
+			<div class="about-webpals">
+				<Island size={64} />
+
+				<h1>
+					Webpals
+					<span class="label" aria-label="(private alpha)"> private alpha </span>
+				</h1>
+
+				<p>Developed by Clembs</p>
+
+				<ul class="socials">
+					<li>
+						<a
+							href="https://bsky.app/profile/did:plc:ywcz5zihn4hxynh6wmxk4f4y"
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							<Butterfly />
+							Bluesky
+						</a>
+					</li>
+					<li>
+						<a href="https://x.com/clembsv" target="_blank" rel="noopener noreferrer">
+							<XLogo weight="regular" />
+							X/Twitter
+						</a>
+					</li>
+					<li>
+						<a href="https://discord.com/Mauurzxvrp" target="_blank" rel="noopener noreferrer">
+							<DiscordLogo />
+							Discord
+						</a>
+					</li>
+					<li>
+						<a href="https://github.com/Clembs/webpals" target="_blank" rel="noopener noreferrer">
+							<Code weight="regular" />
+							Source code
+						</a>
+					</li>
+				</ul>
+			</div>
+		`;
+	}
 </script>
 
 <svelte:window
@@ -25,50 +67,6 @@
 		}
 	}}
 />
-
-{#snippet aboutWebpalsDialog()}
-	<div class="about-webpals">
-		<Island size={64} />
-
-		<h1>
-			Webpals
-			<span class="label" aria-label="(private alpha)"> private alpha </span>
-		</h1>
-
-		<p>Developed by Clembs</p>
-
-		<ul class="socials">
-			<li>
-				<a
-					href="https://bsky.app/profile/did:plc:ywcz5zihn4hxynh6wmxk4f4y"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					<Butterfly />
-					Bluesky
-				</a>
-			</li>
-			<li>
-				<a href="https://x.com/clembsv" target="_blank" rel="noopener noreferrer">
-					<XLogo weight="regular" />
-					X/Twitter
-				</a>
-			</li>
-			<li>
-				<a href="https://discord.com/Mauurzxvrp" target="_blank" rel="noopener noreferrer">
-					<DiscordLogo />
-					Discord
-				</a>
-			</li>
-			<li>
-				<a href="https://github.com/Clembs/webpals" target="_blank" rel="noopener noreferrer">
-					<Code weight="regular" />
-					Source code
-				</a>
-			</li>
-		</ul>
-	</div>
-{/snippet}
 
 <div class="account-menu" transition:fly={{ y: -20, duration: 200 }}>
 	<div class="header">
