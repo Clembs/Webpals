@@ -141,6 +141,7 @@
 					text-decoration: none;
 					width: 100%;
 					background-color: transparent;
+					color: var(--color-heading);
 					border: none;
 					cursor: pointer;
 

@@ -122,7 +122,7 @@
 		padding: calc(var(--base-padding) * 0.25) var(--base-padding);
 		gap: var(--base-gap);
 		background-color: var(--widgets-background-color);
-		height: calc(var(--base-padding) * 4);
+		height: calc(40px + var(--base-padding) * 1.5);
 
 		a,
 		button {
@@ -131,6 +131,7 @@
 			border-radius: 99px;
 			padding: calc(var(--base-padding) * 0.5);
 			background-color: transparent;
+			color: var(--color-heading);
 			cursor: pointer;
 			border: none;
 			position: relative;
@@ -145,7 +146,7 @@
 			}
 
 			&:hover {
-				background-color: var(--widgets-background-color-dim);
+				backdrop-filter: brightness(0.95);
 			}
 		}
 
