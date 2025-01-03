@@ -8,8 +8,8 @@ declare global {
 	namespace App {
 		// interface Error {}
 		interface Locals {
-			getSession: () => Promise<Session | null | undefined>;
-			getCurrentUser: () => Promise<FullUser | null | undefined>;
+			getSession: () => Session | null | undefined;
+			getCurrentUser: () => FullUser | null | undefined;
 		}
 		interface PageData {
 			currentUser: FullUser | null | undefined;
