@@ -109,8 +109,6 @@
 
 			@media (max-width: 950px) {
 				max-width: none;
-				width: calc(100% + var(--base-padding) * 2);
-				margin: 0px calc(0px - var(--base-padding));
 			}
 
 			nav {
@@ -158,14 +156,6 @@
 					@media (max-width: 950px) {
 						padding: calc(var(--base-padding) * 0.5) calc(var(--base-padding) * 0.625);
 						min-width: max-content;
-
-						&:first-child {
-							margin-left: var(--base-padding);
-						}
-
-						&:last-child {
-							margin-right: var(--base-padding);
-						}
 					}
 
 					&[aria-current='true'] {
