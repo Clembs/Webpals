@@ -50,6 +50,7 @@
 		gap: var(--base-gap);
 
 		textarea {
+			background-color: var(--widgets-background-color);
 			color: var(--color-paragraph);
 			border: none;
 			outline: none;
