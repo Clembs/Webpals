@@ -15,6 +15,7 @@
 	<img
 		height={size}
 		width={size}
+		loading="lazy"
 		style:--size={size}
 		class="avatar"
 		src={user.avatar}
