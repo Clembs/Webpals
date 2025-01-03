@@ -1,6 +1,6 @@
 <script lang="ts">
 	import BaseWidget from '$lib/widgets/BaseWidget.svelte';
-	import type { ConnectionsWidget, WidgetComponentProps } from '../types';
+	import type { Connection, ConnectionsWidget, WidgetComponentProps } from '../types';
 	import { connectionProviders } from '../connections';
 	import { ArrowSquareOut, Check, CopySimple, SealCheck, TextAlignLeft } from 'phosphor-svelte';
 	import ConnectionsWidgetEditComponent from '../default-edit-menus/ConnectionsWidgetEditComponent.svelte';
@@ -18,13 +18,37 @@
 		copiedConnection.set(index, true);
 		setTimeout(() => copiedConnection.set(index, false), 1000);
 	}
+
+	// let topTwoConnections = $derived(
+	// 	widget.connections
+	// 		// get the verified non-domain connections
+	// 		.filter((c) => c.provider !== 'domain' && c.url)
+	// 		.sort((a, b) => (b.verified ? 1 : 0) - (a.verified ? 1 : 0))
+	// 		.slice(0, 2)
+	// );
+	// let otherConnections = $derived(widget.connections.filter((c) => !topTwoConnections.includes(c)));
 </script>
 
 {#snippet editMenu()}
 	<ConnectionsWidgetEditComponent {widget} />
 {/snippet}
 
-{#snippet connectionContents(connection: ConnectionsWidget['connections'][0], index: number)}
+{#snippet topConnectionContents(connection: Connection, index: number)}
+	{@const provider = connectionProviders[connection.provider]!}
+
+	<a class="connection" href={connection.url} target="_blank" rel="noopener noreferrer">
+		<provider.icon {...provider.iconProps} />
+
+		<div class="text">
+			{connection.identifiable}
+			{#if connection.verified}
+				<SealCheck size={15} />
+			{/if}
+		</div>
+	</a>
+{/snippet}
+
+{#snippet regularConnectionContents(connection: Connection, index: number)}
 	{@const provider = connectionProviders[connection.provider]}
 
 	<div class="left">
@@ -35,12 +59,9 @@
 		{/if}
 		<div class="text">
 			<div class="heading">
-				{provider?.name || connection.provider}
-			</div>
-			<div class="subtext">
 				{connection.identifiable}
 				{#if connection.verified}
-					<SealCheck size={16} />
+					<SealCheck size={15} />
 				{/if}
 			</div>
 		</div>
@@ -63,17 +84,25 @@
 	<div class="connections">
 		<h2>Connections</h2>
 
+		<!-- <ul class="top-connections-list">
+			{#each topTwoConnections as connection, index (index)}
+				<li>
+					{@render topConnectionContents(connection, index)}
+				</li>
+			{/each}
+		</ul> -->
+
 		<ul class="connections-list">
 			{#each widget.connections as connection, index (index)}
 				<li>
 					{#if connection.url}
 						<a class="connection" href={connection.url} target="_blank" rel="noopener noreferrer">
-							{@render connectionContents(connection, index)}
+							{@render regularConnectionContents(connection, index)}
 						</a>
 					{:else}
 						<!-- TODO: show visual info to confirm copy -->
 						<button class="connection" onclick={() => copyConnectionIdentifiable(index)}>
-							{@render connectionContents(connection, index)}
+							{@render regularConnectionContents(connection, index)}
 						</button>
 					{/if}
 				</li>
@@ -88,7 +117,46 @@
 	.connections {
 		display: flex;
 		flex-direction: column;
-		gap: var(--base-gap);
+		gap: calc(var(--base-gap) * 0.75);
+
+		// .top-connections-list {
+		// 	display: flex;
+		// 	gap: calc(var(--base-gap) * 0.5);
+		// 	list-style: none;
+		// 	margin-bottom: calc(0px - var(--base-gap) * 0.5);
+		// 	container-type: inline-size;
+
+		// 	li {
+		// 		display: contents;
+		// 	}
+
+		// 	.connection {
+		// 		display: flex;
+		// 		background-color: var(--widgets-background-color-dim);
+		// 		color: var(--color-heading);
+		// 		gap: calc(var(--base-gap) * 0.75);
+		// 		padding: var(--base-padding) calc(var(--base-padding) * 0.75);
+		// 		border-radius: calc(var(--widgets-border-base-radius) * 0.5);
+		// 		width: 100%;
+		// 		text-decoration: none;
+		// 		justify-content: center;
+
+		// 		&:hover {
+		// 			filter: brightness(0.95);
+		// 		}
+
+		// 		.text {
+		// 			display: flex;
+		// 			gap: calc(var(--base-gap) * 0.25);
+		// 		}
+		// 	}
+
+		// 	@container (max-width: 400px) {
+		// 		.connection .text {
+		// 			display: none;
+		// 		}
+		// 	}
+		// }
 
 		.connections-list {
 			@include mixins.fancy-list;
@@ -96,7 +164,7 @@
 
 			.connection {
 				display: flex;
-				padding: calc(var(--base-padding) * 0.75);
+				padding: var(--base-padding) calc(var(--base-padding) * 0.75);
 				text-decoration: none;
 				color: var(--color-heading);
 				justify-content: space-between;
@@ -145,6 +213,6 @@
 		}
 	}
 	h2 {
-		font-size: 1.5rem;
+		font-size: 1.25rem;
 	}
 </style>
