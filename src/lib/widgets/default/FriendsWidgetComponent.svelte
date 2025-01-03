@@ -47,11 +47,9 @@
 		</ul>
 		<!-- TODO: make clickable -->
 		{#if friends.length > 6}
-			<li class="all-friends">
-				<div class="friend-el" aria-disabled={true}>
-					<div class="display-name heading">All friends</div>
-				</div>
-			</li>
+			<div class="all-friends friend-el" aria-disabled={true}>
+				<div class="display-name heading">All friends</div>
+			</div>
 		{/if}
 	</div>
 </BaseWidget>
@@ -65,13 +63,10 @@
 		border-radius: calc(var(--widgets-border-base-radius) * 0.5);
 		overflow: hidden;
 
-		.all-friends {
-			// TODO: make clickable
-			.friend-el {
-				cursor: not-allowed;
-				opacity: 0.75;
-				padding: var(--base-padding);
-			}
+		.all-friends.friend-el {
+			cursor: not-allowed;
+			opacity: 0.75;
+			padding: var(--base-padding);
 		}
 	}
 
