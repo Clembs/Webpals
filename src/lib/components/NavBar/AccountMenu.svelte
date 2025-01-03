@@ -146,7 +146,7 @@
 					cursor: pointer;
 
 					&:hover {
-						background-color: var(--widgets-background-color-dim);
+						backdrop-filter: brightness(0.95);
 					}
 				}
 			}
