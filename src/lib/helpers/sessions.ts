@@ -1,6 +1,7 @@
 import { db } from '$lib/db';
 import { sessions, type Session } from '$lib/db/schema/auth';
 import type { Cookies } from '@sveltejs/kit';
+import { NODE_ENV } from '$env/static/private';
 
 export async function createSession(cookies: Cookies, userAgent: string, userId: string) {
 	// Expire the session in 30 days
@@ -79,8 +80,8 @@ export async function createSession(cookies: Cookies, userAgent: string, userId:
 	cookies.set('sessionId', session.id, {
 		path: '/',
 		httpOnly: true,
-		secure: true,
-		sameSite: 'strict',
+		secure: NODE_ENV === 'production',
+		sameSite: 'lax',
 		priority: 'high',
 		expires: expiresAt
 	});
