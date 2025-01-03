@@ -3,7 +3,6 @@
 	import '../styles/global.scss';
 	import { browser } from '$app/environment';
 	import { HEARTBEAT_INTERVAL } from '$lib/helpers/constants';
-	import NavBar from '$lib/components/NavBar/NavBar.svelte';
 	import DialogPortal from '$lib/portals/DialogPortal.svelte';
 
 	let { data, children } = $props();
