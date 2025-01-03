@@ -11,7 +11,7 @@
 <script lang="ts">
 	import type { PublicUser } from '$lib/db/schema/users';
 	import type { AnyWidget } from '$lib/widgets/types';
-	import { type Snippet } from 'svelte';
+	import { tick, type Snippet } from 'svelte';
 	import Card from '$lib/components/Card.svelte';
 	import { enhance } from '$app/forms';
 	import { PencilSimple, TrashSimple } from 'phosphor-svelte';
@@ -42,10 +42,7 @@
 	const animationDurationMs = 350;
 
 	function expandDialog() {
-		if (!wrapperEl || !dialogEl || !dialogContentsEl) return;
-
-		// get the dimensions of the widget wrapper & the dialog's contents so we can animate to it
-		const wrapperRect = wrapperEl.getBoundingClientRect();
+		if (!wrapperEl) return;
 
 		isWidgetEditing = true;
 		isAnyWidgetEditing.value = true;
@@ -54,12 +51,21 @@
 		// hide the original widget
 		wrapperEl.style.visibility = 'hidden';
 
-		// set the dialog
-		dialogEl.style.transition = '';
-		dialogEl.style.left = `${wrapperRect.x}px`;
-		dialogEl.style.top = `${wrapperRect.y}px`;
-		dialogEl.style.width = `${wrapperRect.width}px`;
-		dialogEl.style.height = `${wrapperRect.height}px`;
+		// wait for the dialog component to be mounted before animating
+		tick();
+
+		requestAnimationFrame(() => {
+			if (!dialogEl || !wrapperEl) return;
+			// get the dimensions of the widget wrapper & the dialog's contents so we can animate to it
+			const wrapperRect = wrapperEl.getBoundingClientRect();
+
+			// set the dialog
+			dialogEl.style.transition = '';
+			dialogEl.style.left = `${wrapperRect.x}px`;
+			dialogEl.style.top = `${wrapperRect.y}px`;
+			dialogEl.style.width = `${wrapperRect.width}px`;
+			dialogEl.style.height = `${wrapperRect.height}px`;
+		});
 
 		// wait for the next frame to animate
 		requestAnimationFrame(() => {
@@ -79,19 +85,17 @@
 			dialogEl.style.width = '700px';
 			// set a absolute height so it can be animated
 			dialogEl.style.height = `${dialogContentsRect.height + dialogPadding * 2}px`;
-		});
 
-		dialogEl.addEventListener(
-			'transitionend',
-			() => {
-				// set the dialog height to fit the content so that
-				// the dialog can be expanded (when there's a textarea, for example)
-				dialogEl!.style.height = 'fit-content';
-				// remove transition to avoid weird side-effects
-				dialogEl!.style.transition = '';
-			},
-			{ once: true }
-		);
+			dialogEl.addEventListener(
+				'transitionend',
+				() => {
+					// set the dialog height to fit the content so that
+					// the dialog can be expanded (when there's a textarea, for example)
+					dialogEl!.style.height = 'fit-content';
+				},
+				{ once: true }
+			);
+		});
 	}
 
 	export function closeDialog(ev?: Event, force = false) {
@@ -129,14 +133,13 @@
 		dialogEl.addEventListener(
 			'transitionend',
 			() => {
-				// wait for the animation to finish before closing the dialog
-				// or it brutally interrupts because of display: none;
-				dialogOpen = false;
-
 				// show the original widget
 				wrapperEl!.style.visibility = '';
-				// remove transition to avoid weird side-effects
-				dialogEl!.style.transition = '';
+
+				// wait for the animation to finish & everything to be done before removing the dialog
+				requestAnimationFrame(() => {
+					dialogOpen = false;
+				});
 			},
 			{ once: true }
 		);
@@ -188,17 +191,19 @@
 
 <div class="widget-root">
 	{#if editingMode && editMenu}
-		<div
-			role="dialog"
-			aria-current={dialogOpen}
-			inert={!dialogOpen}
-			aria-label="Edit widget"
-			bind:this={dialogEl}
-		>
-			<div class="menu" bind:this={dialogContentsEl}>
-				{@render editMenu()}
+		{#if dialogOpen}
+			<div
+				role="dialog"
+				aria-current={dialogOpen}
+				inert={!dialogOpen}
+				aria-label="Edit widget"
+				bind:this={dialogEl}
+			>
+				<div class="menu" bind:this={dialogContentsEl}>
+					{@render editMenu()}
+				</div>
 			</div>
-		</div>
+		{/if}
 
 		{#if isWidgetEditing}
 			<div
