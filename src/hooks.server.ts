@@ -15,49 +15,45 @@ export const handle: Handle = async ({ event, resolve }) => {
 		});
 	};
 
-	event.locals.getCurrentUser = async () => {
-		const session = await event.locals.getSession();
+	const session = await event.locals.getSession();
 
-		if (!session) return null;
-
-		const user = await db.query.users.findFirst({
-			where: ({ id }, { eq }) => eq(id, session.userId),
-			with: {
-				sessions: true,
-				passkeys: true,
-				inviteCodes: true,
-				notifications: {
-					with: {
-						mentionedUsers: {
-							with: {
-								user: {
-									columns: publicUserColumns
-								}
+	const user = await db.query.users.findFirst({
+		where: ({ id }, { eq }) => eq(id, session?.userId || ''),
+		with: {
+			sessions: true,
+			passkeys: true,
+			inviteCodes: true,
+			notifications: {
+				with: {
+					mentionedUsers: {
+						with: {
+							user: {
+								columns: publicUserColumns
 							}
 						}
 					}
-				},
-				initiatedRelationships: {
-					with: {
-						recipient: {
-							columns: publicUserColumns
-						}
+				}
+			},
+			initiatedRelationships: {
+				with: {
+					recipient: {
+						columns: publicUserColumns
 					}
-				},
-				receivedRelationships: {
-					with: {
-						user: {
-							columns: publicUserColumns
-						}
+				}
+			},
+			receivedRelationships: {
+				with: {
+					user: {
+						columns: publicUserColumns
 					}
 				}
 			}
-		});
+		}
+	});
 
+	event.locals.getCurrentUser = async () => {
 		return user && { ...user, status: 'online' };
 	};
-
-	const user = await event.locals.getCurrentUser();
 
 	// if the user hasn't sent a heartbeat in the past 3 minutes ago, update it (unless they're purposefully offline)
 	if (
