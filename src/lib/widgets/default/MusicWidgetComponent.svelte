@@ -17,19 +17,28 @@
 <BaseWidget bind:isWidgetEditing={modalOpened} {editMenu} {widget} {user} editingMode={editing}>
 	<div class="music-widget">
 		<div class="heading">
-			<MusicNote />
+			<img
+				draggable={false}
+				src={widget.album_art_url}
+				alt="{widget.title} Cover art"
+				height={48}
+				width={48}
+				class="album-art"
+			/>
 
-			<h2>
-				{#if widget.title}
-					{widget.title.length > 40 ? widget.title.slice(0, 40) + '...' : widget.title}
-				{:else}
-					Music
-				{/if}
+			<div class="text">
+				<h2>
+					{#if widget.title}
+						{widget.title.length > 40 ? widget.title.slice(0, 40) + '...' : widget.title}
+					{:else}
+						Music
+					{/if}
+				</h2>
 
 				<span class="subtext">
 					{widget.artist || 'Artist'}
 				</span>
-			</h2>
+			</div>
 		</div>
 
 		{#if widget.content_type && widget.content_url && widget.album_art_url && widget.title && widget.artist}
@@ -84,13 +93,19 @@
 			gap: calc(var(--base-gap) * 0.5);
 			align-items: center;
 
+			.album-art {
+				border-radius: var(--inputs-border-base-radius);
+			}
+
+			.text {
+				display: flex;
+				flex-direction: column;
+				gap: calc(var(--base-gap) * 0.125);
+			}
+
 			h2 {
 				font-size: 1.25rem;
 				flex: 1;
-			}
-
-			.subtext {
-				margin-left: calc(var(--base-gap) * 0.25);
 			}
 		}
 
