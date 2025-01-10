@@ -179,11 +179,11 @@
 						use:enhance={() => {
 							addFriendState = 'loading';
 							return async ({ result, update }) => {
-								addFriendState = null;
 								await update();
 								if (result.type === 'error' || result.type === 'failure') {
 									addFriendState = 'error';
 								}
+								addFriendState = null;
 							};
 						}}
 						style="display: contents;"
