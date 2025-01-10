@@ -5,6 +5,7 @@
 	import { enhance } from '$app/forms';
 	import AudioPlayer from '$lib/components/AudioPlayer.svelte';
 	import type { SpotifyTrack } from '$lib/helpers/music';
+	import Spinner from '$icons/Spinner.svelte';
 
 	let {
 		modalOpened = $bindable(false)
@@ -12,6 +13,7 @@
 		modalOpened: boolean;
 	} = $props();
 
+	let isLoading = $state(false);
 	let selectedProvider = $state('spotify');
 	let tracks = $state<SpotifyTrack[]>();
 </script>
@@ -26,20 +28,27 @@
 	{#if selectedProvider === 'spotify'}
 		<div id="edit-music-widget-form">
 			{#snippet searchBtn()}
-				<Button type="button" icon aria-label="Search">
-					<MagnifyingGlass weight="regular" />
+				<Button disabled={isLoading} type="button" icon aria-label="Search">
+					{#if isLoading}
+						<Spinner />
+					{:else}
+						<MagnifyingGlass weight="regular" />
+					{/if}
 				</Button>
 			{/snippet}
 
 			<form
 				class="button-wrapper"
-				use:enhance={() =>
-					({ result, update }) => {
+				use:enhance={() => {
+					isLoading = true;
+					return ({ result, update }) => {
+						isLoading = false;
 						if (result.type === 'success' && result.data) {
 							tracks = result.data as any;
 						}
 						update({ reset: false });
-					}}
+					};
+				}}
 				action="/api/search/spotify?"
 				method="post"
 			>
@@ -53,8 +62,8 @@
 							<div class="header">
 								<div class="text-image">
 									<img
-										height={52}
-										width={52}
+										height={48}
+										width={48}
 										src={track.album.images[0].url}
 										alt="Cover art for {track.album.name}"
 										draggable="false"
