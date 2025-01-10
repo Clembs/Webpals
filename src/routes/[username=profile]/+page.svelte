@@ -19,11 +19,15 @@
 
 	let theme = $state(data.user.theme);
 	let userWidgets = $state(data.user.widgets);
+	let editing = $state(data.editing);
 
 	$effect(() => {
 		theme = data.user.theme;
 		userWidgets = data.user.widgets;
+		editing = data.editing;
 	});
+
+	$inspect(editing);
 
 	async function updateWidgetPosition(widgetId: string) {
 		const newColumn = userWidgets.findIndex((c) => c.find((w) => w.id === widgetId));
@@ -56,15 +60,15 @@
 
 {#snippet widgetEl(widget: AnyWidget)}
 	{#if widget.id === 'about_me' && 'content' in widget}
-		<AboutMeWidgetComponent {widget} {...data} />
-	{:else if widget.id === 'music' && 'content_url' in widget && (!data.editing ? widget.content_url : true)}
-		<MusicWidgetComponent {widget} {...data} />
+		<AboutMeWidgetComponent {widget} {...data} {editing} />
+	{:else if widget.id === 'music' && 'content_url' in widget && (!editing ? widget.content_url : true)}
+		<MusicWidgetComponent {widget} {...data} {editing} />
 	{:else if widget.id === 'friends' && !('blocks' in widget)}
-		<FriendsWidgetComponent {widget} {...data} />
+		<FriendsWidgetComponent {widget} {...data} {editing} />
 	{:else if widget.id === 'connections' && 'connections' in widget}
-		<ConnectionsWidgetComponent {widget} {...data} />
+		<ConnectionsWidgetComponent {widget} {...data} {editing} />
 	{:else if 'blocks' in widget}
-		<CustomWidgetComponent {widget} {...data} />
+		<CustomWidgetComponent {widget} {...data} {editing} />
 	{/if}
 {/snippet}
 
@@ -101,7 +105,7 @@
 				{#if index === 0}
 					<ProfileWidgetComponent {...data} />
 				{/if}
-				{#if data.editing}
+				{#if editing}
 					{@render widgetColumn(column, index)}
 				{:else}
 					<div class="column">
@@ -118,7 +122,7 @@
 </ThemeProvider>
 
 {#if data.editable && data.currentUser}
-	<ProfileEditBar bind:editing={data.editing} user={data.currentUser} bind:theme />
+	<ProfileEditBar bind:editing user={data.currentUser} bind:theme />
 {/if}
 
 <style lang="scss">

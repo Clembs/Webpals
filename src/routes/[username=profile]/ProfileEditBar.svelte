@@ -19,10 +19,6 @@
 		theme: Theme;
 	} = $props();
 
-	// this just proxies the editing prop to a state, i guess
-	// bindable props are not reactive
-	let editingState = $state(editing);
-
 	let widgetPickerOpen = $state(false);
 	let themeEditorOpen = $state(false);
 	let accountSettingsOpen = $state(false);
@@ -38,7 +34,6 @@
 		if (!editBarWrapperEl || !toggleModesButtonEl || !editBarEl) return;
 
 		editing = !editing;
-		editingState = editing;
 
 		// switch to editing
 		if (editing) {
@@ -104,8 +99,8 @@
 					class="edit-command"
 					onclick={() => (widgetPickerOpen = true)}
 					aria-label="Add widget"
-					inert={!editingState}
-					aria-hidden={!editingState}
+					inert={!editing}
+					aria-hidden={!editing}
 				>
 					<Plus weight="regular" />
 					<span class="label"> Add widget </span>
@@ -114,8 +109,8 @@
 					class="edit-command"
 					onclick={() => (themeEditorOpen = true)}
 					aria-label="Theme settings"
-					inert={!editingState}
-					aria-hidden={!editingState}
+					inert={!editing}
+					aria-hidden={!editing}
 				>
 					<Palette />
 					<span class="label"> Theme settings </span>
@@ -124,15 +119,15 @@
 					class="edit-command"
 					onclick={() => (accountSettingsOpen = true)}
 					aria-label="Account settings"
-					inert={!editingState}
-					aria-hidden={!editingState}
+					inert={!editing}
+					aria-hidden={!editing}
 				>
 					<Gear />
 					<span class="label"> Account settings </span>
 				</button>
 			</div>
 
-			{#if editingState}
+			{#if editing}
 				<!-- switch button -->
 				<!-- holy fuck thats a lot of props lmao -->
 				<button
