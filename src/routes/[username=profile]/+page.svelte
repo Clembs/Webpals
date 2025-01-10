@@ -12,7 +12,7 @@
 	import ProfileEditBar from './ProfileEditBar.svelte';
 	import { dndzone } from 'svelte-dnd-action';
 	import { invalidateAll } from '$app/navigation';
-	import { isAnyWidgetEditing } from '$lib/widgets/BaseWidget.svelte';
+	import BaseWidget, { isAnyWidgetEditing } from '$lib/widgets/BaseWidget.svelte';
 	import NavBar from '$lib/components/NavBar/NavBar.svelte';
 
 	let { data } = $props();
@@ -69,10 +69,15 @@
 		<ConnectionsWidgetComponent {widget} {...data} {editing} />
 	{:else if 'blocks' in widget}
 		<CustomWidgetComponent {widget} {...data} {editing} />
+	{:else if editing}
+		<BaseWidget editingMode={editing} user={data.user} {widget}>
+			I didn't code this widget in yet (type {widget.id}).<br />
+			Other users won't see this widget, but once it's coded it'll render properly!
+		</BaseWidget>
 	{/if}
 {/snippet}
 
-{#snippet widgetColumn(widgets: AnyWidget[], index: number)}
+{#snippet draggableWidgetColumns(widgets: AnyWidget[], index: number)}
 	<div
 		class="column"
 		use:dndzone={{
@@ -90,7 +95,9 @@
 	>
 		{#each widgets as widget (widget.id)}
 			<div class="widget-wrapper" animate:flip={{ duration: 200 }}>
-				{@render widgetEl(widget)}
+				<ThemeProvider {theme}>
+					{@render widgetEl(widget)}
+				</ThemeProvider>
 			</div>
 		{/each}
 	</div>
@@ -106,13 +113,11 @@
 					<ProfileWidgetComponent {...data} />
 				{/if}
 				{#if editing}
-					{@render widgetColumn(column, index)}
+					{@render draggableWidgetColumns(column, index)}
 				{:else}
 					<div class="column">
 						{#each column as widget (widget.id)}
-							<div class="widget-wrapper">
-								{@render widgetEl(widget)}
-							</div>
+							{@render widgetEl(widget)}
 						{/each}
 					</div>
 				{/if}
