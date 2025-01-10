@@ -20,7 +20,7 @@
 		} = $props();
 </script>
 
-<label class="text-input" class:error for={name}>
+<div class="text-input" class:error>
 	{#if !multiline}
 		<input
 			style:--font-size={fontSize}
@@ -52,12 +52,13 @@
 			{/if}
 		</div>
 	{/if}
-</label>
+</div>
 
 <style lang="scss">
 	.text-input {
 		display: inline-flex;
 		flex-direction: column;
+		max-width: fit-content;
 
 		.label-text,
 		.error {
@@ -68,7 +69,8 @@
 		input,
 		textarea {
 			border: none;
-			border-bottom: var(--inputs-border-width) solid var(--inputs-border-color);
+			// border-bottom: var(--inputs-border-width) solid var(--inputs-border-color);
+			text-decoration: underline var(--inputs-border-color) var(--inputs-border-width);
 			outline: none;
 			font-size: var(--font-size, inherit);
 			font-weight: 500;
