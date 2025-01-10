@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Pause, Play } from 'phosphor-svelte';
+	import { Pause, Play, SpeakerHigh, SpeakerNone } from 'phosphor-svelte';
 
 	let {
 		src,
@@ -16,6 +16,7 @@
 	let rangeValue = $state(0);
 	let currentTime = $state(0);
 	let duration = $state(0);
+	let muted = $state(false);
 
 	function togglePlayback() {
 		if (paused) {
@@ -28,6 +29,10 @@
 		} else {
 			audioEl?.pause();
 		}
+	}
+
+	function mute() {
+		muted = !muted;
 	}
 
 	function createMediaSession() {
@@ -59,13 +64,23 @@
 <!-- TODO: link this to the actual audio player -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div class="audio-player">
-	<button type="button" onclick={togglePlayback} class="toggle-playback">
-		{#if paused}
-			<Play />
-		{:else}
-			<Pause />
-		{/if}
-	</button>
+	<div class="buttons">
+		<button type="button" onclick={togglePlayback} class="toggle-playback">
+			{#if paused}
+				<Play />
+			{:else}
+				<Pause />
+			{/if}
+		</button>
+
+		<button type="button" onclick={mute} class="mute">
+			{#if muted}
+				<SpeakerNone />
+			{:else}
+				<SpeakerHigh />
+			{/if}
+		</button>
+	</div>
 
 	<input
 		onchange={(ev) => {
@@ -84,6 +99,7 @@
 <audio
 	bind:this={audioEl}
 	controls
+	bind:muted
 	bind:paused
 	bind:currentTime
 	bind:duration
@@ -107,11 +123,18 @@
 		align-items: center;
 		gap: var(--base-gap);
 
-		.toggle-playback {
+		.buttons {
+			display: flex;
+			gap: calc(var(--base-gap) * 0.5);
+		}
+
+		button {
 			padding: calc(var(--base-padding) * 0.5);
+			border-radius: var(--inputs-border-base-radius);
 			border: none;
 			cursor: pointer;
-			background: transparent;
+			background-color: transparent;
+			color: inherit;
 		}
 
 		[name='audio-track'] {
