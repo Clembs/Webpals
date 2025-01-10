@@ -2,13 +2,12 @@
 	import type { FullUser } from '$lib/db/schema/users';
 	import type { Theme } from '$lib/themes/types';
 	import { Eye, PencilSimple, Plus, Gear, Palette } from 'phosphor-svelte';
-	import { fly } from 'svelte/transition';
-	import type { EditBarMenuMethods } from './BaseEditBarMenu.svelte';
 	import WidgetPickerMenu from './WidgetPickerMenu.svelte';
 	import AccountSettingsMenu from './AccountSettingsMenu.svelte';
 	import ThemeEditorMenu from './ThemeEditorMenu.svelte';
 	import ThemeProvider from '$lib/themes/ThemeProvider.svelte';
 	import { plainTheme } from '$lib/themes/mergeThemes';
+	import { replaceState } from '$app/navigation';
 
 	let {
 		editing = $bindable(),
@@ -20,99 +19,81 @@
 		theme: Theme;
 	} = $props();
 
+	// this just proxies the editing prop to a state, i guess
+	// bindable props are not reactive
+	let editingState = $state(editing);
+
 	let widgetPickerOpen = $state(false);
-	let widgetPickerMethods = $state<EditBarMenuMethods>();
-
 	let themeEditorOpen = $state(false);
-	let themeEditor = $state<EditBarMenuMethods>();
-
 	let accountSettingsOpen = $state(false);
-	let accountSettingsMethods = $state<EditBarMenuMethods>();
 
 	let editBarEl = $state<HTMLDivElement>();
 	let editBarWrapperEl = $state<HTMLDivElement>();
-	let toggleModesButtonEl = $state<HTMLAnchorElement>();
+	let toggleModesButtonEl = $state<HTMLElement>();
 	let editModeButtonHover = $state(false);
 
 	// handles the fancy animation when toggling between view and edit mode
 	// if i ever need to change any of this i'm just gonna cry ;-;
-	function toggleMode(mode: 'editing' | 'viewing') {
+	function toggleMode() {
 		if (!editBarWrapperEl || !toggleModesButtonEl || !editBarEl) return;
 
-		editing = mode === 'editing';
+		editing = !editing;
+		editingState = editing;
 
+		// switch to editing
 		if (editing) {
-			// expand animation
-			const anim = editBarWrapperEl.animate(
-				[
-					{ width: `${toggleModesButtonEl.clientWidth}px` },
-					{ width: `${editBarEl.clientWidth}px` }
-				],
-				{
-					duration: 500,
-					easing: 'cubic-bezier(0.8, -0.3, 0.1, 1.3)'
-				}
-			);
+			replaceState(`/${user.username}`, {});
 
+			// expand animation
+			editBarWrapperEl.style.width = `${toggleModesButtonEl.clientWidth}px`;
+			editBarWrapperEl.style.transition = `width 500ms cubic-bezier(0.75, -0.2, 0.15, 1)`;
 			editBarEl.style.transform = `none`;
 
-			anim.finished.then(() => {
-				if (!editBarWrapperEl) return;
-				editBarWrapperEl.style.width = `max-content`;
+			requestAnimationFrame(() => {
+				editBarWrapperEl!.style.width = `${editBarEl!.clientWidth}px`;
 			});
-		} else {
-			// collapse animation
-			const anim = editBarWrapperEl.animate(
-				[
-					{ width: `${editBarEl.clientWidth}px` },
-					{ width: `${toggleModesButtonEl.clientWidth}px` }
-				],
-				{
-					duration: 500,
-					easing: 'cubic-bezier(0.8, -0.3, 0.1, 1.3)'
-				}
+
+			editBarWrapperEl.addEventListener(
+				'transitionend',
+				() => {
+					editBarWrapperEl!.style.width = '';
+					editBarWrapperEl!.style.transition = '';
+				},
+				{ once: true }
 			);
+		}
+		// switch to viewing
+		else {
+			replaceState(`/${user.username}?view`, {});
 
-			editBarEl.style.transform = `translateX(calc(-100% + ${toggleModesButtonEl.clientWidth}px))`;
+			// collapse animation
+			editBarWrapperEl.style.transition = `width 500ms cubic-bezier(0.75, -0.2, 0.15, 1)`;
+			editBarWrapperEl.style.width = `${editBarEl.clientWidth}px`;
 
-			anim.finished.then(() => {
-				if (!editBarWrapperEl || !toggleModesButtonEl) return;
-				// enforce the width because idfk weird js bug i guess??????
-				editBarWrapperEl.style.width = `${toggleModesButtonEl.clientWidth}px`;
+			editBarEl.style.transform = `translateX(calc(0px - var(--toggle-modes-button-width) - 20px))`;
+
+			requestAnimationFrame(() => {
+				editBarWrapperEl!.style.width = `${toggleModesButtonEl!.clientWidth}px`;
+			});
+
+			editBarWrapperEl.addEventListener('transitionend', () => {
+				editBarWrapperEl!.style.transition = '';
+				editBarWrapperEl!.style.width = '';
 			});
 		}
 	}
 </script>
 
 <ThemeProvider theme={plainTheme}>
-	<div
-		id="edit-bar-wrapper"
-		transition:fly={{ y: 200 }}
-		bind:this={editBarWrapperEl}
-		class:viewing={!editing}
-		class:expanded={themeEditorOpen || widgetPickerOpen || accountSettingsOpen}
-	>
-		<WidgetPickerMenu
-			{user}
-			{editBarEl}
-			{editBarWrapperEl}
-			bind:menu={widgetPickerMethods}
-			bind:menuOpen={widgetPickerOpen}
-		/>
+	<div id="edit-bar-wrapper" bind:this={editBarWrapperEl} class:viewing={!editing}>
+		<WidgetPickerMenu {user} {editBarEl} {editBarWrapperEl} bind:menuOpen={widgetPickerOpen} />
 
-		<ThemeEditorMenu
-			bind:theme
-			{editBarEl}
-			{editBarWrapperEl}
-			bind:menu={themeEditor}
-			bind:menuOpen={themeEditorOpen}
-		/>
+		<ThemeEditorMenu bind:theme {editBarEl} {editBarWrapperEl} bind:menuOpen={themeEditorOpen} />
 
 		<AccountSettingsMenu
 			{user}
 			{editBarEl}
 			{editBarWrapperEl}
-			bind:menu={accountSettingsMethods}
 			bind:menuOpen={accountSettingsOpen}
 		/>
 
@@ -121,42 +102,40 @@
 			<div id="edit-commands">
 				<button
 					class="edit-command"
-					onclick={() => widgetPickerMethods?.open()}
+					onclick={() => (widgetPickerOpen = true)}
 					aria-label="Add widget"
-					inert={!editing}
-					aria-hidden={!editing}
+					inert={!editingState}
+					aria-hidden={!editingState}
 				>
 					<Plus weight="regular" />
 					<span class="label"> Add widget </span>
 				</button>
 				<button
 					class="edit-command"
-					onclick={() => themeEditor?.open()}
+					onclick={() => (themeEditorOpen = true)}
 					aria-label="Theme settings"
-					inert={!editing}
-					aria-hidden={!editing}
+					inert={!editingState}
+					aria-hidden={!editingState}
 				>
 					<Palette />
 					<span class="label"> Theme settings </span>
 				</button>
 				<button
 					class="edit-command"
-					onclick={() => accountSettingsMethods?.open()}
+					onclick={() => (accountSettingsOpen = true)}
 					aria-label="Account settings"
-					inert={!editing}
-					aria-hidden={!editing}
+					inert={!editingState}
+					aria-hidden={!editingState}
 				>
 					<Gear />
 					<span class="label"> Account settings </span>
 				</button>
 			</div>
 
-			{#if editing}
+			{#if editingState}
 				<!-- switch button -->
 				<!-- holy fuck thats a lot of props lmao -->
-				<a
-					href="?view"
-					data-sveltekit-replacestate
+				<button
 					id="toggle-modes-button"
 					class:hovering={editModeButtonHover}
 					class="switch-to-view"
@@ -165,7 +144,7 @@
 					onmouseleave={() => (editModeButtonHover = false)}
 					onfocus={() => (editModeButtonHover = true)}
 					onblur={() => (editModeButtonHover = false)}
-					onclick={() => toggleMode('viewing')}
+					onclick={toggleMode}
 					bind:this={toggleModesButtonEl}
 				>
 					{#if editModeButtonHover}
@@ -175,22 +154,19 @@
 						<PencilSimple />
 						<span class="label"> Currently in edit mode </span>
 					{/if}
-				</a>
+				</button>
 			{:else}
-				<a
-					href="/{user.username}"
-					data-sveltekit-replacestate
+				<button
 					id="toggle-modes-button"
-					class="view"
 					aria-label="Switch to edit mode"
-					onclick={() => toggleMode('editing')}
+					onclick={toggleMode}
 					bind:this={toggleModesButtonEl}
 				>
 					<PencilSimple />
 					<span class="label">
 						<div class="label">Switch to edit mode</div>
 					</span>
-				</a>
+				</button>
 			{/if}
 		</div>
 	</div>
@@ -206,13 +182,16 @@
 		overflow: hidden;
 		border: var(--widgets-border-width) solid var(--widgets-border-color);
 
+		display: flex;
+		flex-direction: column;
+
 		position: fixed;
 		bottom: var(--base-padding);
 		left: 50%;
 		transform: translateX(-50%);
 		z-index: 5;
-		width: max-content;
-		max-height: 40vh;
+		// width: max-content;
+		max-height: 500px;
 
 		--toggle-modes-button-width: 230px;
 
@@ -230,11 +209,18 @@
 			}
 
 			#edit-bar {
-				transform: translateX(calc(-100% + var(--toggle-modes-button-width)));
+				transform: translateX(calc(0px - var(--toggle-modes-button-width) - 20px));
 			}
 		}
 
-		&.expanded {
+		&:global(.expanded) {
+			// :global(#edit-bar) {
+			// 	position: absolute;
+			// 	bottom: 0;
+			// 	left: 50%;
+			// 	transform: translateX(-50%);
+			// }
+
 			@media (max-width: 950px) {
 				width: 100% !important;
 				bottom: 0;
@@ -246,10 +232,11 @@
 	#edit-bar {
 		display: flex;
 		transition:
-			transform 500ms cubic-bezier(0.8, -0.3, 0.1, 1.3),
+			transform 500ms cubic-bezier(0.75, -0.2, 0.15, 1),
 			// fancy ass cubic bézier
 			opacity 250ms ease;
 		width: fit-content;
+		align-self: center;
 
 		#edit-commands {
 			display: flex;
@@ -296,6 +283,8 @@
 			white-space: nowrap;
 			flex: 1;
 			transition: background-color 150ms;
+			border: none;
+			cursor: pointer;
 
 			:global(svg) {
 				flex-shrink: 0;

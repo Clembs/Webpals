@@ -1,14 +1,7 @@
-<script lang="ts" module>
-	export type EditBarMenuMethods = {
-		open: () => void;
-		close: () => void;
-	};
-</script>
-
 <script lang="ts">
 	import { dialogPortal } from '$lib/portals/dialog.svelte';
 	import { ArrowsOutSimple, CaretLeft } from 'phosphor-svelte';
-	import type { Snippet } from 'svelte';
+	import { type Snippet } from 'svelte';
 
 	let {
 		name,
@@ -28,17 +21,16 @@
 		children: Snippet;
 	} = $props();
 
-	let menuEl = $state<HTMLDivElement>();
-
 	let addWidgetMenuScroll = $state(0);
 
-	export function open() {
-		if (!menuEl || !editBarEl || !editBarWrapperEl) return;
+	// i am abusing svelte's animation directive to animate the opening and closing of the menu
+	function openAnimation(menuEl: HTMLElement) {
+		if (!editBarEl || !editBarWrapperEl) return {};
 
-		// get the dimensions of the edit bar wrapper so we can animate to it
+		// get the fixed dimensions of the wrapper so they can be animated
 		const wrapperRect = editBarWrapperEl.getBoundingClientRect();
 
-		// show the widget picker
+		// initial state of the menu
 		menuEl.style.display = 'flex';
 		menuEl.style.transition = 'opacity 500ms ease 200ms';
 		menuEl.style.opacity = '0';
@@ -50,20 +42,21 @@
 		const mobile = window.matchMedia('(max-width: 950px)').matches;
 
 		requestAnimationFrame(() => {
-			if (!editBarEl || !editBarWrapperEl || !menuEl) return;
+			if (!editBarEl || !editBarWrapperEl) return {};
 
 			const openedMenuRect = menuEl.getBoundingClientRect();
 
 			// animate the edit bar wrapper to the dimensions of the opened menu
-			editBarWrapperEl.style.transition = `all 500ms cubic-bezier(0.8, -0.3, 0.1, 1.3)`;
+			editBarWrapperEl.style.transition = `all 500ms cubic-bezier(0.75, -0.2, 0.15, 1)`;
 			editBarWrapperEl.style.height =
 				// see whats taller between the opened menu and the max height of the window (80% on mobile, 40% on desktop)
-				`${Math.max(openedMenuRect.height, window.innerHeight * (mobile ? 0.8 : 0.4))}px`;
-			editBarWrapperEl.style.width = mobile ? `100%` : `${openedMenuRect.width}px`;
+				`${Math.max(openedMenuRect.height, mobile ? window.innerHeight - 200 : 500)}px`;
+			editBarWrapperEl.style.width = `${openedMenuRect.width}px`;
 
-			menuOpen = true;
+			editBarWrapperEl.classList.add('expanded');
 
 			// fade out the edit bar
+			editBarEl.style.transition = 'opacity 250ms ease';
 			editBarEl.style.opacity = '0';
 			editBarEl.style.pointerEvents = 'none';
 
@@ -71,119 +64,109 @@
 			menuEl.style.opacity = '1';
 		});
 
-		editBarWrapperEl.addEventListener(
-			'transitionend',
-			() => {
-				if (!editBarWrapperEl || !menuEl) return;
-
-				// set the dimensions of the edit bar wrapper to be lax
-				// editBarWrapperEl.style.height = '';
-				// editBarWrapperEl.style.width = '';
-			},
-			{ once: true }
-		);
+		return {};
 	}
 
-	export function close() {
-		if (!menuEl || !editBarEl || !editBarWrapperEl) return;
+	function closeAnimation(menuEl: HTMLElement) {
+		if (!editBarEl || !editBarWrapperEl) return {};
 
-		// get the dimensions of the edit bar wrapper so we can animate to it
+		// get the fixed dimensions of the wrapper so they can be animated
 		const wrapperRect = editBarWrapperEl.getBoundingClientRect();
 
-		// animate the edit bar wrapper to the dimensions of the opened menu
+		editBarWrapperEl.style.transition = `all 500ms cubic-bezier(0.75, -0.2, 0.15, 1)`;
 		editBarWrapperEl.style.height = `${wrapperRect.height}px`;
 		editBarWrapperEl.style.width = `${wrapperRect.width}px`;
 
 		// fade out the opened menu
-		menuEl.style.transition = 'opacity 250ms ease';
+		menuEl.style.transition = 'opacity 500ms ease';
 		menuEl.style.opacity = '0';
 
 		// fade in the edit bar
+		editBarEl.style.transition = 'opacity 250ms ease 250ms';
 		editBarEl.style.opacity = '1';
 		editBarEl.style.pointerEvents = 'all';
 
+		const editBarRect = editBarEl.getBoundingClientRect();
+
+		const targetHeight = editBarRect.height;
+		const targetWidth = editBarRect.width;
+
 		requestAnimationFrame(() => {
-			if (!editBarEl || !editBarWrapperEl || !menuEl) return;
+			editBarWrapperEl.style.height = `${targetHeight}px`;
+			editBarWrapperEl.style.width = `${targetWidth}px`;
 
-			const editBarRect = editBarEl.getBoundingClientRect();
+			menuEl.style.opacity = '0';
 
-			// reset the dimensions of the edit bar wrapper
-			editBarWrapperEl.style.transition = `all 500ms cubic-bezier(0.8, -0.3, 0.1, 1.3)`;
-			editBarWrapperEl.style.height = `${editBarRect.height}px`;
-			editBarWrapperEl.style.width = `${editBarRect.width}px`;
-			menuOpen = false;
+			editBarWrapperEl.classList.remove('expanded');
 		});
 
 		editBarWrapperEl.addEventListener(
 			'transitionend',
 			() => {
-				if (!editBarWrapperEl || !menuEl) return;
-
-				// set the dimensions of the edit bar wrapper to be lax
+				editBarWrapperEl.style.transition = '';
 				editBarWrapperEl.style.height = '';
 				editBarWrapperEl.style.width = '';
-
-				menuEl.style.display = '';
+				editBarEl.style.transition = '';
 			},
 			{ once: true }
 		);
+
+		return {
+			duration: 250
+		};
 	}
 </script>
 
 <svelte:window
 	onkeydown={(ev) => {
 		if (ev.key === 'Escape' && !dialogPortal.wasOpened() && menuOpen) {
-			close();
+			menuOpen = false;
 		}
 	}}
 />
 
-<div bind:this={menuEl} class="bar-menu" class:open={menuOpen}>
-	<div class="header" class:scrolling={addWidgetMenuScroll}>
-		<div class="third">
-			<button
-				class="btn"
-				onclick={() => {
-					close();
-				}}
-			>
-				<CaretLeft weight="regular" />
-			</button>
+{#if menuOpen}
+	<div in:openAnimation out:closeAnimation class="bar-menu">
+		<div class="header" class:scrolling={addWidgetMenuScroll}>
+			<div class="third">
+				<button class="btn" onclick={() => (menuOpen = false)}>
+					<CaretLeft weight="regular" />
+				</button>
+			</div>
+
+			<div class="third">
+				<h2>{name}</h2>
+			</div>
+
+			<div class="third">
+				{#if expandHref}
+					<a aria-label="Expand settings" class="btn" href="/settings/account">
+						<ArrowsOutSimple weight="regular" />
+					</a>
+				{:else if rightButton}
+					{@render rightButton()}
+				{:else}
+					<div></div>
+				{/if}
+			</div>
 		</div>
 
-		<div class="third">
-			<h2>{name}</h2>
-		</div>
-
-		<div class="third">
-			{#if expandHref}
-				<a aria-label="Expand settings" class="btn" href="/settings/account">
-					<ArrowsOutSimple weight="regular" />
-				</a>
-			{:else if rightButton}
-				{@render rightButton()}
-			{:else}
-				<div></div>
-			{/if}
+		<div
+			class="scrollable"
+			onscroll={(ev) => (addWidgetMenuScroll = (ev.target as HTMLUListElement).scrollTop)}
+		>
+			{@render children()}
 		</div>
 	</div>
-
-	<div
-		class="scrollable"
-		onscroll={(ev) => (addWidgetMenuScroll = (ev.target as HTMLUListElement).scrollTop)}
-	>
-		{@render children()}
-	</div>
-</div>
+{/if}
 
 <style lang="scss">
 	.bar-menu {
 		display: none;
 		flex-direction: column;
 		background-color: var(--widgets-background-color);
-		opacity: 0;
-		transition: opacity 500ms ease 200ms;
 		height: 100%;
+		flex: 1;
 
 		@media (max-width: 950px) {
 			min-width: 100%;

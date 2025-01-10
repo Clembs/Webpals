@@ -5,17 +5,15 @@
 	import PlaceholderFriendsWidget from '$lib/widgets/picker/PlaceholderFriendsWidget.svelte';
 	import PlaceholderMusicWidget from '$lib/widgets/picker/PlaceholderMusicWidget.svelte';
 	import PlaceholderConnectionsWidgets from '$lib/widgets/picker/PlaceholderConnectionsWidgets.svelte';
-	import BaseEditBarMenu, { type EditBarMenuMethods } from './BaseEditBarMenu.svelte';
+	import BaseEditBarMenu from './BaseEditBarMenu.svelte';
 
 	let {
 		user,
-		menu = $bindable(),
 		menuOpen = $bindable(false),
 		editBarEl,
 		editBarWrapperEl
 	}: {
 		user: FullUser;
-		menu: EditBarMenuMethods | undefined;
 		menuOpen: boolean;
 		editBarEl: HTMLDivElement | undefined;
 		editBarWrapperEl: HTMLDivElement | undefined;
@@ -28,7 +26,7 @@
 	);
 </script>
 
-<BaseEditBarMenu name="Add a widget" {editBarEl} {editBarWrapperEl} bind:menuOpen bind:this={menu}>
+<BaseEditBarMenu name="Add a widget" {editBarEl} {editBarWrapperEl} bind:menuOpen>
 	{#if addableWidgets.length === 0}
 		<div class="no-widgets">
 			<p>No more widgets to add :(</p>

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import ThemeEditor from '$lib/themes/ThemeEditor.svelte';
-	import BaseEditBarMenu, { type EditBarMenuMethods } from './BaseEditBarMenu.svelte';
+	import BaseEditBarMenu from './BaseEditBarMenu.svelte';
 	import type { Theme } from '$lib/themes/types';
 	import { enhance } from '$app/forms';
 	import Button from '$lib/components/Button.svelte';
@@ -9,13 +9,11 @@
 
 	let {
 		theme = $bindable(),
-		menu = $bindable(),
 		menuOpen = $bindable(false),
 		editBarEl,
 		editBarWrapperEl
 	}: {
 		theme: Theme;
-		menu: EditBarMenuMethods | undefined;
 		menuOpen: boolean;
 		editBarEl: HTMLDivElement | undefined;
 		editBarWrapperEl: HTMLDivElement | undefined;
@@ -52,7 +50,6 @@
 			variant="secondary"
 			type="button"
 			onclick={() => {
-				console.log('hi');
 				console.log(page.data.user.theme);
 				theme = page.data.user.theme;
 			}}
@@ -80,7 +77,6 @@
 	{editBarWrapperEl}
 	rightButton={saveButton}
 	bind:menuOpen
-	bind:this={menu}
 >
 	<ThemeEditor bind:theme />
 </BaseEditBarMenu>
