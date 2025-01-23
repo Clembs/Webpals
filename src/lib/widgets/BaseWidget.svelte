@@ -266,6 +266,7 @@
 		display: none;
 		gap: var(--base-gap);
 		background-color: var(--widgets-background-color);
+		backdrop-filter: blur(var(--widgets-background-blur));
 		padding: var(--base-padding);
 		border-radius: var(--widgets-border-base-radius);
 		border: var(--widgets-border-width) solid var(--widgets-border-color);
@@ -298,6 +299,7 @@
 			right: calc(var(--base-padding) * 0.25);
 			top: calc(var(--base-padding) * 0.25);
 			padding: calc(var(--base-padding) * 0.25);
+			z-index: 2;
 
 			button {
 				border: none;

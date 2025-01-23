@@ -20,6 +20,23 @@
 		bind:hex={theme.widgets.color_background_dim}
 	/>
 
+	<label for="widgets.border.radius">
+		Background blur
+
+		<input
+			name="widgets.background_blur"
+			type="range"
+			bind:value={theme.widgets.background_blur}
+			min="0"
+			max="10"
+			step="0.5"
+		/>
+
+		<span class="subtext">
+			Pro tip: Lower the widget's background opacity to make the blur effect more visible.
+		</span>
+	</label>
+
 	<h3>Border</h3>
 
 	<ColorPicker

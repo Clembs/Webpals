@@ -88,7 +88,8 @@ export const ThemeStructure = strictObject({
 		color_background: HexColorStructure,
 		color_background_dim: HexColorStructure,
 		border: BorderStructure,
-		shadow: nullable(ShadowStructure)
+		shadow: nullable(ShadowStructure),
+		blur: pipe(number(), minValue(0), maxValue(10))
 	}),
 	primary_buttons: strictObject({
 		color_background: HexColorStructure,

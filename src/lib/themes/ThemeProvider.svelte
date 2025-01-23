@@ -50,6 +50,7 @@
   
 	--widgets-background-color: {theme.widgets.color_background};
   --widgets-background-color-dim: {theme.widgets.color_background_dim};
+	--widgets-background-blur: {theme.widgets.background_blur}px;
   --widgets-border-width: {theme.widgets.border.width}px;
   --widgets-border-color: {theme.widgets.border.color};
   --widgets-border-base-radius: {theme.widgets.border.radius}rem;

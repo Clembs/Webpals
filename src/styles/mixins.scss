@@ -10,6 +10,7 @@
 	border: var(--widgets-border-width) solid var(--widgets-border-color);
 	box-shadow: var(--widgets-box-shadow-x) var(--widgets-box-shadow-y) var(--widgets-box-shadow-blur)
 		var(--widgets-box-shadow-color);
+	backdrop-filter: blur(var(--widgets-background-blur));
 }
 
 @mixin fancy-list {

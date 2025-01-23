@@ -51,6 +51,7 @@ export type Theme = {
 		color_background_dim: string;
 		border: ThemeBorder;
 		shadow: ThemeShadow | null;
+		background_blur: number;
 	};
 	primary_buttons: {
 		color_background: string;

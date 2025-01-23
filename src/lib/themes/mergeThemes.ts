@@ -26,6 +26,7 @@ export const plainTheme: Theme = {
 	widgets: {
 		color_background: '#fff',
 		color_background_dim: '#f2f2f2',
+		background_blur: 0,
 		border: {
 			radius: 1,
 			width: 1,
