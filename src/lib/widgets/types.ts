@@ -69,23 +69,31 @@ export type CommentsWidget = BaseDefaultWidget & {
 };
 
 export type ConnectionProvider =
-	| 'twitter'
 	| 'bluesky'
 	| 'discord'
-	| 'email'
 	| 'domain'
+	| 'email'
+	| 'facebook'
 	| 'github'
-	| 'webpals'
-	| 'youtube'
-	| 'steam'
+	| 'instagram'
+	| 'linkedin'
+	| 'phone'
 	| 'pretendo'
-	| (string & {});
+	| 'reddit'
+	| 'signal'
+	| 'spotify'
+	| 'steam'
+	| 'twitch'
+	| 'twitter'
+	| 'webpals'
+	| 'youtube';
 
 export type Connection = {
 	provider: ConnectionProvider;
+	label?: string | null;
 	identifiable: string;
+	url?: string | null;
 	verified: boolean;
-	url?: string;
 };
 
 export type ConnectionsWidget = BaseDefaultWidget & {
@@ -93,14 +101,15 @@ export type ConnectionsWidget = BaseDefaultWidget & {
 	connections: Connection[];
 };
 
-export type AnyWidget =
+export type DefaultWidget =
 	| MusicWidget
 	| AboutMeWidget
 	| FriendsWidget
 	| PostsWidget
 	| CommentsWidget
-	| ConnectionsWidget
-	| CustomWidget;
+	| ConnectionsWidget;
+
+export type AnyWidget = DefaultWidget | CustomWidget;
 
 export type WidgetComponentProps<T extends AnyWidget> = {
 	user: PublicUser;

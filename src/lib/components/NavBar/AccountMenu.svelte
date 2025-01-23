@@ -3,7 +3,7 @@
 </script>
 
 <script lang="ts">
-	import DiscordLogo from '$icons/DiscordLogo.svelte';
+	import DiscordLogo from '$icons/brands/DiscordLogo.svelte';
 	import type { FullUser } from '$lib/db/schema/users';
 	import { dialogPortal } from '$lib/portals/dialog.svelte';
 	import { Butterfly, Code, DoorOpen, Gear, Island, UserSquare, XLogo } from 'phosphor-svelte';
@@ -55,7 +55,7 @@
 				</a>
 			</li>
 			<li>
-				<a href="https://discord.com/Mauurzxvrp" target="_blank" rel="noopener noreferrer">
+				<a href="https://discord.gg/Mauurzxvrp" target="_blank" rel="noopener noreferrer">
 					<DiscordLogo />
 					Discord
 				</a>
