@@ -60,7 +60,7 @@ export async function editConnection({ locals: { getCurrentUser }, request, url 
 	const connectionUrl = connectionProvider.hasUrl
 		? rawIdentifiable.startsWith('http')
 			? rawIdentifiable
-			: `https://${connectionProvider.identifiablePrefix}${rawIdentifiable}`
+			: `https://${connectionProvider.identifiablePrefix ?? ''}${rawIdentifiable}`
 		: undefined;
 
 	console.log({
