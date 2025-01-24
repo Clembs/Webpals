@@ -10,8 +10,16 @@ export const POST: RequestHandler = async ({ locals: { getCurrentUser } }) => {
 
 	if (!user) return error(401, 'Unauthorized');
 
+	// fetch the user from the database since we update the last heartbeat on the getCurrentUser method
+	const actualUser = await db.query.users.findFirst({
+		where: ({ id }, { eq }) => eq(id, user.id),
+		columns: {
+			lastHeartbeat: true
+		}
+	});
+
 	// if the last heartbeat was less than 3 minutes ago, ignore it to prevent spamming
-	if (user.lastHeartbeat.getTime() > Date.now() - HEARTBEAT_INTERVAL)
+	if (actualUser!.lastHeartbeat.getTime() > Date.now() - HEARTBEAT_INTERVAL)
 		return new Response(null, { status: 204 });
 
 	// if the user is purposefully offline, don't update the heartbeat
