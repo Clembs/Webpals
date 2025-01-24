@@ -1,130 +1,84 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { RequestEvent } from './$types';
-import { connectionProvidersArray } from '$lib/widgets/connections';
+import { connectionProviders } from '$lib/widgets/connections';
 import { db } from '$lib/db';
-import { users } from '$lib/db/schema/users';
-import type { ConnectionsWidget } from '$lib/widgets/types';
+import { connections } from '$lib/db/schema/users';
 import { eq } from 'drizzle-orm';
 
 export async function editConnection({ locals: { getCurrentUser }, request, url }: RequestEvent) {
-	const user = await getCurrentUser();
+	const user = getCurrentUser();
 
 	if (!user) redirect(302, '/login');
 
 	const formData = await request.formData();
-	const provider = formData.get('connection-provider')?.toString();
 	const rawIdentifiable = formData.get('connection-identifiable')?.toString();
-	const connectionIndex = parseInt(url.searchParams.get('index')!);
+	const connectionId = url.searchParams.get('connection-id');
 
-	if (!rawIdentifiable || isNaN(connectionIndex)) {
-		return fail(400, { message: 'Missing required fields' });
+	if (!rawIdentifiable || !connectionId) {
+		return fail(400, {
+			message: 'Missing required fields'
+		});
 	}
 
-	const connectionWidget = user.widgets
+	const connectionsWidget = user.widgets
 		.find((column) => column.find((w) => w.id === 'connections'))
-		?.find((w) => w.id === 'connections') as ConnectionsWidget | undefined;
+		?.find((w) => w.id === 'connections');
 
-	if (!connectionWidget) {
-		return fail(400, { message: 'Invalid widget ID.' });
+	if (!connectionsWidget) {
+		return fail(400, {
+			message: 'No connection widget'
+		});
 	}
 
-	const connection = connectionWidget.connections[connectionIndex];
+	const connection = user.connections.find(({ id }) => id === connectionId);
 
 	if (!connection) {
-		return fail(400, { message: 'Invalid connection index.' });
+		return fail(400, {
+			message: 'Invalid connection ID'
+		});
 	}
 
-	const knownProvider = provider
-		? connectionProvidersArray.find(
-				({ id, name }) =>
-					id.toLowerCase() === provider.toLowerCase() ||
-					name.toLowerCase() === provider.toLowerCase()
-			)
+	const connectionProvider = connectionProviders[connection.provider];
+
+	if (
+		connectionProvider.identifiablePattern &&
+		!connectionProvider.identifiablePattern.test(rawIdentifiable)
+	) {
+		return fail(400, {
+			message: 'Invalid connection identifier'
+		});
+	}
+
+	const matches = connectionProvider.identifiablePattern?.exec(rawIdentifiable);
+
+	const identifiable = connectionProvider.identifiablePattern
+		? // in case there's two different URL patterns for the same provider
+			matches![1] || matches![2] || rawIdentifiable
+		: rawIdentifiable;
+
+	// if the provider needs a URL, prepend https if not already present
+	const connectionUrl = connectionProvider.hasUrl
+		? rawIdentifiable.startsWith('http')
+			? rawIdentifiable
+			: `https://${connectionProvider.identifiablePrefix}${rawIdentifiable}`
 		: undefined;
 
-	if (knownProvider) {
-		if (knownProvider.matchingPattern && !knownProvider.matchingPattern.test(rawIdentifiable)) {
-			return fail(400, {
-				message: 'Invalid connection identifier'
-			});
-		}
+	console.log({
+		...connection,
+		identifiable,
+		url: connectionUrl
+	});
 
-		const matches = knownProvider.matchingPattern?.exec(rawIdentifiable);
-
-		const identifiable = knownProvider.matchingPattern
-			? // in case there's two different URL patterns for the same provider
-				matches![1] || matches![2]
-			: rawIdentifiable;
-
-		// if the provider needs a URL, prepend https if not already present
-		const url = knownProvider.hasUrl
-			? rawIdentifiable.startsWith('http')
-				? rawIdentifiable
-				: `https://${rawIdentifiable}`
-			: undefined;
-
-		try {
-			await db
-				.update(users)
-				.set({
-					widgets: user.widgets.map((column) =>
-						column.map((w) => {
-							if (w.id === 'connections') {
-								const widget = w as ConnectionsWidget;
-
-								return {
-									...w,
-									connections: widget.connections.map((c, i) =>
-										i === connectionIndex
-											? {
-													...c,
-													provider: knownProvider.id || connection.provider,
-													identifiable,
-													url
-												}
-											: c
-									)
-								};
-							}
-							return w;
-						})
-					)
-				})
-				.where(eq(users.id, user.id));
-		} catch (e) {
-			return fail(500, { message: String(e) });
-		}
-	} else {
-		try {
-			await db
-				.update(users)
-				.set({
-					widgets: user.widgets.map((column) =>
-						column.map((w) => {
-							if (w.id === 'connections') {
-								const widget = w as ConnectionsWidget;
-
-								return {
-									...w,
-									connections: widget.connections.map((c, i) =>
-										i === connectionIndex
-											? {
-													...c,
-													provider: provider || connection.provider,
-													identifiable: rawIdentifiable
-												}
-											: c
-									)
-								};
-							}
-							return w;
-						})
-					)
-				})
-				.where(eq(users.id, user.id));
-		} catch (e) {
-			return fail(500, { message: String(e) });
-		}
+	try {
+		await db
+			.update(connections)
+			.set({
+				identifiable,
+				url: connectionUrl
+			})
+			.where(eq(connections.id, connectionId));
+	} catch (e) {
+		return fail(500, { message: String(e) });
 	}
 
 	return {};

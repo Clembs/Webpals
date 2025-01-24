@@ -1,9 +1,5 @@
-// See https://kit.svelte.dev/docs/types#app
+import type { Session, FullUser } from '$lib/db/schema/types';
 
-import type { Session } from '$lib/db/schema/auth';
-import type { FullUser } from '$lib/db/schema/users';
-
-// for information about these interfaces
 declare global {
 	namespace App {
 		// interface Error {}

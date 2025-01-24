@@ -1,22 +1,28 @@
 import type { PartialTheme } from '$lib/themes/mergeThemes';
-import type { AnyWidget } from '$lib/widgets/types';
-import { relations } from 'drizzle-orm';
-import { jsonb, pgTable, primaryKey, smallint, text, timestamp } from 'drizzle-orm/pg-core';
 import {
-	inviteCodes,
-	passkeys,
-	sessions,
-	type InviteCode,
-	type Passkey,
-	type Session
-} from './auth';
-import { notifications, notificationsMentionedUsers, type Notification } from './notifications';
+	connectionProviderKeys,
+	type AnyWidget,
+	type ConnectionProvider
+} from '../../widgets/types';
+import { relations, sql } from 'drizzle-orm';
+import {
+	boolean,
+	jsonb,
+	pgTable,
+	primaryKey,
+	smallint,
+	text,
+	timestamp
+} from 'drizzle-orm/pg-core';
+import { inviteCodes, passkeys, sessions } from './auth';
+import { notifications, notificationsMentionedUsers } from './notifications';
 import {
 	defaultAboutMeWidget,
 	defaultCommentsWidget,
 	defaultFriendsWidget,
 	defaultMusicWidget
 } from '../../widgets/default-widgets';
+import type { PublicUser } from './types';
 
 export const UserStatusTypes = ['online', 'dnd', 'offline'] as const;
 
@@ -53,6 +59,7 @@ export const usersRelations = relations(users, ({ many }) => ({
 	passkeys: many(passkeys),
 	sessions: many(sessions),
 	notifications: many(notifications),
+	connections: many(connections),
 	mentionedInNotifications: many(notificationsMentionedUsers),
 	// Relationships can be bi-directional (for friends for example), so we need to define the relation twice
 	initiatedRelationships: many(relationships, {
@@ -64,33 +71,24 @@ export const usersRelations = relations(users, ({ many }) => ({
 	inviteCodes: many(inviteCodes)
 }));
 
-type User = typeof users.$inferSelect;
-
-export type PublicUser = Omit<User, 'challenge' | 'challengeExpiresAt' | 'email'>;
-
-export const publicUserColumns: { [K in Partial<keyof PublicUser>]: true } = {
-	avatar: true,
-	displayName: true,
-	id: true,
-	status: true,
-	lastHeartbeat: true,
-	pronouns: true,
-	theme: true,
-	username: true,
-	widgets: true
-} as const;
-
-export type FullUser = User & {
-	passkeys: Passkey[];
-	sessions: Session[];
-	notifications: Notification[];
-	initiatedRelationships: (Relationship & {
-		recipient: PublicUser;
-	})[];
-	receivedRelationships: (Relationship & {
-		user: PublicUser;
-	})[];
-	inviteCodes: InviteCode[];
+export const publicUserQuery = {
+	columns: {
+		id: true,
+		username: true,
+		displayName: true,
+		avatar: true,
+		pronouns: true,
+		lastHeartbeat: true,
+		widgets: true,
+		status: true,
+		theme: true
+	},
+	with: {
+		connections: true
+	}
+} as const satisfies {
+	columns: { [key in keyof PublicUser]?: true };
+	with: Record<string, true>;
 };
 
 export enum RelationshipTypes {
@@ -129,4 +127,25 @@ export const relationshipsRelations = relations(relationships, ({ one }) => ({
 	})
 }));
 
-export type Relationship = typeof relationships.$inferSelect;
+export const connections = pgTable('connections', {
+	id: text('id')
+		.default(sql`gen_random_uuid()`)
+		.primaryKey(),
+	userId: text('user_id').notNull(),
+	provider: text('provider', {
+		enum: connectionProviderKeys
+	})
+		.$type<ConnectionProvider>()
+		.notNull(),
+	label: text('label'),
+	identifiable: text('identifiable').notNull(),
+	url: text('url'),
+	verified: boolean('verified').default(false).notNull()
+});
+
+export const connectionsRelations = relations(connections, ({ one }) => ({
+	user: one(users, {
+		fields: [connections.userId],
+		references: [users.id]
+	})
+}));

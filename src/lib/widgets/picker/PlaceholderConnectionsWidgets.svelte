@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { XLogo, ArrowSquareOut, Globe } from 'phosphor-svelte';
+	import { ArrowSquareOut, Globe } from 'phosphor-svelte';
 	import BasePlaceholderWidget from './BasePlaceholderWidget.svelte';
+	import XLogo from '$icons/brands/XLogo.svelte';
 
 	let { showPicker = $bindable(false) } = $props();
 </script>

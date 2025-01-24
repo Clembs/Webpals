@@ -7,7 +7,7 @@
 	import FriendsWidgetComponent from '$lib/widgets/default/FriendsWidgetComponent.svelte';
 	import MusicWidgetComponent from '$lib/widgets/default/MusicWidgetComponent.svelte';
 	import ProfileWidgetComponent from '$lib/widgets/default/ProfileWidgetComponent.svelte';
-	import type { AboutMeWidget, AnyWidget } from '$lib/widgets/types';
+	import type { AboutMeWidget, AnyWidget, ConnectionsWidget } from '$lib/widgets/types';
 	import { flip } from 'svelte/animate';
 	import ProfileEditBar from './ProfileEditBar.svelte';
 	import { dndzone } from 'svelte-dnd-action';
@@ -65,8 +65,8 @@
 		<MusicWidgetComponent {widget} {...data} {editing} />
 	{:else if widget.id === 'friends' && !('blocks' in widget)}
 		<FriendsWidgetComponent {widget} {...data} {editing} />
-	{:else if widget.id === 'connections' && 'connections' in widget}
-		<ConnectionsWidgetComponent {widget} {...data} {editing} />
+	{:else if widget.id === 'connections'}
+		<ConnectionsWidgetComponent widget={widget as ConnectionsWidget} {...data} {editing} />
 	{:else if 'blocks' in widget}
 		<CustomWidgetComponent {widget} {...data} {editing} />
 	{:else if editing}

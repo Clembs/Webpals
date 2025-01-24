@@ -1,110 +1,71 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { RequestEvent } from './$types';
 import { db } from '$lib/db';
-import { users } from '$lib/db/schema/users';
-import { eq } from 'drizzle-orm';
-import { connectionProvidersArray } from '$lib/widgets/connections';
-import type { ConnectionsWidget } from '$lib/widgets/types';
+import { connections } from '$lib/db/schema/users';
+import { connectionProviders } from '$lib/widgets/connections';
+import type { ConnectionProvider } from '$lib/widgets/types';
 
 export async function createConnection({ locals: { getCurrentUser }, request }: RequestEvent) {
-	const user = await getCurrentUser();
+	const user = getCurrentUser();
 
 	if (!user) redirect(302, '/login');
 
 	const formData = await request.formData();
-	const provider = formData.get('connection-provider')?.toString();
+	const rawProvider = formData.get('connection-provider')?.toString() as
+		| ConnectionProvider
+		| undefined;
 	const rawIdentifiable = formData.get('connection-identifiable')?.toString();
+	const label = formData.get('connection-label')?.toString();
 
-	if (!provider || !rawIdentifiable) {
+	if (!rawProvider || !rawIdentifiable) {
 		return fail(400, { message: 'Missing required fields' });
 	}
 
-	const knownProvider = connectionProvidersArray.find(
-		({ id, name }) =>
-			id.toLowerCase() === provider.toLowerCase() || name.toLowerCase() === provider.toLowerCase()
-	);
+	if (label && label.length > 30) {
+		return fail(400, { message: 'Label too long' });
+	}
 
-	if (knownProvider) {
-		if (knownProvider.matchingPattern && !knownProvider.matchingPattern.test(rawIdentifiable)) {
-			return fail(400, {
-				message: 'Invalid connection identifier'
-			});
-		}
+	const connectionProvider = connectionProviders[rawProvider];
 
-		const matches = knownProvider.matchingPattern?.exec(rawIdentifiable);
+	if (!connectionProvider) {
+		return fail(400, {
+			message: 'Invalid connection provider'
+		});
+	}
 
-		const identifiable = knownProvider.matchingPattern
-			? // in case there's two different URL patterns for the same provider
-				matches![1] || matches![2]
-			: rawIdentifiable;
+	if (
+		connectionProvider.identifiablePattern &&
+		!connectionProvider.identifiablePattern.test(rawIdentifiable)
+	) {
+		return fail(400, {
+			message: 'Invalid connection identifier'
+		});
+	}
 
-		// if the provider needs a URL, prepend https if not already present
-		const url = knownProvider.hasUrl
-			? rawIdentifiable.startsWith('http')
-				? rawIdentifiable
-				: `https://${rawIdentifiable}`
-			: undefined;
+	const matches = connectionProvider.identifiablePattern?.exec(rawIdentifiable);
 
-		try {
-			await db
-				.update(users)
-				.set({
-					widgets: user.widgets.map((column) =>
-						column.map((w) => {
-							if (w.id === 'connections') {
-								const widget = w as ConnectionsWidget;
+	const identifiable = connectionProvider.identifiablePattern
+		? // in case there's two different URL patterns for the same provider
+			matches![1] || matches![2] || rawIdentifiable
+		: rawIdentifiable;
 
-								return {
-									...w,
-									connections: [
-										...widget.connections,
-										{
-											provider: knownProvider.id,
-											identifiable,
-											url,
-											verified: false
-										}
-									]
-								};
-							}
-							return w;
-						})
-					)
-				})
-				.where(eq(users.id, user.id));
-		} catch (e) {
-			return fail(500, { message: String(e) });
-		}
-	} else {
-		try {
-			await db
-				.update(users)
-				.set({
-					widgets: user.widgets.map((column) =>
-						column.map((w) => {
-							if (w.id === 'connections') {
-								const widget = w as ConnectionsWidget;
+	// if the provider needs a URL, prepend https if not already present
+	const url = connectionProvider.hasUrl
+		? rawIdentifiable.startsWith('http')
+			? rawIdentifiable
+			: `https://${connectionProvider.identifiablePrefix}${rawIdentifiable}`
+		: undefined;
 
-								return {
-									...w,
-									connections: [
-										...widget.connections,
-										{
-											provider,
-											identifiable: rawIdentifiable,
-											verified: false
-										}
-									]
-								};
-							}
-							return w;
-						})
-					)
-				})
-				.where(eq(users.id, user.id));
-		} catch (e) {
-			return fail(500, { message: String(e) });
-		}
+	try {
+		await db.insert(connections).values({
+			userId: user.id,
+			provider: rawProvider,
+			label,
+			identifiable,
+			url
+		});
+	} catch (e) {
+		return fail(500, { message: String(e) });
 	}
 
 	return {};

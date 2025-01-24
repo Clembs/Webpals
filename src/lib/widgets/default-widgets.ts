@@ -30,8 +30,7 @@ export const defaultCommentsWidget: CommentsWidget = {
 };
 
 export const defaultConnectionsWidget: ConnectionsWidget = {
-	id: 'connections',
-	connections: []
+	id: 'connections'
 };
 
 export const defaultWidgets = [

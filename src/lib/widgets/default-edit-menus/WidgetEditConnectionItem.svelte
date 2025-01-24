@@ -1,15 +1,7 @@
 <script lang="ts">
-	import {
-		Check,
-		Globe,
-		PencilSimple,
-		SealCheck,
-		TextAlignLeft,
-		TrashSimple,
-		X
-	} from 'phosphor-svelte';
+	import { Check, PencilSimple, SealCheck, Trash, X } from 'phosphor-svelte';
 	import { connectionProviders } from '../connections';
-	import type { Connection } from '../types';
+	import type { Connection } from '$lib/db/schema/types';
 	import InlineTextInput from '$lib/components/InlineTextInput.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import { enhance } from '$app/forms';
@@ -17,19 +9,17 @@
 	import { slide } from 'svelte/transition';
 
 	let {
-		selectedConnectionIndex = $bindable(),
-		connection,
-		index
+		editingConnectionId = $bindable(),
+		connection
 	}: {
-		selectedConnectionIndex: number | undefined;
+		editingConnectionId: string | undefined;
 		connection: Connection;
-		index: number;
 	} = $props();
 
-	let isEditing = $derived(selectedConnectionIndex === index);
+	let isEditing = $derived(editingConnectionId === connection.id);
 	let isLoading = $state(false);
 
-	let knownProvider = $derived(connectionProviders[connection.provider]);
+	let provider = $derived(connectionProviders[connection.provider]);
 
 	let isPressingShift = $state(false);
 </script>
@@ -40,9 +30,9 @@
 			isPressingShift = true;
 		}
 
-		if (e.key === 'Escape' && selectedConnectionIndex) {
+		if (e.key === 'Escape' && editingConnectionId) {
 			e.preventDefault();
-			selectedConnectionIndex = undefined;
+			editingConnectionId = undefined;
 		}
 	}}
 	onkeyup={(e) => {
@@ -52,65 +42,57 @@
 	}}
 />
 
-<li class="connection" out:slide>
-	<!-- TODO: the endpoint -->
+<li class="connection" transition:slide>
 	<form
 		use:enhance={() => {
 			isLoading = true;
 			return async ({ result, update }) => {
-				isLoading = false;
-
 				if (result.type === 'success') {
-					selectedConnectionIndex = undefined;
+					editingConnectionId = undefined;
 				}
 
 				await update({
 					reset: false
 				});
+
+				isLoading = false;
 			};
 		}}
-		action="/api/profile?/editConnection&index={index}"
+		action="/api/profile?/editConnection&connection-id={connection.id}"
 		method="post"
 	>
 		<div class="left">
-			{#if knownProvider}
-				<knownProvider.icon {...knownProvider.iconProps} />
-			{:else if connection.url}
-				<Globe />
-			{:else}
-				<TextAlignLeft />
-			{/if}
+			<provider.icon {...provider.iconProps} />
 			<div class="text">
-				{#if isEditing && (!knownProvider || connection.url)}
-					<InlineTextInput
-						name="connection-provider"
-						value={knownProvider?.name || connection.provider}
-						placeholder="Service (e.g. Discord, Nintendo Network...)"
-						required
-					/>
-				{:else}
-					<div class="heading">
-						{knownProvider?.name || connection.provider}
-					</div>
+				{#if provider.identifiablePrefix}
+					<span class="subtext">
+						{provider.identifiablePrefix}
+					</span>
 				{/if}
 				{#if isEditing}
 					<InlineTextInput
 						name="connection-identifiable"
-						value={connection.url || connection.identifiable}
-						placeholder={connection.url
-							? 'Enter a valid URL'
-							: knownProvider && knownProvider.identifiableHint
-								? knownProvider.identifiableHint
-								: 'Enter your @, a friend'}
+						value={connection.identifiable}
+						placeholder={provider.identifiablePlaceholder}
 						required
+						autofocus
 					/>
+				{:else if !connection.verified}
+					<button
+						aria-label="Edit connection"
+						onclick={() => (editingConnectionId = connection.id)}
+						class="edit-button heading"
+					>
+						{connection.identifiable}
+						<PencilSimple size={20} />
+					</button>
 				{:else}
-					<div class="subtext">
+					<span class="heading">
 						{connection.identifiable}
 						{#if connection.verified}
 							<SealCheck size={16} />
 						{/if}
-					</div>
+					</span>
 				{/if}
 			</div>
 		</div>
@@ -118,11 +100,8 @@
 		<div class="actions">
 			{#if isEditing}
 				<!-- Save & Cancel buttons -->
-				<Button aria-label="Save changes" icon size="small" inline>
-					<Check weight="regular" />
-				</Button>
 				<Button
-					onclick={() => (selectedConnectionIndex = undefined)}
+					onclick={() => (editingConnectionId = undefined)}
 					aria-label="Cancel changes"
 					icon
 					size="small"
@@ -130,10 +109,13 @@
 					inline
 					type="button"
 				>
-					<X weight="regular" />
+					<X weight="regular" size={20} />
+				</Button>
+				<Button aria-label="Save changes" icon size="small" inline>
+					<Check weight="regular" size={20} />
 				</Button>
 			{:else}
-				{#if !connection.verified && knownProvider && knownProvider.verifiable}
+				{#if !connection.verified && provider && provider.verifiable}
 					<Button
 						aria-label="Verify connection"
 						disabled
@@ -143,21 +125,9 @@
 						inline
 						type="button"
 					>
-						<SealCheck />
+						<SealCheck size={20} />
 					</Button>
 				{/if}
-				<Button
-					onclick={() => (selectedConnectionIndex = index)}
-					aria-label="Edit connection"
-					icon
-					size="small"
-					variant="secondary"
-					inline
-					disabled={connection.verified}
-					type="button"
-				>
-					<PencilSimple />
-				</Button>
 				{#if isPressingShift}
 					<Button
 						aria-label="Delete connection"
@@ -166,9 +136,9 @@
 						variant="urgent"
 						inline
 						type="submit"
-						formaction="/api/profile?/deleteConnection&index={index}"
+						formaction="/api/profile?/deleteConnection&connection-id={connection.id}"
 					>
-						<TrashSimple />
+						<Trash size={20} />
 					</Button>
 				{:else}
 					<Button
@@ -182,7 +152,7 @@
 							if (!isPressingShift) dialogPortal.openDialog(confirmDeleteDialog);
 						}}
 					>
-						<TrashSimple />
+						<Trash size={20} />
 					</Button>
 				{/if}
 			{/if}
@@ -199,7 +169,7 @@
 				update();
 			}}
 		method="post"
-		action="/api/profile?/deleteConnection&index={index}"
+		action="/api/profile?/deleteConnection&connection-id={connection.id}"
 	>
 		<h2>Delete connection</h2>
 
@@ -231,8 +201,7 @@
 <style lang="scss">
 	.connection {
 		display: flex;
-		padding: calc(var(--base-padding) * 0.75);
-		text-decoration: none;
+		padding: calc(var(--base-padding) * 0.5) calc(var(--base-padding) * 0.75);
 		color: var(--color-heading);
 		justify-content: space-between;
 		background-color: var(--widgets-background-color-dim);
@@ -253,8 +222,7 @@
 
 		.text {
 			display: flex;
-			flex-direction: column;
-			gap: calc(var(--base-gap) * 0.125);
+			// gap: calc(var(--base-gap) * 0.125);
 			width: 100%;
 			flex: 1;
 
@@ -263,6 +231,22 @@
 				display: flex;
 				align-items: center;
 				gap: calc(var(--base-gap) * 0.25);
+			}
+
+			.edit-button {
+				display: flex;
+				align-items: center;
+				gap: calc(var(--base-gap) * 0.25);
+				cursor: pointer;
+				background-color: transparent;
+				border: none;
+				color: inherit;
+				padding: calc(var(--base-gap) * 0.75);
+				margin: calc(0px - var(--base-gap) * 0.75);
+			}
+
+			.heading {
+				text-decoration: underline;
 			}
 		}
 

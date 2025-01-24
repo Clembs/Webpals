@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { RelationshipTypes, type PublicUser } from '$lib/db/schema/users';
+	import { type PublicUser } from '$lib/db/schema/types';
 	import { formatDate, formatRelativeTime } from '$lib/helpers/text';
 	import { snowflakeToDate } from '$lib/helpers/users';
 	import {
@@ -21,6 +21,7 @@
 	import { page } from '$app/state';
 	import Avatar from '$lib/components/Avatar.svelte';
 	import { scale } from 'svelte/transition';
+	import { RelationshipTypes } from '$lib/db/schema/users';
 
 	let { user, editing }: { user: PublicUser; editing: boolean } = $props();
 	// If the user set their status to something other than offline AND that the last heartbeat was within the IN (plus a second for safety)

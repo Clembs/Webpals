@@ -1,4 +1,4 @@
-import type { PublicUser } from '$lib/db/schema/users';
+import type { PublicUser } from '$lib/db/schema/types';
 
 export type BaseDefaultWidget = {
 	id: string;
@@ -68,37 +68,31 @@ export type CommentsWidget = BaseDefaultWidget & {
 	id: 'comments';
 };
 
-export type ConnectionProvider =
-	| 'bluesky'
-	| 'discord'
-	| 'domain'
-	| 'email'
-	| 'facebook'
-	| 'github'
-	| 'instagram'
-	| 'linkedin'
-	| 'phone'
-	| 'pretendo'
-	| 'reddit'
-	| 'signal'
-	| 'spotify'
-	| 'steam'
-	| 'twitch'
-	| 'twitter'
-	| 'webpals'
-	| 'youtube';
+export const connectionProviderKeys = [
+	'bluesky',
+	'discord',
+	'domain',
+	'email',
+	'facebook',
+	'github',
+	'instagram',
+	'linkedin',
+	'phone',
+	'pretendo',
+	'reddit',
+	'signal',
+	'spotify',
+	'steam',
+	'twitch',
+	'twitter',
+	'webpals',
+	'youtube'
+] as const;
 
-export type Connection = {
-	provider: ConnectionProvider;
-	label?: string | null;
-	identifiable: string;
-	url?: string | null;
-	verified: boolean;
-};
+export type ConnectionProvider = (typeof connectionProviderKeys)[number];
 
 export type ConnectionsWidget = BaseDefaultWidget & {
 	id: 'connections';
-	connections: Connection[];
 };
 
 export type DefaultWidget =

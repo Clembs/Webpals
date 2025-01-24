@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Avatar from '$lib/components/Avatar.svelte';
-	import { users, type PublicUser } from '$lib/db/schema/users';
+	import { type PublicUser } from '$lib/db/schema/types';
 	import { HEARTBEAT_INTERVAL } from '$lib/helpers/constants';
 	import { formatDate, formatRelativeTime } from '$lib/helpers/text';
 	import { snowflakeToDate } from '$lib/helpers/users';

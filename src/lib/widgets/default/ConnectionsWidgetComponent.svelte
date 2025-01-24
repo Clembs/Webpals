@@ -1,22 +1,23 @@
 <script lang="ts">
 	import BaseWidget from '$lib/widgets/BaseWidget.svelte';
-	import type { Connection, ConnectionsWidget, WidgetComponentProps } from '../types';
+	import type { ConnectionsWidget, WidgetComponentProps } from '../types';
 	import { connectionProviders } from '../connections';
 	import { ArrowSquareOut, Check, CopySimple, SealCheck, TextAlignLeft } from 'phosphor-svelte';
 	import ConnectionsWidgetEditComponent from '../default-edit-menus/ConnectionsWidgetEditComponent.svelte';
 	import { SvelteMap } from 'svelte/reactivity';
+	import type { Connection } from '$lib/db/schema/types';
 
 	let { user, widget, editing }: WidgetComponentProps<ConnectionsWidget> = $props();
 
 	let modalOpened = $state(false);
 
-	let copiedConnection = new SvelteMap(widget.connections.map((_, index) => [index, false]));
+	let copiedConnections = new SvelteMap(user.connections.map((_, index) => [index, false]));
 
 	function copyConnectionIdentifiable(index: number) {
-		const connection = widget.connections[index];
+		const connection = user.connections[index];
 		navigator.clipboard.writeText(connection.identifiable);
-		copiedConnection.set(index, true);
-		setTimeout(() => copiedConnection.set(index, false), 1000);
+		copiedConnections.set(index, true);
+		setTimeout(() => copiedConnections.set(index, false), 1000);
 	}
 
 	// let topTwoConnections = $derived(
@@ -30,10 +31,10 @@
 </script>
 
 {#snippet editMenu()}
-	<ConnectionsWidgetEditComponent {widget} />
+	<ConnectionsWidgetEditComponent {user} />
 {/snippet}
 
-{#snippet topConnectionContents(connection: Connection, index: number)}
+<!-- {#snippet topConnectionContents(connection: Connection, index: number)}
 	{@const provider = connectionProviders[connection.provider]!}
 
 	<a class="connection" href={connection.url} target="_blank" rel="noopener noreferrer">
@@ -46,7 +47,7 @@
 			{/if}
 		</div>
 	</a>
-{/snippet}
+{/snippet} -->
 
 {#snippet regularConnectionContents(connection: Connection, index: number)}
 	{@const provider = connectionProviders[connection.provider]}
@@ -70,8 +71,8 @@
 	{#if connection.url}
 		<ArrowSquareOut weight="regular" />
 	{:else}
-		<div class="copy-icon" class:animate={copiedConnection.get(index)}>
-			{#if copiedConnection.get(index)}
+		<div class="copy-icon" class:animate={copiedConnections.get(index)}>
+			{#if copiedConnections.get(index)}
 				<Check weight="regular" />
 			{:else}
 				<CopySimple />
@@ -93,7 +94,7 @@
 		</ul> -->
 
 		<ul class="connections-list">
-			{#each widget.connections as connection, index (index)}
+			{#each user.connections as connection, index (index)}
 				<li>
 					{#if connection.url}
 						<a class="connection" href={connection.url} target="_blank" rel="noopener noreferrer">

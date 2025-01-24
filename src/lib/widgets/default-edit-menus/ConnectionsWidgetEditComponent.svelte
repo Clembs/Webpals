@@ -1,31 +1,27 @@
 <script lang="ts">
-	import type { ConnectionsWidget } from '../types';
-	import ConnectionCreateField from './ConnectionCreateField.svelte';
-	import ConnectionEdit from './ConnectionEdit.svelte';
+	import ConnectionEdit from './WidgetEditConnectionItem.svelte';
+	import ConnectionCreate from './ConnectionCreate.svelte';
+	import type { PublicUser } from '$lib/db/schema/types';
 
 	let {
-		widget
+		user
 	}: {
-		widget: ConnectionsWidget;
+		user: PublicUser;
 	} = $props();
 
-	let selectedConnectionIndex = $state<number>();
+	let editingConnectionId = $state<string>();
 </script>
 
 <div class="connections-widget-edit">
 	<h2>Connections</h2>
 
 	<ul class="connections-list">
-		{#each widget.connections as connection, index}
-			<ConnectionEdit bind:selectedConnectionIndex {connection} {index} />
+		{#each user.connections as connection, index}
+			<ConnectionEdit bind:editingConnectionId {connection} />
 		{/each}
-
-		<li>
-			<ConnectionCreateField />
-		</li>
 	</ul>
 
-	<div class="subtext">Note: Connection verification is coming soon.</div>
+	<ConnectionCreate />
 </div>
 
 <style lang="scss">

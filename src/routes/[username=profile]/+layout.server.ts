@@ -2,7 +2,7 @@ import { db } from '$lib/db';
 import { error, redirect } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
 import { sql } from 'drizzle-orm';
-import { publicUserColumns } from '$lib/db/schema/users';
+import { publicUserQuery } from '$lib/db/schema/users';
 import { mergeThemes, plainTheme } from '$lib/themes/mergeThemes';
 
 export const load: LayoutServerLoad = async ({ params: { username }, url, parent }) => {
@@ -20,11 +20,10 @@ export const load: LayoutServerLoad = async ({ params: { username }, url, parent
 			theme: true
 		},
 		with: {
+			connections: true,
 			initiatedRelationships: {
 				with: {
-					recipient: {
-						columns: publicUserColumns
-					}
+					recipient: publicUserQuery
 				}
 			}
 		}

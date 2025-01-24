@@ -1,5 +1,5 @@
 import { boolean, pgTable, primaryKey, smallint, text } from 'drizzle-orm/pg-core';
-import { users, type PublicUser } from './users';
+import { users } from './users';
 import { relations } from 'drizzle-orm';
 
 export enum NotificationTypes {
@@ -32,12 +32,6 @@ export const notificationsRelations = relations(notifications, ({ one, many }) =
 	}),
 	mentionedUsers: many(notificationsMentionedUsers)
 }));
-
-export type Notification = typeof notifications.$inferSelect & {
-	mentionedUsers: (typeof notificationsMentionedUsers.$inferSelect & {
-		user: PublicUser | null;
-	})[];
-};
 
 export const notificationsMentionedUsers = pgTable(
 	'notif_mentioned',

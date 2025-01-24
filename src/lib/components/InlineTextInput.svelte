@@ -2,6 +2,7 @@
 	import type { HTMLInputAttributes, HTMLTextareaAttributes } from 'svelte/elements';
 
 	let {
+		ref = $bindable(),
 		type,
 		error,
 		name,
@@ -12,6 +13,7 @@
 		...restProps
 	}: HTMLInputAttributes &
 		HTMLTextareaAttributes & {
+			ref?: HTMLInputElement | HTMLTextAreaElement;
 			name: string;
 			error?: string;
 			value?: string;
@@ -23,6 +25,7 @@
 <div class="text-input" class:error>
 	{#if !multiline}
 		<input
+			bind:this={ref}
 			style:--font-size={fontSize}
 			{type}
 			id={name}
@@ -32,7 +35,14 @@
 			bind:value
 		/>
 	{:else}
-		<textarea style:--font-size={fontSize} id={name} {name} {required} {...restProps} bind:value
+		<textarea
+			style:--font-size={fontSize}
+			bind:this={ref}
+			id={name}
+			{name}
+			{required}
+			{...restProps}
+			bind:value
 		></textarea>
 	{/if}
 

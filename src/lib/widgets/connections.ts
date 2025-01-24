@@ -1,101 +1,141 @@
-// note: all of the REGEX has been AI-generated and im kind of ashamed of myself but regex is so fking hard and i mean ive tested a few edge cases for each and they work fine.
+// note: some of the more complex regex has been AI-generated and im kind of ashamed of myself but regex is kinda hard and i mean ive tested a few edge cases for each and they work fine.
 // if you're a regex wizard reading this and something doesn't work, help me by submitting an issue.
 
 import type { ConnectionProvider } from './types';
-import {
-	Butterfly,
-	Envelope,
-	GithubLogo,
-	Globe,
-	Island,
-	SteamLogo,
-	XLogo,
-	YoutubeLogo,
-	type IconContextProps
-} from 'phosphor-svelte';
-import DiscordLogo from '$icons/DiscordLogo.svelte';
+import { Envelope, Globe, Island, Phone, type IconContextProps } from 'phosphor-svelte';
+import DiscordLogo from '$icons/brands/DiscordLogo.svelte';
 import { EMAIL_REGEX } from 'valibot';
-import PretendoNetworkId from '$icons/PretendoNetworkID.svelte';
+import PretendoLogo from '$icons/brands/PretendoLogo.svelte';
+import { USERNAME_REGEX } from '$lib/helpers/constants';
+import BlueskyLogo from '$icons/brands/BlueskyLogo.svelte';
+import XLogo from '$icons/brands/XLogo.svelte';
+import SteamLogo from '$icons/brands/SteamLogo.svelte';
+import YouTubeLogo from '$icons/brands/YouTubeLogo.svelte';
+import GitHubLogo from '$icons/brands/GitHubLogo.svelte';
+import FacebookLogo from '$icons/brands/FacebookLogo.svelte';
+import RedditLogo from '$icons/brands/RedditLogo.svelte';
+import SignalLogo from '$icons/brands/SignalLogo.svelte';
+import SpotifyLogo from '$icons/brands/SpotifyLogo.svelte';
+import TwitchLogo from '$icons/brands/TwitchLogo.svelte';
+import InstagramLogo from '$icons/brands/InstagramLogo.svelte';
+import LinkedInLogo from '$icons/brands/LinkedInLogo.svelte';
 
 export const connectionProviders: Record<
 	ConnectionProvider,
 	{
 		name: string;
-		icon: typeof XLogo | typeof DiscordLogo;
+		icon: typeof Globe | typeof DiscordLogo;
 		iconProps?: IconContextProps['values'];
-		matchingPattern?: RegExp;
-		identifiableHint?: string;
-		hasUrl: boolean;
-		verifiable: boolean;
+		identifiablePattern?: RegExp; // the regex pattern to match the identifiable part of the connection
+		identifiablePlaceholder?: string; // the placeholder for the identifiable input
+		identifiablePrefix?: string;
+		hasUrl: boolean; // true the connection links to a webpage, false if it's just text
+		verifiable: boolean; // whether the connection can be oauth verified
 	}
 > = {
-	twitter: {
-		name: 'X/Twitter',
-		icon: XLogo,
-		iconProps: { weight: 'regular' },
-		// works for twitter.com & x.com URLs. group 1 is the handle
-		matchingPattern: /^(?:https?:\/\/)?(?:x\.com|twitter\.com)\/([a-zA-Z0-9_]{1,15})(?:\?.*)?$/,
-		hasUrl: true,
-		verifiable: true
-	},
 	bluesky: {
 		name: 'Bluesky',
-		icon: Butterfly,
-		// works for bsky.app URLs and did:plc: URLs. group 1 is the handle, group 2 is the DID
-		// this MIGHT not work as intended. if you're reading this because it doesn't work, please lmk through an issue.
-		matchingPattern:
-			/^(?:https?:\/\/)?bsky\.app\/profile\/((?:[a-zA-Z0-9-]+\.)+[a-zA-Z0-9-]+|did:(?:plc|web):[a-zA-Z0-9]+)$|^(did:(?:plc|web):[a-zA-Z0-9]+)$/,
+		icon: BlueskyLogo,
+		// works for domain names, DID PLC identities and Web DID identities.
+		identifiablePattern:
+			// wrote this regex myself. proud of it.
+			/^((?:[a-zA-Z0-9-]+\.)+[a-zA-Z0-9-]+|^(?:did:plc:[a-zA-Z0-9]{24})$|^(?:did:web:[a-zA-Z0-9.]+))$/,
+		identifiablePlaceholder: 'bluesky handle/did',
+		identifiablePrefix: 'bsky.app/profile/',
 		hasUrl: true,
 		verifiable: true
 	},
 	discord: {
 		name: 'Discord',
 		icon: DiscordLogo,
-		identifiableHint: 'Enter your Discord username (e.g. clembs)',
+		identifiablePattern: /^([a-zA-Z0-9._]{2,32})$/,
+		identifiablePlaceholder: 'discord username',
+		identifiablePrefix: '@',
 		hasUrl: false,
 		verifiable: true
-	},
-	pretendo: {
-		name: 'Pretendo Network ID',
-		icon: PretendoNetworkId,
-		identifiableHint: 'Enter your Pretendo Network ID (e.g. Clembs)',
-		hasUrl: false,
-		verifiable: false
 	},
 	email: {
 		name: 'Email',
 		icon: Envelope,
-		// i trust valibot devs. their brains are bigger than mine
-		matchingPattern: EMAIL_REGEX,
+		identifiablePattern: EMAIL_REGEX,
+		identifiablePlaceholder: 'email address',
 		hasUrl: false,
+		verifiable: true
+	},
+	facebook: {
+		name: 'Facebook',
+		icon: FacebookLogo,
+		identifiablePattern: /^([a-zA-Z0-9.]{5,50})$/,
+		identifiablePrefix: 'facebook.com/',
+		identifiablePlaceholder: 'facebook username',
+		hasUrl: true,
 		verifiable: true
 	},
 	github: {
 		name: 'GitHub',
-		icon: GithubLogo,
-		// works for github.com URLs. group 1 is the username
-		matchingPattern:
-			/^(?:https?:\/\/)?github\.com\/([a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)(?:\?.*)?$/,
+		icon: GitHubLogo,
+		identifiablePattern: /^([a-zA-Z0-9-]{1,39})$/,
+		identifiablePlaceholder: 'github username',
+		identifiablePrefix: 'github.com/',
 		hasUrl: true,
 		verifiable: true
 	},
-	webpals: {
-		name: 'Webpals',
-		icon: Island,
-		// works for webpals.me, webpals.vercel.com, and webpals.clembs.com URLs. group 1 is the handle
-		// this should work unless i break smth. i'd be very dumb
-		matchingPattern:
-			/^(?:https?:\/\/)?(?:webpals\.me|webpals\.vercel\.app|webpals\.clembs\.com)\/([a-zA-Z0-9_]{2,24})(?:\?.*)?$/,
+	instagram: {
+		name: 'Instagram',
+		icon: InstagramLogo,
+		identifiablePattern: /^([a-zA-Z0-9._]{1,30})$/,
+		identifiablePlaceholder: 'instagram handle',
+		identifiablePrefix: 'instagram.com/',
 		hasUrl: true,
 		verifiable: true
 	},
-	youtube: {
-		name: 'YouTube',
-		icon: YoutubeLogo,
-		// works for youtube.com URLs. group 1 is the channelId. group 2 is the handle or username
-		// modified from https://stackoverflow.com/a/65726047 (ty)
-		matchingPattern:
-			/^(?:https?:\/\/)(?:www\.|m\.)?youtube\.com\/(?:channel\/(UC[\w-]{21}[AQgw])|(?:c\/|user\/)?([\w@-]+))$/,
+	linkedin: {
+		name: 'LinkedIn',
+		icon: LinkedInLogo,
+		identifiablePattern: /^([a-zA-Z0-9-]{1,50})$/,
+		identifiablePlaceholder: 'linkedin username',
+		identifiablePrefix: 'linkedin.com/in/',
+		hasUrl: true,
+		verifiable: true
+	},
+	phone: {
+		name: 'Phone',
+		icon: Phone,
+		identifiablePattern: /^(\+?[0-9]{1,3}-?[0-9]{3,14})$/,
+		identifiablePlaceholder: 'phone number',
+		hasUrl: false,
+		verifiable: false
+	},
+	pretendo: {
+		name: 'Pretendo Network ID',
+		icon: PretendoLogo,
+		identifiablePlaceholder: 'pretendo network id',
+		hasUrl: false,
+		verifiable: false
+	},
+	reddit: {
+		name: 'Reddit',
+		icon: RedditLogo,
+		identifiablePattern: /^([a-zA-Z0-9_]{3,20})$/,
+		identifiablePlaceholder: 'reddit username',
+		identifiablePrefix: 'reddit.com/u/',
+		hasUrl: true,
+		verifiable: true
+	},
+	signal: {
+		name: 'Signal',
+		icon: SignalLogo,
+		identifiablePattern: /^([a-zA-Z0-9_]{3,32}\.\d{2})$/,
+		identifiablePlaceholder: 'signal username',
+		hasUrl: false,
+		verifiable: false
+	},
+	spotify: {
+		name: 'Spotify',
+		icon: SpotifyLogo,
+		identifiablePattern: /^([0-9A-Za-z-]{2,32})$/,
+		identifiablePrefix: 'open.spotify.com/user/',
+		identifiablePlaceholder: 'spotify username',
 		hasUrl: true,
 		verifiable: true
 	},
@@ -103,8 +143,48 @@ export const connectionProviders: Record<
 		name: 'Steam',
 		icon: SteamLogo,
 		// works for steamcommunity.com URLs. group 1 is the SteamID or profile URL
-		matchingPattern:
-			/^(?:https?:\/\/)?steamcommunity\.com\/(?:id|profiles)\/([a-zA-Z0-9_-]+)(?:\?.*)?$/,
+		identifiablePattern: /^((?:id|profiles)\/[a-zA-Z0-9_-]+)(?:\?.*)?$/,
+		identifiablePrefix: 'steamcommunity.com/',
+		identifiablePlaceholder: 'steam profile id/url',
+		hasUrl: true,
+		verifiable: true
+	},
+	twitch: {
+		name: 'Twitch',
+		icon: TwitchLogo,
+		identifiablePattern: /^([a-zA-Z0-9_]{4,25})$/,
+		identifiablePlaceholder: 'twitch username',
+		identifiablePrefix: 'twitch.tv/',
+		hasUrl: true,
+		verifiable: true
+	},
+	twitter: {
+		name: 'X/Twitter',
+		icon: XLogo,
+		iconProps: { weight: 'regular' },
+		identifiablePattern: /^([a-zA-Z0-9_]{1,15})$/,
+		identifiablePlaceholder: 'twitter handle',
+		identifiablePrefix: 'x.com/',
+		hasUrl: true,
+		verifiable: true
+	},
+	webpals: {
+		name: 'Webpals',
+		icon: Island,
+		identifiablePattern: USERNAME_REGEX,
+		identifiablePrefix: 'webpals.me/',
+		identifiablePlaceholder: 'webpals username',
+		hasUrl: true,
+		verifiable: true
+	},
+	youtube: {
+		name: 'YouTube',
+		icon: YouTubeLogo,
+		// works for youtube.com URLs. group 1 is the channelId. group 2 is the handle or username
+		// modified from https://stackoverflow.com/a/65726047 (ty)
+		identifiablePattern: /^(?:channel\/(UC[\w-]{21}[AQgw])|(?:c\/|user\/)?([\w@-]+))$/,
+		identifiablePlaceholder: 'username/handle/channel id',
+		identifiablePrefix: 'youtube.com/',
 		hasUrl: true,
 		verifiable: true
 	},
@@ -112,17 +192,17 @@ export const connectionProviders: Record<
 	domain: {
 		name: 'Website',
 		icon: Globe,
-		// group 1 is the domain
-		// honestly tho idk why i called this "domain" when it's literally just a website
+		// honestly tho idk why i called this "domain" when it can be any website
 		// modified from https://uibakery.io/regex-library/url to group the domain
-		matchingPattern:
+		identifiablePattern:
 			/^(?:https?:\/\/)?((?:www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6})\b(?:[-a-zA-Z0-9()@:%_+.~#?&/=]*)$/,
+		identifiablePlaceholder: 'website url',
 		hasUrl: true,
 		verifiable: true
 	}
 };
 
 export const connectionProvidersArray = Object.entries(connectionProviders).map(([id, rest]) => ({
-	id,
+	id: id as ConnectionProvider,
 	...rest
 }));

@@ -20,8 +20,6 @@ export const passkeysRelations = relations(passkeys, ({ one }) => ({
 	})
 }));
 
-export type Passkey = typeof passkeys.$inferSelect;
-
 export const authCodes = pgTable('auth_codes', {
 	id: text('id')
 		.primaryKey()
@@ -30,8 +28,6 @@ export const authCodes = pgTable('auth_codes', {
 	email: text('email').notNull(),
 	expiresAt: timestamp('expires_at').notNull()
 });
-
-export type AuthCode = typeof authCodes.$inferSelect;
 
 export const sessions = pgTable('sessions', {
 	id: text('id')
@@ -55,8 +51,6 @@ export const sessionsRelations = relations(sessions, ({ one }) => ({
 	})
 }));
 
-export type Session = typeof sessions.$inferSelect;
-
 export const inviteCodes = pgTable('invite_codes', {
 	id: text('id')
 		.primaryKey()
@@ -79,5 +73,3 @@ export const inviteCodesRelations = relations(inviteCodes, ({ one }) => ({
 		references: [users.id]
 	})
 }));
-
-export type InviteCode = typeof inviteCodes.$inferSelect;

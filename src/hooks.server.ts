@@ -1,5 +1,5 @@
 import { db } from '$lib/db';
-import { publicUserColumns } from '$lib/db/schema/users';
+import { publicUserQuery } from '$lib/db/schema/users';
 import type { Handle } from '@sveltejs/kit';
 
 export const handle: Handle = async ({ event, resolve }) => {
@@ -19,29 +19,24 @@ export const handle: Handle = async ({ event, resolve }) => {
 					sessions: true,
 					passkeys: true,
 					inviteCodes: true,
+					connections: true,
 					notifications: {
 						with: {
 							mentionedUsers: {
 								with: {
-									user: {
-										columns: publicUserColumns
-									}
+									user: publicUserQuery
 								}
 							}
 						}
 					},
 					initiatedRelationships: {
 						with: {
-							recipient: {
-								columns: publicUserColumns
-							}
+							recipient: publicUserQuery
 						}
 					},
 					receivedRelationships: {
 						with: {
-							user: {
-								columns: publicUserColumns
-							}
+							user: publicUserQuery
 						}
 					}
 				}
