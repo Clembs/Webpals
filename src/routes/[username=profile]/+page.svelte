@@ -110,7 +110,7 @@
 		{#each userWidgets as column, index}
 			<div class="column-outer">
 				{#if index === 0}
-					<ProfileWidgetComponent {...data} />
+					<ProfileWidgetComponent {...data} {editing} />
 				{/if}
 				{#if editing}
 					{@render draggableWidgetColumns(column, index)}
