@@ -19,6 +19,12 @@ import SpotifyLogo from '$icons/brands/SpotifyLogo.svelte';
 import TwitchLogo from '$icons/brands/TwitchLogo.svelte';
 import InstagramLogo from '$icons/brands/InstagramLogo.svelte';
 import LinkedInLogo from '$icons/brands/LinkedInLogo.svelte';
+import KoFiLogo from '$icons/brands/KoFiLogo.svelte';
+import LastFmLogo from '$icons/brands/LastFmLogo.svelte';
+import MastodonLogo from '$icons/brands/MastodonLogo.svelte';
+import PatreonLogo from '$icons/brands/PatreonLogo.svelte';
+import StartGgLogo from '$icons/brands/StartGgLogo.svelte';
+import ThreadsLogo from '$icons/brands/ThreadsLogo.svelte';
 
 export const connectionProviders: Record<
 	ConnectionProvider,
@@ -89,6 +95,24 @@ export const connectionProviders: Record<
 		hasUrl: true,
 		verifiable: true
 	},
+	kofi: {
+		name: 'Ko-fi',
+		icon: KoFiLogo,
+		identifiablePattern: /^([a-zA-Z0-9-]{1,50})$/,
+		identifiablePrefix: 'ko-fi.com/',
+		identifiablePlaceholder: 'ko-fi username',
+		hasUrl: true,
+		verifiable: false
+	},
+	lastfm: {
+		name: 'Last.fm',
+		icon: LastFmLogo,
+		identifiablePattern: /^([a-zA-Z0-9-]{1,50})$/,
+		identifiablePrefix: 'last.fm/user/',
+		identifiablePlaceholder: 'last.fm username',
+		hasUrl: true,
+		verifiable: false
+	},
 	linkedin: {
 		name: 'LinkedIn',
 		icon: LinkedInLogo,
@@ -97,6 +121,25 @@ export const connectionProviders: Record<
 		identifiablePrefix: 'linkedin.com/in/',
 		hasUrl: true,
 		verifiable: true
+	},
+	mastodon: {
+		name: 'Mastodon',
+		icon: MastodonLogo,
+		// taken from https://regex101.com/r/ac4fG5/2, thank you very much
+		identifiablePattern: /^@?\b(?:[a-zA-Z0-9._%+-]+)@(?:[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})\b$/,
+		identifiablePrefix: 'mastodon.social/@',
+		identifiablePlaceholder: 'mastodon full handle (e.g. @clembs@mastodon.social)',
+		hasUrl: true,
+		verifiable: false
+	},
+	patreon: {
+		name: 'Patreon',
+		icon: PatreonLogo,
+		identifiablePattern: /^([a-zA-Z0-9-]{1,50})$/,
+		identifiablePrefix: 'patreon.com/',
+		identifiablePlaceholder: 'patreon username',
+		hasUrl: true,
+		verifiable: false
 	},
 	phone: {
 		name: 'Phone',
@@ -139,6 +182,15 @@ export const connectionProviders: Record<
 		hasUrl: true,
 		verifiable: true
 	},
+	startgg: {
+		name: 'Start.gg',
+		icon: StartGgLogo,
+		identifiablePattern: /$[a-zA-Z0-9]{8}$/,
+		identifiablePrefix: 'start.gg/user/',
+		identifiablePlaceholder: 'start.gg user ID',
+		hasUrl: true,
+		verifiable: true
+	},
 	steam: {
 		name: 'Steam',
 		icon: SteamLogo,
@@ -148,6 +200,15 @@ export const connectionProviders: Record<
 		identifiablePlaceholder: 'steam profile id/url',
 		hasUrl: true,
 		verifiable: true
+	},
+	threads: {
+		name: 'Threads',
+		icon: ThreadsLogo,
+		identifiablePattern: /^([a-zA-Z0-9._]{1,30})$/,
+		identifiablePrefix: 'threads.net/@',
+		identifiablePlaceholder: 'threads/instagram handle',
+		hasUrl: true,
+		verifiable: false
 	},
 	twitch: {
 		name: 'Twitch',
