@@ -16,6 +16,7 @@ export async function load() {
 		count: userCount,
 		awaitedUsers: db.query.users.findMany({
 			columns: publicUserColumns,
+			orderBy: ({ lastHeartbeat }, { desc }) => desc(lastHeartbeat),
 			offset: 10
 		})
 	};
