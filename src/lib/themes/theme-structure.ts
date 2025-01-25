@@ -52,7 +52,9 @@ const BackgroundGradientStructure = union([
 		gradient_colors: optional(array(HexColorStructure)),
 		gradient_direction: optional(nullable(number())),
 		gradient_type: optional(picklist(['linear', 'radial', 'conic'])),
-		image_url: optional(pipe(string(), url())),
+		image_url: optional(
+			pipe(string(), regex(/^data:image\/(png|jpg|jpeg|gif|svg|webp);base64,([a-zA-Z0-9+/=]+)$/))
+		),
 		image_position: optional(picklist(['center', 'top', 'bottom', 'left', 'right'])),
 		image_size: optional(picklist(['cover', 'contain']))
 	}),
@@ -89,7 +91,7 @@ export const ThemeStructure = strictObject({
 		color_background_dim: HexColorStructure,
 		border: BorderStructure,
 		shadow: nullable(ShadowStructure),
-		blur: pipe(number(), minValue(0), maxValue(10))
+		background_blur: pipe(number(), minValue(0), maxValue(10))
 	}),
 	primary_buttons: strictObject({
 		color_background: HexColorStructure,

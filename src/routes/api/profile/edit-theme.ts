@@ -6,9 +6,12 @@ import { db } from '$lib/db';
 import { users } from '$lib/db/schema/users';
 import type { Theme } from '$lib/themes/types';
 import { eq } from 'drizzle-orm';
+import { supabase } from '$lib/db/supabase';
+import sharp from 'sharp';
+import { generateSnowflake } from '$lib/helpers/users';
 
 export async function editTheme({ locals: { getCurrentUser }, request }: RequestEvent) {
-	const user = await getCurrentUser();
+	const user = getCurrentUser();
 
 	if (!user) redirect(302, '/login');
 
@@ -53,6 +56,60 @@ export async function editTheme({ locals: { getCurrentUser }, request }: Request
 		return fail(400, {
 			message: String(err)
 		});
+	}
+
+	if (themeObject.background.type === 'image') {
+		const base64String = themeObject.background.image_url;
+
+		// upload the image to the storage
+		const imageBuffer = Buffer.from(base64String.split(',')[1], 'base64');
+
+		// resize & convert image to webp
+		const webpBuffer = await sharp(imageBuffer)
+			.resize(1900)
+			.webp({
+				quality: 80
+			})
+			.toBuffer();
+
+		// delete the previous image from storage
+		if (user.theme?.background?.type === 'image' && user.theme?.background?.image_url) {
+			const previousImageName = user.theme.background.image_url.split('/').pop();
+
+			try {
+				await supabase.storage.from('backgrounds').remove([`/${user.id}/${previousImageName}`]);
+			} catch (e) {
+				console.error(e);
+				return fail(500, {
+					message: 'Failed to remove previous background image'
+				});
+			}
+		}
+
+		try {
+			// upload the new image
+			const storageObject = await supabase.storage
+				.from('backgrounds')
+				.upload(`/${user.id}/background-${generateSnowflake()}.webp`, webpBuffer, {
+					contentType: 'image/webp'
+				});
+
+			if (storageObject.error || !storageObject.data) {
+				console.error(storageObject.error);
+				return fail(500, {
+					message: 'Failed to upload background image'
+				});
+			}
+
+			const url = supabase.storage.from('backgrounds').getPublicUrl(storageObject.data.path);
+
+			themeObject.background.image_url = url.data.publicUrl;
+		} catch (e) {
+			console.error(e);
+			return fail(500, {
+				message: 'Failed to upload background image'
+			});
+		}
 	}
 
 	await db
