@@ -27,8 +27,6 @@
 		editing = data.editing;
 	});
 
-	$inspect(editing);
-
 	async function updateWidgetPosition(widgetId: string) {
 		const newColumn = userWidgets.findIndex((c) => c.find((w) => w.id === widgetId));
 		const newPosition = userWidgets[newColumn].findIndex((w) => w.id === widgetId);
