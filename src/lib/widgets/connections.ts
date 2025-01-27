@@ -185,7 +185,7 @@ export const connectionProviders: Record<
 	startgg: {
 		name: 'Start.gg',
 		icon: StartGgLogo,
-		identifiablePattern: /$[a-zA-Z0-9]{8}$/,
+		identifiablePattern: /^([a-zA-Z0-9]{8})$/,
 		identifiablePrefix: 'start.gg/user/',
 		identifiablePlaceholder: 'start.gg user ID',
 		hasUrl: true,
