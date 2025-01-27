@@ -6,28 +6,34 @@ import { publicUserQuery } from '$lib/db/schema/users';
 import { mergeThemes, plainTheme } from '$lib/themes/mergeThemes';
 
 export const load: LayoutServerLoad = async ({ params: { username }, url, parent }) => {
-	const user = await db.query.users.findFirst({
-		where: (user, { eq }) => eq(sql`LOWER(${user.username})`, username.toLowerCase()),
-		columns: {
-			id: true,
-			avatar: true,
-			displayName: true,
-			lastHeartbeat: true,
-			pronouns: true,
-			status: true,
-			widgets: true,
-			username: true,
-			theme: true
-		},
-		with: {
-			connections: true,
-			initiatedRelationships: {
+	const { currentUser } = await parent();
+	const isCurrentUser =
+		currentUser && currentUser.username.toLowerCase() === username.toLowerCase();
+
+	const user = isCurrentUser
+		? currentUser
+		: await db.query.users.findFirst({
+				where: (user, { eq }) => eq(sql`LOWER(${user.username})`, username.toLowerCase()),
+				columns: {
+					id: true,
+					avatar: true,
+					displayName: true,
+					lastHeartbeat: true,
+					pronouns: true,
+					status: true,
+					widgets: true,
+					username: true,
+					theme: true
+				},
 				with: {
-					recipient: publicUserQuery
+					connections: true,
+					initiatedRelationships: {
+						with: {
+							recipient: publicUserQuery
+						}
+					}
 				}
-			}
-		}
-	});
+			});
 
 	if (!user) throw error(404, 'User not found');
 
@@ -35,9 +41,6 @@ export const load: LayoutServerLoad = async ({ params: { username }, url, parent
 	if (username !== user.username) {
 		redirect(301, `/${user.username}`);
 	}
-
-	const { currentUser } = await parent();
-	const isCurrentUser = currentUser && currentUser.id === user.id;
 
 	if (url.searchParams.has('edit')) {
 		if (!isCurrentUser) {
