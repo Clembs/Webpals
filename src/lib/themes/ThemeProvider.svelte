@@ -34,7 +34,15 @@
 	style="
 	display: contents;
 	--background: {resolveBackground(theme)};
-  
+	{theme.background.type === 'image'
+		? `
+	--background-size: ${theme.background.image_size};
+	--background-position: ${theme.background.image_position};
+	--background-repeat: ${theme.background.image_repeat};
+	--background-rendering: ${theme.background.image_rendering};
+	`
+		: ''}
+
 	--avatar-size: {theme.avatar.size}px;
   --avatar-border-radius: {typeof theme.avatar.border?.radius === 'string'
 		? theme.avatar.border?.radius

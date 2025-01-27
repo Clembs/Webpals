@@ -131,13 +131,16 @@
 <style lang="scss">
 	main {
 		background: var(--background);
+		background-size: var(--background-size);
+		background-position: var(--background-position);
+		background-repeat: var(--background-repeat);
+		image-rendering: var(--background-rendering);
+
 		display: grid;
 		padding: clamp(calc(var(--base-padding) / 2), 2vw, calc(var(--base-padding) * 2));
 		gap: var(--base-gap);
 		grid-template-columns: 1fr 1.5fr;
 		grid-template-rows: 1fr auto; // thx kevin powell https://stackoverflow.com/a/45897789
-		background-position: center;
-		background-size: cover;
 		flex: 1;
 
 		.column-outer {

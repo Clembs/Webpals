@@ -23,7 +23,9 @@ type ImageBackground = {
 	type: 'image';
 	image_url: string;
 	image_position: 'center' | 'top' | 'bottom' | 'left' | 'right';
-	image_size: 'cover' | 'contain';
+	image_size: 'auto' | 'cover' | 'contain';
+	image_repeat: 'no-repeat' | 'repeat';
+	image_rendering: 'smooth' | 'pixelated';
 };
 
 type ColorBackground = {

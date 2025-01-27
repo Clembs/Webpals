@@ -69,8 +69,53 @@
 		</label>
 
 		Recommended size: 1920x1080 pixels
+
+		<label for="background.image_position">
+			Align image to
+
+			<select bind:value={theme.background.image_position} id="background.image_position">
+				<option value="center" selected>Center</option>
+				<option value="top">Top</option>
+				<option value="bottom">Bottom</option>
+				<option value="left">Left</option>
+				<option value="right">Right</option>
+			</select>
+		</label>
+
+		<label for="background.image_size">
+			Image size
+
+			<select bind:value={theme.background.image_size} id="background.image_size">
+				<option value="auto">Automatic</option>
+				<option value="cover" selected>Cover</option>
+				<option value="contain">Contain</option>
+			</select>
+		</label>
+
+		<label for="background.image_repeat">
+			Repeat image in a tile pattern
+
+			<select bind:value={theme.background.image_repeat} id="background.image_repeat">
+				<option value="no-repeat" selected>Don't repeat</option>
+				<option value="repeat">Repeat</option>
+			</select>
+		</label>
+
+		<label for="background.image_rendering">
+			Image rendering
+
+			<select bind:value={theme.background.image_rendering} id="background.image_rendering">
+				<option value="smooth" selected>Smooth</option>
+				<option value="pixelated">Pixelated</option>
+			</select>
+		</label>
 	{:else if theme.background.type === 'color'}
-		<ColorPicker isDialog={false} bind:hex={theme.background.color} label="Background color" />
+		<ColorPicker
+			isDialog={false}
+			bind:hex={theme.background.color}
+			label="Background color"
+			name="background.color"
+		/>
 	{/if}
 </section>
 
