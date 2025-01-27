@@ -42,16 +42,9 @@ export async function editTheme({ locals: { getCurrentUser }, request }: Request
 		});
 	} catch (err) {
 		if (isValiError(err)) {
-			console.dir(
-				err.issues.map((i) => ({
-					expected: i.expected,
-					received: i.received,
-					path: i.path
-				})),
-				{
-					depth: 10
-				}
-			);
+			console.dir(err.issues[0].issues, {
+				depth: 10
+			});
 		}
 		return fail(400, {
 			message: String(err)
@@ -64,9 +57,20 @@ export async function editTheme({ locals: { getCurrentUser }, request }: Request
 		// upload the image to the storage
 		const imageBuffer = Buffer.from(base64String.split(',')[1], 'base64');
 
+		const loadedSharpImage = sharp(imageBuffer);
+
+		// get the image's width & height
+		const { width, height } = (await loadedSharpImage.metadata()) as {
+			width: number;
+			height: number;
+		};
+
 		// resize & convert image to webp
-		const webpBuffer = await sharp(imageBuffer)
-			.resize(1900)
+		const webpBuffer = await loadedSharpImage
+			.resize({
+				width: Math.min(width, 1900),
+				height: Math.round((Math.min(width, 1900) / width) * height)
+			})
 			.webp({
 				quality: 80
 			})
