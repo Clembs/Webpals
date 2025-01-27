@@ -40,6 +40,7 @@
 	--background-position: ${theme.background.image_position};
 	--background-repeat: ${theme.background.image_repeat};
 	--background-rendering: ${theme.background.image_rendering};
+	--background-attachment: ${theme.background.image_attachment};
 	`
 		: ''}
 

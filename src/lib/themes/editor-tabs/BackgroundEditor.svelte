@@ -4,8 +4,6 @@
 	import ColorPicker from 'svelte-awesome-color-picker';
 
 	let { theme = $bindable() }: { theme: Theme } = $props();
-
-	let fileInput = $state<HTMLInputElement>();
 </script>
 
 <section>
@@ -14,7 +12,7 @@
 			<input
 				type="radio"
 				id="color"
-				name="background-type"
+				name="background.type"
 				value="color"
 				bind:group={theme.background.type}
 			/>
@@ -25,7 +23,7 @@
 			<input
 				type="radio"
 				id="image"
-				name="background-type"
+				name="background.type"
 				value="image"
 				bind:group={theme.background.type}
 			/>
@@ -34,28 +32,7 @@
 	</ul>
 
 	{#if theme.background.type === 'image'}
-		<label for="file-input">
-			<input
-				id="file-input"
-				type="file"
-				accept="image/*"
-				bind:this={fileInput}
-				onchange={() => {
-					const file = fileInput?.files?.[0];
-					if (!file) return;
-
-					const reader = new FileReader();
-
-					reader.onload = () => {
-						if (theme.background.type === 'image') {
-							theme.background.image_url = reader.result as string;
-						}
-					};
-
-					reader.readAsDataURL(file);
-				}}
-			/>
-
+		<label for="background.image">
 			<div class="hover-text">
 				<Image />
 				Upload image
@@ -109,6 +86,15 @@
 				<option value="pixelated">Pixelated</option>
 			</select>
 		</label>
+
+		<label for="background.image_attachment">
+			Page scroll behavior
+
+			<select bind:value={theme.background.image_attachment} id="background.image_attachment">
+				<option value="scroll">Scroll image with page</option>
+				<option value="fixed" selected>Keep the image fixed</option>
+			</select>
+		</label>
 	{:else if theme.background.type === 'color'}
 		<ColorPicker
 			isDialog={false}
@@ -159,7 +145,7 @@
 		}
 	}
 
-	[for='file-input'] {
+	[for='background.image'] {
 		display: block;
 		position: relative;
 		cursor: pointer;
@@ -178,28 +164,6 @@
 			}
 
 			&:hover .hover-text {
-				position: absolute;
-				top: 0;
-				left: 0;
-				width: 100%;
-				height: 100%;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				gap: 0.5rem;
-				padding: calc(var(--base-padding) * 0.75) calc(var(--base-padding) * 1.5);
-				border-radius: var(--widgets-border-base-radius);
-				background: rgba(0, 0, 0, 0.5);
-				backdrop-filter: blur(5px);
-				color: var(--buttons-primary-on-background-color);
-			}
-		}
-
-		input[type='file'] {
-			position: fixed;
-			top: -1000px;
-
-			&:focus + .hover-text {
 				position: absolute;
 				top: 0;
 				left: 0;

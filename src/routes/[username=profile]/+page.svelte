@@ -134,6 +134,7 @@
 		background-size: var(--background-size);
 		background-position: var(--background-position);
 		background-repeat: var(--background-repeat);
+		background-attachment: var(--background-attachment);
 		image-rendering: var(--background-rendering);
 
 		display: grid;

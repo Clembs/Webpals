@@ -26,6 +26,7 @@ type ImageBackground = {
 	image_size: 'auto' | 'cover' | 'contain';
 	image_repeat: 'no-repeat' | 'repeat';
 	image_rendering: 'smooth' | 'pixelated';
+	image_attachment: 'scroll' | 'fixed';
 };
 
 type ColorBackground = {

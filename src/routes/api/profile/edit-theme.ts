@@ -10,7 +10,7 @@ import { supabase } from '$lib/db/supabase';
 import sharp from 'sharp';
 import { generateSnowflake } from '$lib/helpers/users';
 
-export async function editTheme({ locals: { getCurrentUser }, request }: RequestEvent) {
+export async function editTheme({ locals: { getCurrentUser }, request, url }: RequestEvent) {
 	const user = getCurrentUser();
 
 	if (!user) redirect(302, '/login');
@@ -51,13 +51,33 @@ export async function editTheme({ locals: { getCurrentUser }, request }: Request
 		});
 	}
 
-	if (themeObject.background.type === 'image') {
-		const base64String = themeObject.background.image_url;
+	// we get the image from the input field
+	const background = formData.get('background.image');
 
-		// upload the image to the storage
-		const imageBuffer = Buffer.from(base64String.split(',')[1], 'base64');
+	// if background is set, it means the image has been changed
+	if (themeObject.background.type === 'image' && background) {
+		if (!(background instanceof File)) {
+			return fail(400, {
+				message: 'Invalid image type (must be a file)'
+			});
+		}
+		if (!background.type.startsWith('image/')) {
+			return fail(400, {
+				message: 'Invalid image type (must be an image)'
+			});
+		}
 
-		const loadedSharpImage = sharp(imageBuffer);
+		const BLOB_REGEX = new RegExp(
+			`^blob:${url.origin}/[\\da-f]{8}(?:-[\\da-f]{4}){3}-[\\da-f]{12}$`
+		);
+
+		if (!BLOB_REGEX.test(themeObject.background.image_url)) {
+			return fail(400, {
+				message: 'Invalid image URL'
+			});
+		}
+
+		const loadedSharpImage = sharp(await background.arrayBuffer());
 
 		// get the image's width & height
 		const { width, height } = (await loadedSharpImage.metadata()) as {
