@@ -1,5 +1,12 @@
 @import url('plain-theme.scss');
 
+@font-face {
+	font-family: 'Public Sans';
+	src: url('/fonts/PublicSans-VariableFont_wght.woff2') format('woff2');
+	font-weight: 100 900;
+	font-display: swap;
+}
+
 :root {
 	--color-success: #2f9126;
 	--color-urgent: #e90000;
