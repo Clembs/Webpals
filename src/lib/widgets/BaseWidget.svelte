@@ -9,7 +9,7 @@
 </script>
 
 <script lang="ts">
-	import type { PublicUser } from '$lib/db/schema/users';
+	import type { PublicUser } from '$lib/db/schema/types';
 	import type { AnyWidget } from '$lib/widgets/types';
 	import { tick, type Snippet } from 'svelte';
 	import Card from '$lib/components/Card.svelte';
@@ -244,13 +244,15 @@
 			</div>
 		{/if}
 
-		<Card inert={editingMode}>
+		<div class="inner-widget" inert={editingMode}>
 			{@render children()}
-		</Card>
+		</div>
 	</div>
 </div>
 
 <style lang="scss">
+	@use '../../styles/mixins.scss';
+
 	.dialog-backdrop {
 		background-color: transparent;
 		transition: background-color;
@@ -328,6 +330,12 @@
 					filter: brightness(0.9);
 				}
 			}
+		}
+
+		.inner-widget {
+			@include mixins.card;
+			max-height: 400px;
+			overflow-y: scroll;
 		}
 	}
 </style>

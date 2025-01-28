@@ -4,7 +4,7 @@
 
 <script lang="ts">
 	import DiscordLogo from '$icons/brands/DiscordLogo.svelte';
-	import type { FullUser } from '$lib/db/schema/users';
+	import type { FullUser } from '$lib/db/schema/types';
 	import { dialogPortal } from '$lib/portals/dialog.svelte';
 	import { Butterfly, Code, DoorOpen, Gear, Island, UserSquare, XLogo } from 'phosphor-svelte';
 	import { fly } from 'svelte/transition';

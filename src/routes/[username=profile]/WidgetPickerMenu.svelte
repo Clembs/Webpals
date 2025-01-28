@@ -1,7 +1,7 @@
 <script lang="ts">
 	import BasePlaceholderWidget from '$lib/widgets/picker/BasePlaceholderWidget.svelte';
 	import { defaultWidgets } from '$lib/widgets/default-widgets';
-	import type { FullUser } from '$lib/db/schema/users';
+	import type { FullUser } from '$lib/db/schema/types';
 	import PlaceholderFriendsWidget from '$lib/widgets/picker/PlaceholderFriendsWidget.svelte';
 	import PlaceholderMusicWidget from '$lib/widgets/picker/PlaceholderMusicWidget.svelte';
 	import PlaceholderConnectionsWidgets from '$lib/widgets/picker/PlaceholderConnectionsWidgets.svelte';

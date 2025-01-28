@@ -1,13 +1,14 @@
 <script lang="ts">
-	import type { FullUser } from '$lib/db/schema/users';
+	import type { FullUser } from '$lib/db/schema/types';
 	import type { Theme } from '$lib/themes/types';
-	import { Eye, PencilSimple, Plus, Gear, Palette } from 'phosphor-svelte';
+	import { Eye, PencilSimple, Plus, Gear, Palette, Hexagon } from 'phosphor-svelte';
 	import WidgetPickerMenu from './WidgetPickerMenu.svelte';
 	import AccountSettingsMenu from './AccountSettingsMenu.svelte';
 	import ThemeEditorMenu from './ThemeEditorMenu.svelte';
 	import ThemeProvider from '$lib/themes/ThemeProvider.svelte';
 	import { plainTheme } from '$lib/themes/mergeThemes';
 	import { replaceState } from '$app/navigation';
+	import MattMenu from './MattMenu.svelte';
 
 	let {
 		editing = $bindable(),
@@ -22,6 +23,7 @@
 	let widgetPickerOpen = $state(false);
 	let themeEditorOpen = $state(false);
 	let accountSettingsOpen = $state(false);
+	let mattOpen = $state(false);
 
 	let editBarEl = $state<HTMLDivElement>();
 	let editBarWrapperEl = $state<HTMLDivElement>();
@@ -92,6 +94,8 @@
 			bind:menuOpen={accountSettingsOpen}
 		/>
 
+		<MattMenu {editBarEl} {editBarWrapperEl} bind:menuOpen={mattOpen} />
+
 		<div id="edit-bar" bind:this={editBarEl}>
 			<!-- commands -->
 			<div id="edit-commands">
@@ -124,6 +128,17 @@
 				>
 					<Gear />
 					<span class="label"> Account settings </span>
+				</button>
+				<button
+					class="edit-command"
+					onclick={() => (mattOpen = true)}
+					aria-label="Matt"
+					inert={!editing}
+					aria-hidden={!editing}
+				>
+					<Hexagon />
+
+					<div class="label">Matt</div>
 				</button>
 			</div>
 
@@ -169,7 +184,7 @@
 
 <style lang="scss">
 	#edit-bar-wrapper {
-		max-width: 800px;
+		max-width: 900px;
 		background-color: var(--widgets-background-color);
 		border-radius: var(--widgets-border-base-radius);
 		box-shadow: var(--widgets-box-shadow-x) var(--widgets-box-shadow-y)
