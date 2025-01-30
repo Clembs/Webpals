@@ -13,8 +13,7 @@ import {
 	omit,
 	minValue,
 	maxValue,
-	partial,
-	startsWith
+	partial
 } from 'valibot';
 
 const HexColorStructure = pipe(string(), hexColor());
@@ -34,7 +33,7 @@ const ShadowStructure = strictObject({
 });
 
 const ImageBackgroundStructure = strictObject({
-	image_url: pipe(string(), startsWith('blob:')),
+	image_url: string(),
 	image_position: picklist(['center', 'top', 'bottom', 'left', 'right']),
 	image_size: picklist(['auto', 'cover', 'contain']),
 	image_repeat: picklist(['no-repeat', 'repeat']),

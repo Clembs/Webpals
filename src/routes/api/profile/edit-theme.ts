@@ -42,7 +42,7 @@ export async function editTheme({ locals: { getCurrentUser }, request, url }: Re
 		});
 	} catch (err) {
 		if (isValiError(err)) {
-			console.dir(err.issues[0].issues, {
+			console.dir(err.issues, {
 				depth: 10
 			});
 		}
@@ -52,15 +52,16 @@ export async function editTheme({ locals: { getCurrentUser }, request, url }: Re
 	}
 
 	// we get the image from the input field
-	const background = formData.get('background.image');
+	const background = formData.get('background.image') as File | null;
 
 	// if background is set, it means the image has been changed
-	if (themeObject.background.type === 'image' && background) {
-		if (!(background instanceof File)) {
-			return fail(400, {
-				message: 'Invalid image type (must be a file)'
-			});
-		}
+	if (
+		themeObject.background.type === 'image' &&
+		background &&
+		background instanceof File &&
+		background.size > 0 &&
+		background.name
+	) {
 		if (!background.type.startsWith('image/')) {
 			return fail(400, {
 				message: 'Invalid image type (must be an image)'
@@ -135,7 +136,11 @@ export async function editTheme({ locals: { getCurrentUser }, request, url }: Re
 			});
 		}
 	}
-
+	// if the background wasn't changed through the input field, we keep the previous image
+	// to make sure people don't manually edit the URL :)
+	else if (user.theme?.background?.type === 'image') {
+		themeObject.background.image_url = user.theme.background.image_url;
+	}
 	await db
 		.update(users)
 		.set({

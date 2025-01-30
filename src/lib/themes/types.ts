@@ -1,3 +1,6 @@
+import type { InferInput } from 'valibot';
+import type { ThemeStructure } from './theme-structure';
+
 type ThemeBorder = {
 	radius: `${number}%` | number;
 	width: number;
@@ -34,7 +37,7 @@ type ColorBackground = {
 	color: string;
 };
 
-export type Theme = {
+export type ManualTheme = {
 	background: GradientBackground | ImageBackground | ColorBackground;
 	avatar: {
 		size: number;
@@ -69,3 +72,5 @@ export type Theme = {
 		shadow: ThemeShadow | null;
 	};
 };
+
+export type Theme = InferInput<typeof ThemeStructure>;
