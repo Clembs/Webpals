@@ -334,8 +334,6 @@
 
 		.inner-widget {
 			@include mixins.card;
-			max-height: 400px;
-			overflow-y: scroll;
 		}
 	}
 </style>
