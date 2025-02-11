@@ -1,14 +1,14 @@
-import type { Session, FullUser } from '$lib/db/schema/types';
+import type { Session, FullProfile } from '$lib/db/schema/types';
 
 declare global {
 	namespace App {
 		// interface Error {}
 		interface Locals {
 			getSession: () => Session | null | undefined;
-			getCurrentUser: () => FullUser | null | undefined;
+			getCurrentUser: () => FullProfile | null | undefined;
 		}
 		interface PageData {
-			currentUser: FullUser | null | undefined;
+			currentUser: FullProfile | null | undefined;
 		}
 		// interface PageState {}
 		// interface Platform {}

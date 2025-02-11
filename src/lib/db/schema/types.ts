@@ -2,19 +2,17 @@ import type { inviteCodes } from './auth';
 import type { notifications, notificationsMentionedProfiles } from './notifications';
 import type { profiles, relationships, connections } from './users';
 
-type User = typeof profiles.$inferSelect & {
+export type Profile = typeof profiles.$inferSelect & {
 	connections: Connection[];
 };
 
-export type PublicUser = Omit<User, 'challenge' | 'challengeExpiresAt' | 'email'>;
-
-export type FullUser = User & {
+export type FullProfile = Profile & {
 	notifications: Notification[];
 	initiatedRelationships: (Relationship & {
-		recipient: PublicUser;
+		recipient: Profile;
 	})[];
 	receivedRelationships: (Relationship & {
-		user: PublicUser;
+		user: Profile;
 	})[];
 	inviteCodes: InviteCode[];
 };
@@ -27,6 +25,6 @@ export type InviteCode = typeof inviteCodes.$inferSelect;
 
 export type Notification = typeof notifications.$inferSelect & {
 	mentionedUsers: (typeof notificationsMentionedProfiles.$inferSelect & {
-		user: PublicUser | null;
+		user: Profile | null;
 	})[];
 };

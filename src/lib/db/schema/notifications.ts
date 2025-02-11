@@ -1,4 +1,4 @@
-import { boolean, pgTable, primaryKey, smallint, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { boolean, pgTable, primaryKey, smallint, timestamp, uuid } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { profiles } from './users';
 
@@ -20,8 +20,8 @@ export const notifications = pgTable('notifications', {
 		.notNull()
 		.references(() => profiles.id, { onDelete: 'cascade' }),
 	createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
-	type: smallint('type').notNull().$type<NotificationTypes>(),
-	read: boolean('read').notNull().default(false)
+	type: smallint().notNull().$type<NotificationTypes>(),
+	read: boolean().notNull().default(false)
 	// TODO: when i implement posts
 	// postId: text('post_id'),
 });

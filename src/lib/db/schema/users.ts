@@ -53,7 +53,7 @@ export const profiles = pgTable(
 		theme: jsonb('theme').$type<PartialTheme>()
 	},
 	(table) => [
-		check('username should fit the regex', sql`${table.username} ~ ${USERNAME_REGEX.source}`),
+		check('username should fit the regex', sql`${table.username} ~ '${USERNAME_REGEX.source}'`),
 		pgPolicy('users can update their own profile', {
 			for: 'update',
 			to: authenticatedRole,
@@ -89,7 +89,7 @@ export const connections = pgTable('connections', {
 });
 
 export const connectionsRelations = relations(connections, ({ one }) => ({
-	user: one(profiles, {
+	profile: one(profiles, {
 		fields: [connections.profileId],
 		references: [profiles.id]
 	})
@@ -121,25 +121,25 @@ export enum RelationshipTypes {
 export const relationships = pgTable(
 	'relationships',
 	{
-		userId: text()
+		profileId: uuid()
 			.notNull()
 			.references(() => profiles.id, { onDelete: 'cascade' }),
-		recipientId: text()
+		recipientId: uuid()
 			.notNull()
 			.references(() => profiles.id, { onDelete: 'cascade' }),
 		status: smallint().notNull().$type<RelationshipTypes>(),
-		createdAt: timestamp().notNull().defaultNow()
+		createdAt: timestamp({ withTimezone: true }).notNull().defaultNow()
 	},
 	(table) => [
 		primaryKey({
-			columns: [table.userId, table.recipientId]
+			columns: [table.profileId, table.recipientId]
 		})
 	]
 );
 
 export const relationshipsRelations = relations(relationships, ({ one }) => ({
-	user: one(profiles, {
-		fields: [relationships.userId],
+	profile: one(profiles, {
+		fields: [relationships.profileId],
 		references: [profiles.id],
 		relationName: 'initiated'
 	}),

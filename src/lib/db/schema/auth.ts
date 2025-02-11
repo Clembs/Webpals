@@ -4,7 +4,7 @@ import { profiles } from './users';
 
 export const inviteCodes = pgTable('invite_codes', {
 	id: uuid().notNull().primaryKey().defaultRandom(),
-	code: text('code').notNull().unique(),
+	code: text().notNull().unique(),
 	issuerId: uuid()
 		.notNull()
 		.references(() => profiles.id, { onDelete: 'cascade' }),
