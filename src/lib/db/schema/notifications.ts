@@ -1,24 +1,25 @@
-import { boolean, pgTable, primaryKey, smallint, text } from 'drizzle-orm/pg-core';
-import { users } from './users';
+import { boolean, pgTable, primaryKey, smallint, text, timestamp, uuid } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
+import { profiles } from './users';
 
 export enum NotificationTypes {
-	Generic,
-	FriendRequest,
-	FriendRequestAccepted,
-	PostLike,
-	PostComment,
-	PostReply,
-	PostCommentReply,
-	ProfileComment,
-	ProfileCommentReply
+	Generic = 0,
+	FriendRequest = 1,
+	FriendRequestAccepted = 2,
+	PostLike = 3,
+	PostComment = 4,
+	PostReply = 5,
+	PostCommentReply = 6,
+	ProfileComment = 7,
+	ProfileCommentReply = 8
 }
 
 export const notifications = pgTable('notifications', {
-	id: text('id').primaryKey(),
-	userId: text('user_id')
+	id: uuid().notNull().primaryKey().defaultRandom(),
+	profileId: uuid()
 		.notNull()
-		.references(() => users.id),
+		.references(() => profiles.id, { onDelete: 'cascade' }),
+	createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
 	type: smallint('type').notNull().$type<NotificationTypes>(),
 	read: boolean('read').notNull().default(false)
 	// TODO: when i implement posts
@@ -26,40 +27,40 @@ export const notifications = pgTable('notifications', {
 });
 
 export const notificationsRelations = relations(notifications, ({ one, many }) => ({
-	user: one(users, {
-		fields: [notifications.userId],
-		references: [users.id]
+	profile: one(profiles, {
+		fields: [notifications.profileId],
+		references: [profiles.id]
 	}),
-	mentionedUsers: many(notificationsMentionedUsers)
+	mentionedProfiles: many(notificationsMentionedProfiles)
 }));
 
-export const notificationsMentionedUsers = pgTable(
+export const notificationsMentionedProfiles = pgTable(
 	'notif_mentioned',
 	{
-		notificationId: text('notification_id')
+		notificationId: uuid()
 			.notNull()
-			.references(() => notifications.id),
-		userId: text('user_id')
+			.references(() => notifications.id, { onDelete: 'cascade' }),
+		profileId: uuid()
 			.notNull()
-			.references(() => users.id)
+			.references(() => profiles.id, { onDelete: 'cascade' })
 	},
-	({ notificationId, userId }) => ({
-		id: primaryKey({
-			columns: [notificationId, userId]
+	(table) => [
+		primaryKey({
+			columns: [table.notificationId, table.profileId]
 		})
-	})
+	]
 );
 
-export const notificationsMentionedUsersRelations = relations(
-	notificationsMentionedUsers,
+export const notificationsMentionedProfilesRelations = relations(
+	notificationsMentionedProfiles,
 	({ one }) => ({
 		notification: one(notifications, {
-			fields: [notificationsMentionedUsers.notificationId],
+			fields: [notificationsMentionedProfiles.notificationId],
 			references: [notifications.id]
 		}),
-		user: one(users, {
-			fields: [notificationsMentionedUsers.userId],
-			references: [users.id]
+		profile: one(profiles, {
+			fields: [notificationsMentionedProfiles.profileId],
+			references: [profiles.id]
 		})
 	})
 );

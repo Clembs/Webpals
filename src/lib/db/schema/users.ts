@@ -1,66 +1,71 @@
 import type { PartialTheme } from '$lib/themes/mergeThemes';
-import {
-	connectionProviderKeys,
-	type AnyWidget,
-	type ConnectionProvider
-} from '../../widgets/types';
-import { relations, sql } from 'drizzle-orm';
+import { connectionProviderKeys, type AnyWidget } from '../../widgets/types';
+import { eq, relations, sql } from 'drizzle-orm';
 import {
 	boolean,
+	check,
 	jsonb,
+	pgEnum,
+	pgPolicy,
 	pgTable,
+	pgView,
 	primaryKey,
 	smallint,
 	text,
-	timestamp
+	timestamp,
+	uuid,
+	varchar
 } from 'drizzle-orm/pg-core';
-import { inviteCodes, passkeys, sessions } from './auth';
-import { notifications, notificationsMentionedUsers } from './notifications';
+import { inviteCodes } from './auth';
+import { notifications, notificationsMentionedProfiles } from './notifications';
 import {
 	defaultAboutMeWidget,
 	defaultCommentsWidget,
 	defaultFriendsWidget,
 	defaultMusicWidget
 } from '../../widgets/default-widgets';
-import type { PublicUser } from './types';
+import { authenticatedRole, authUid, authUsers } from 'drizzle-orm/supabase';
 
-export const UserStatusTypes = ['online', 'dnd', 'offline'] as const;
+export const USERNAME_REGEX = /^([a-zA-Z0-9_]{2,24})$/;
 
-export const users = pgTable('users', {
-	id: text('id').primaryKey(),
-	email: text('email').notNull().unique(),
-	challenge: text('challenge'),
-	challengeExpiresAt: timestamp('challenge_expires_at'),
-	username: text('username').notNull().unique(),
-	displayName: text('display_name'),
-	avatar: text('avatar'),
-	pronouns: text('pronouns'),
-	lastHeartbeat: timestamp('last_heartbeat', {
-		withTimezone: true
-	})
-		.notNull()
-		.defaultNow(),
-	widgets: jsonb('widgets')
-		.notNull()
-		.default([
-			[defaultMusicWidget],
-			[defaultAboutMeWidget, defaultFriendsWidget, defaultCommentsWidget]
-		] as AnyWidget[][])
-		.$type<AnyWidget[][]>(),
-	status: text('status', {
-		enum: UserStatusTypes
-	})
-		.notNull()
-		.default('online'),
-	theme: jsonb('theme').$type<PartialTheme>()
-});
+export const profileStatus = pgEnum('profile_status', ['online', 'dnd', 'offline']);
 
-export const usersRelations = relations(users, ({ many }) => ({
-	passkeys: many(passkeys),
-	sessions: many(sessions),
+export const profiles = pgTable(
+	'profiles',
+	{
+		id: uuid()
+			.notNull()
+			.primaryKey()
+			.references(() => authUsers.id, { onDelete: 'cascade' }),
+		username: varchar({ length: 24 }).notNull().unique(),
+		displayName: varchar({ length: 50 }),
+		avatar: varchar({ length: 64 }),
+		pronouns: varchar({ length: 16 }),
+		lastHeartbeat: timestamp({ withTimezone: true }).notNull().defaultNow(),
+		status: profileStatus().notNull().default('online'),
+		widgets: jsonb()
+			.notNull()
+			.default([
+				[defaultMusicWidget],
+				[defaultAboutMeWidget, defaultFriendsWidget, defaultCommentsWidget]
+			] as AnyWidget[][])
+			.$type<AnyWidget[][]>(),
+		theme: jsonb('theme').$type<PartialTheme>()
+	},
+	(table) => [
+		check('username should fit the regex', sql`${table.username} ~ ${USERNAME_REGEX.source}`),
+		pgPolicy('users can update their own profile', {
+			for: 'update',
+			to: authenticatedRole,
+			using: eq(table.id, authUid)
+		})
+	]
+);
+
+export const profilesRelations = relations(profiles, ({ many }) => ({
 	notifications: many(notifications),
 	connections: many(connections),
-	mentionedInNotifications: many(notificationsMentionedUsers),
+	mentionedInNotifications: many(notificationsMentionedProfiles),
 	// Relationships can be bi-directional (for friends for example), so we need to define the relation twice
 	initiatedRelationships: many(relationships, {
 		relationName: 'initiated'
@@ -71,25 +76,41 @@ export const usersRelations = relations(users, ({ many }) => ({
 	inviteCodes: many(inviteCodes)
 }));
 
-export const publicUserQuery = {
-	columns: {
-		id: true,
-		username: true,
-		displayName: true,
-		avatar: true,
-		pronouns: true,
-		lastHeartbeat: true,
-		widgets: true,
-		status: true,
-		theme: true
-	},
-	with: {
-		connections: true
-	}
-} as const satisfies {
-	columns: { [key in keyof PublicUser]?: true };
-	with: Record<string, true>;
-};
+export const connections = pgTable('connections', {
+	id: uuid().defaultRandom().primaryKey(),
+	profileId: uuid()
+		.notNull()
+		.references(() => profiles.id, { onDelete: 'cascade' }),
+	provider: text({ enum: connectionProviderKeys }).notNull(),
+	label: varchar({ length: 64 }),
+	identifiable: varchar({ length: 128 }).notNull(),
+	url: text(),
+	verified: boolean().notNull().default(false)
+});
+
+export const connectionsRelations = relations(connections, ({ one }) => ({
+	user: one(profiles, {
+		fields: [connections.profileId],
+		references: [profiles.id]
+	})
+}));
+
+export const publicProfiles = pgView('public_profiles_view').as((qb) =>
+	qb
+		.select({
+			id: profiles.id,
+			username: profiles.username,
+			displayName: profiles.displayName,
+			avatar: profiles.avatar,
+			pronouns: profiles.pronouns,
+			lastHeartbeat: profiles.lastHeartbeat,
+			widgets: profiles.widgets,
+			status: profiles.status,
+			theme: profiles.theme
+		})
+		.from(profiles)
+		.leftJoin(connections, eq(profiles.id, connections.profileId))
+);
 
 export enum RelationshipTypes {
 	FriendPending,
@@ -100,52 +121,31 @@ export enum RelationshipTypes {
 export const relationships = pgTable(
 	'relationships',
 	{
-		userId: text('user_id').notNull(),
-		recipientId: text('recipient_id').notNull(),
-		status: smallint('status').notNull().$type<RelationshipTypes>(),
-		createdAt: timestamp('created_at').notNull().defaultNow()
+		userId: text()
+			.notNull()
+			.references(() => profiles.id, { onDelete: 'cascade' }),
+		recipientId: text()
+			.notNull()
+			.references(() => profiles.id, { onDelete: 'cascade' }),
+		status: smallint().notNull().$type<RelationshipTypes>(),
+		createdAt: timestamp().notNull().defaultNow()
 	},
-	({ userId, recipientId }) => [
-		{
-			id: primaryKey({
-				columns: [userId, recipientId]
-			})
-		}
+	(table) => [
+		primaryKey({
+			columns: [table.userId, table.recipientId]
+		})
 	]
 );
 
 export const relationshipsRelations = relations(relationships, ({ one }) => ({
-	user: one(users, {
+	user: one(profiles, {
 		fields: [relationships.userId],
-		references: [users.id],
+		references: [profiles.id],
 		relationName: 'initiated'
 	}),
-	recipient: one(users, {
+	recipient: one(profiles, {
 		fields: [relationships.recipientId],
-		references: [users.id],
+		references: [profiles.id],
 		relationName: 'received'
-	})
-}));
-
-export const connections = pgTable('connections', {
-	id: text('id')
-		.default(sql`gen_random_uuid()`)
-		.primaryKey(),
-	userId: text('user_id').notNull(),
-	provider: text('provider', {
-		enum: connectionProviderKeys
-	})
-		.$type<ConnectionProvider>()
-		.notNull(),
-	label: text('label'),
-	identifiable: text('identifiable').notNull(),
-	url: text('url'),
-	verified: boolean('verified').default(false).notNull()
-});
-
-export const connectionsRelations = relations(connections, ({ one }) => ({
-	user: one(users, {
-		fields: [connections.userId],
-		references: [users.id]
 	})
 }));

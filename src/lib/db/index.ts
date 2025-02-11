@@ -8,6 +8,7 @@ import * as notifications from './schema/notifications';
 const client = postgres(DATABASE_URL);
 
 export const db = drizzle(client, {
+	casing: 'snake_case',
 	schema: {
 		...users,
 		...auth,
