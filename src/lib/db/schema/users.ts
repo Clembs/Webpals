@@ -41,6 +41,7 @@ export const profiles = pgTable(
 		displayName: varchar({ length: 50 }),
 		avatar: varchar({ length: 64 }),
 		pronouns: varchar({ length: 16 }),
+		createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
 		lastHeartbeat: timestamp({ withTimezone: true }).notNull().defaultNow(),
 		status: profileStatus().notNull().default('online'),
 		widgets: jsonb()

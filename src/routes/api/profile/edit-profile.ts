@@ -1,13 +1,13 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { RequestEvent } from './$types';
 import { db } from '$lib/db';
-import { users } from '$lib/db/schema/users';
+import { profiles } from '$lib/db/schema/users';
 import { eq } from 'drizzle-orm';
 
-export async function editProfile({ locals: { getCurrentUser }, request }: RequestEvent) {
-	const user = await getCurrentUser();
+export async function editProfile({ locals: { getCurrentProfile }, request }: RequestEvent) {
+	const profile = getCurrentProfile();
 
-	if (!user) redirect(302, '/login');
+	if (!profile) redirect(302, '/login');
 
 	const formData = await request.formData();
 	const displayName = formData.get('display-name')?.toString();
@@ -26,12 +26,12 @@ export async function editProfile({ locals: { getCurrentUser }, request }: Reque
 	}
 
 	await db
-		.update(users)
+		.update(profiles)
 		.set({
 			displayName,
 			pronouns
 		})
-		.where(eq(users.id, user.id));
+		.where(eq(profiles.id, profile.id));
 
 	return {};
 }

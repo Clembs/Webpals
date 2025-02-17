@@ -11,12 +11,6 @@ declare global {
 				user: User | null;
 			};
 			getCurrentProfile: () => FullProfile | null | undefined;
-			session:
-				| (Session & {
-						user: User | null;
-				  })
-				| null;
-			currentProfile: FullProfile | null | undefined;
 		}
 		interface PageData {
 			currentProfile: FullProfile | null | undefined;

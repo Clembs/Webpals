@@ -56,13 +56,12 @@ export const actions: Actions = {
 		}
 
 		const { error } = await supabase.auth.signInWithOtp({
-			email,
-			options: {
-				shouldCreateUser: true
-			}
+			email
 		});
 
 		if (error) {
+			console.error(error);
+
 			return fail(400, {
 				message: 'Error sending OTP. Please try again later.'
 			});

@@ -2,7 +2,7 @@ import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_PROJECT_URL } from '$env/stat
 import { db } from '$lib/db';
 import { publicProfileQuery } from '$lib/db/schema/users';
 import { createServerClient } from '@supabase/ssr';
-import type { Session, User } from '@supabase/supabase-js';
+import type { User } from '@supabase/supabase-js';
 import type { Handle } from '@sveltejs/kit';
 
 export const handle: Handle = async ({ event, resolve }) => {
@@ -21,24 +21,20 @@ export const handle: Handle = async ({ event, resolve }) => {
 		}
 	);
 
-	const { data: sessionData, error } = await event.locals.supabase.auth.getSession();
+	const { data: sessionData } = await event.locals.supabase.auth.getSession();
+	const session = sessionData?.session;
+	let user: User | null = null;
 
-	if (sessionData && !error) {
-		event.locals.session = sessionData.session;
+	if (sessionData) {
 		const { data: userData, error } = await event.locals.supabase.auth.getUser();
 
 		if (userData && !error) {
-			event.locals.session.user = userData.user;
+			user = userData.user;
 		}
 	}
-
-	event.locals.getSession = () => {
-		return { session: event.locals.session, user: event.locals.session?.user };
-	};
-
-	const profile = event.locals.session?.user
+	const profile = user
 		? await db.query.profiles.findFirst({
-				where: ({ id }, { eq }) => eq(id, event.locals.session?.user?.id),
+				where: ({ id }, { eq }) => eq(id, user?.id),
 				with: {
 					inviteCodes: true,
 					connections: true,
@@ -64,6 +60,10 @@ export const handle: Handle = async ({ event, resolve }) => {
 				}
 			})
 		: null;
+
+	event.locals.getSession = () => {
+		return { session, user };
+	};
 
 	event.locals.getCurrentProfile = () => {
 		return profile && { ...profile, lastHeartbeat: new Date() };

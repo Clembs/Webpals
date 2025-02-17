@@ -27,7 +27,7 @@
 	}: {
 		editingMode?: boolean;
 		isWidgetEditing?: boolean;
-		user: Profile;
+		profile: Profile;
 		widget?: AnyWidget;
 		editMenu?: Snippet;
 		children: Snippet;

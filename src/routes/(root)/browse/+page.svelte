@@ -3,7 +3,6 @@
 	import { type Profile } from '$lib/db/schema/types';
 	import { HEARTBEAT_INTERVAL } from '$lib/helpers/constants';
 	import { formatDate, formatRelativeTime } from '$lib/helpers/text';
-	import { snowflakeToDate } from '$lib/helpers/users';
 	import { mergeThemes, plainTheme } from '$lib/themes/mergeThemes';
 
 	import ThemeProvider from '$lib/themes/ThemeProvider.svelte';
@@ -14,41 +13,41 @@
 	let usePlainTheme = $state(false);
 </script>
 
-{#snippet renderProfile(user: Profile)}
-	<ThemeProvider theme={usePlainTheme ? plainTheme : mergeThemes(plainTheme, user.theme || {})}>
+{#snippet renderProfile(profile: Profile)}
+	<ThemeProvider theme={usePlainTheme ? plainTheme : mergeThemes(plainTheme, profile.theme || {})}>
 		{@const userAlive =
-			user.status !== 'offline' &&
-			user.lastHeartbeat.getTime() > Date.now() - HEARTBEAT_INTERVAL + 1000}
+			profile.status !== 'offline' &&
+			profile.lastHeartbeat.getTime() > Date.now() - HEARTBEAT_INTERVAL + 1000}
 		<li>
-			<a class="profile" href="/{user.username}">
+			<a class="profile" href="/{profile.username}">
 				<div class="important">
-					<Avatar {user} size="48px" />
+					<Avatar user={profile} size="48px" />
 
 					<div class="text">
-						<h3>{user.displayName || user.username}</h3>
-						@{user.username}
+						<h3>{profile.displayName || profile.username}</h3>
+						@{profile.username}
 					</div>
 				</div>
 				<div class="less-important">
 					<p class="line">
-						{#if user.status === 'online' && userAlive}
+						{#if profile.status === 'online' && userAlive}
 							<Circle color="var(--color-success)" />
 							Currently <span class="darken"> online </span>
-						{:else if user.status === 'dnd' && userAlive}
+						{:else if profile.status === 'dnd' && userAlive}
 							<Prohibit color="var(--color-urgent)" />
 							Currently <span class="darken"> busy </span>
 						{:else}
 							<CircleDashed />
 							Last seen
 							<!-- if the last heartbeat was less than a day ago, use relative time -->
-							{#if user.lastHeartbeat.getTime() > Date.now() - 24 * 60 * 60 * 1000}
+							{#if profile.lastHeartbeat.getTime() > Date.now() - 24 * 60 * 60 * 1000}
 								<span class="darken">
-									{formatRelativeTime(user.lastHeartbeat, 'en-US')}
+									{formatRelativeTime(profile.lastHeartbeat, 'en-US')}
 								</span>
 							{:else}
 								on
 								<span class="darken">
-									{formatDate(user.lastHeartbeat, 'en-US')}
+									{formatDate(profile.lastHeartbeat, 'en-US')}
 								</span>
 							{/if}
 						{/if}
@@ -56,7 +55,7 @@
 					<p class="line">
 						<Cake />
 						<span class="darken">
-							{formatDate(snowflakeToDate(user.id), 'en-US')}
+							{formatDate(profile.createdAt, 'en-US')}
 						</span>
 					</p>
 				</div>

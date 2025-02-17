@@ -8,7 +8,6 @@ import {
 	NotificationTypes
 } from '$lib/db/schema/notifications';
 import { and, eq } from 'drizzle-orm';
-import { generateSnowflake } from '$lib/helpers/users';
 
 export async function acceptFriendRequest({ locals: { getCurrentProfile }, url }: RequestEvent) {
 	const currentUser = await getCurrentProfile();
@@ -58,7 +57,6 @@ export async function acceptFriendRequest({ locals: { getCurrentProfile }, url }
 	const [notification] = await db
 		.insert(notifications)
 		.values({
-			id: generateSnowflake(),
 			profileId: recipientId,
 			type: NotificationTypes.FriendRequestAccepted
 		})

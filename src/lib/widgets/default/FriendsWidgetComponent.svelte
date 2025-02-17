@@ -6,11 +6,11 @@
 	import type { FriendsWidget, WidgetComponentProps } from '../types';
 
 	let {
-		user,
+		profile,
 		widget,
 		editing
 	}: WidgetComponentProps<FriendsWidget> & {
-		user: Profile & {
+		profile: Profile & {
 			initiatedRelationships: (Relationship & {
 				recipient: Profile;
 			})[];
@@ -18,13 +18,13 @@
 	} = $props();
 
 	let friends = $derived(
-		user.initiatedRelationships
+		profile.initiatedRelationships
 			.filter((r) => r.status === RelationshipTypes.Friend)
 			.map((r) => r.recipient)
 	);
 </script>
 
-<BaseWidget {user} {widget} editingMode={editing}>
+<BaseWidget {profile} {widget} editingMode={editing}>
 	<h2>Friends ({friends.length})</h2>
 
 	<div class="friends-wrapper">

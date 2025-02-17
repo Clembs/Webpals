@@ -42,7 +42,7 @@ export const load: LayoutServerLoad = async ({
 	}
 
 	return {
-		user: { ...profile, theme: mergeThemes(plainTheme, profile?.theme || {}) },
+		profile: { ...profile, theme: mergeThemes(plainTheme, profile?.theme || {}) },
 		editable: isCurrentProfile,
 		editing: !!(!url.searchParams.has('view') && isCurrentProfile)
 	};
