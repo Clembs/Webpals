@@ -44,9 +44,6 @@ export async function sendFriendRequest({ locals: { getCurrentProfile }, request
 		(relationship) => relationship.recipientId === recipient.id
 	);
 
-	// console.log(currentUser.initiatedRelationships);
-	// console.log(currentUser.receivedRelationships);
-
 	if (existingFriendship?.status === RelationshipTypes.FriendPending) {
 		return fail(400, {
 			message: 'You already sent a friend request to this user.'

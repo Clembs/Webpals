@@ -10,13 +10,15 @@ import {
 import { and, eq } from 'drizzle-orm';
 
 export async function acceptFriendRequest({ locals: { getCurrentProfile }, url }: RequestEvent) {
-	const currentUser = await getCurrentProfile();
+	const currentProfile = await getCurrentProfile();
 
-	if (!currentUser) redirect(401, '/login');
+	if (!currentProfile) redirect(401, '/login');
 
 	const recipientId = url.searchParams.get('id');
 
-	const relationship = currentUser.receivedRelationships.find((r) => r.profileId === recipientId);
+	const relationship = currentProfile.receivedRelationships.find(
+		(r) => r.profileId === recipientId
+	);
 
 	if (!recipientId || !relationship) {
 		return fail(400, {
@@ -43,12 +45,15 @@ export async function acceptFriendRequest({ locals: { getCurrentProfile }, url }
 			status: RelationshipTypes.Friend
 		})
 		.where(
-			and(eq(relationships.profileId, recipientId), eq(relationships.recipientId, currentUser.id))
+			and(
+				eq(relationships.profileId, recipientId),
+				eq(relationships.recipientId, currentProfile.id)
+			)
 		);
 
 	// also create a new relationship for the current user
 	await db.insert(relationships).values({
-		profileId: currentUser.id,
+		profileId: currentProfile.id,
 		recipientId,
 		status: RelationshipTypes.Friend
 	});
@@ -64,11 +69,11 @@ export async function acceptFriendRequest({ locals: { getCurrentProfile }, url }
 
 	await db.insert(notificationsMentionedProfiles).values({
 		notificationId: notification.id,
-		profileId: currentUser.id
+		profileId: currentProfile.id
 	});
 
 	// remove the pending notification from the current user
-	const pendingNotification = currentUser.notifications.find(
+	const pendingNotification = currentProfile.notifications.find(
 		(n) =>
 			n.type === NotificationTypes.FriendRequest && n.mentionedProfiles[0].profileId === recipientId
 	);
