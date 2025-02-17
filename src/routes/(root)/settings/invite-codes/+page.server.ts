@@ -2,8 +2,8 @@ import { db } from '$lib/db';
 import { inviteCodes } from '$lib/db/schema/auth';
 import { redirect, fail } from '@sveltejs/kit';
 
-export async function load({ locals: { getCurrentUser } }) {
-	const user = await getCurrentUser();
+export async function load({ locals: { getCurrentProfile } }) {
+	const user = await getCurrentProfile();
 
 	if (user?.username.toLowerCase() !== 'clembs') {
 		redirect(301, '/settings/account');
@@ -11,12 +11,12 @@ export async function load({ locals: { getCurrentUser } }) {
 }
 
 export const actions = {
-	async default({ locals: { getCurrentUser } }) {
-		const user = await getCurrentUser();
+	async default({ locals: { getCurrentProfile } }) {
+		const currentProfile = getCurrentProfile();
 
-		if (!user) redirect(301, '/login');
+		if (!currentProfile) redirect(301, '/login');
 
-		if (user.inviteCodes.length >= 10) {
+		if (currentProfile.inviteCodes.length >= 10) {
 			return fail(403, {
 				message: 'You have reached the maximum number of invite codes'
 			});
@@ -27,7 +27,7 @@ export const actions = {
 
 		await db.insert(inviteCodes).values({
 			code: randomCode,
-			userId: user.id
+			issuerId: currentProfile.id
 		});
 
 		return {

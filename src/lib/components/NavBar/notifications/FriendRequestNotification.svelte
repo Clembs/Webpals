@@ -2,7 +2,7 @@
 	import { enhance } from '$app/forms';
 	import Avatar from '$lib/components/Avatar.svelte';
 	import Button from '$lib/components/Button.svelte';
-	import type { Notification } from '$lib/db/schema/notifications';
+	import type { Notification } from '$lib/db/schema/types';
 	import { Check, X } from 'phosphor-svelte';
 
 	let {
@@ -14,7 +14,7 @@
 	let acceptIsLoading = $state(false);
 	let declineIsLoading = $state(false);
 
-	let recipient = $derived(notification.mentionedUsers[0].user!);
+	let recipient = $derived(notification.mentionedProfiles[0].profile!);
 </script>
 
 <div class="left">

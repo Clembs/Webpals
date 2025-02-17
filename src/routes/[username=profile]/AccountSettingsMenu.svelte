@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { FullUser } from '$lib/db/schema/users';
+	import type { FullProfile } from '$lib/db/schema/types';
 	import AccountSettings from '../(root)/settings/account/AccountSettings.svelte';
 	import BaseEditBarMenu from './BaseEditBarMenu.svelte';
 
@@ -9,7 +9,7 @@
 		editBarEl,
 		editBarWrapperEl
 	}: {
-		user: FullUser;
+		user: FullProfile;
 		menuOpen: boolean;
 		editBarEl: HTMLDivElement | undefined;
 		editBarWrapperEl: HTMLDivElement | undefined;
@@ -25,7 +25,7 @@
 >
 	<AccountSettings
 		data={{
-			currentUser: user
+			currentProfile: user
 		}}
 	/>
 </BaseEditBarMenu>

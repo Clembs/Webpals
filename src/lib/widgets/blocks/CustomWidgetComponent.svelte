@@ -6,33 +6,32 @@
 	import LayoutBlockComponent from './LayoutBlockComponent.svelte';
 
 	let {
-		user,
+		profile,
 		widget,
 		editing
 	}: WidgetComponentProps<CustomWidget> & {
-		user: { id: string };
+		profile: { id: string };
 	} = $props();
 
 	let modalOpened = $state(false);
 </script>
 
-{#snippet editMenu()}
-	<form
-		use:enhance={() =>
-			({ update }) => {
-				update({ reset: false });
-				modalOpened = false;
-			}}
-		method="post"
-		action="/api/profile?/editCustomWidget&id={widget.id}"
-	>
-		<LayoutBlockComponent edit {user} block={widget} />
-		<Button type="submit">Save</Button>
-	</form>
-{/snippet}
-
-<BaseWidget bind:isWidgetEditing={modalOpened} {editMenu} {user} {widget} editingMode={editing}>
-	<LayoutBlockComponent {user} block={widget} />
+<BaseWidget bind:isWidgetEditing={modalOpened} {profile} {widget} editingMode={editing}>
+	{#snippet editMenu()}
+		<form
+			use:enhance={() =>
+				({ update }) => {
+					update({ reset: false });
+					modalOpened = false;
+				}}
+			method="post"
+			action="/api/profile?/editCustomWidget&id={widget.id}"
+		>
+			<LayoutBlockComponent edit user={profile} block={widget} />
+			<Button type="submit">Save</Button>
+		</form>
+	{/snippet}
+	<LayoutBlockComponent user={profile} block={widget} />
 </BaseWidget>
 
 <style lang="scss">

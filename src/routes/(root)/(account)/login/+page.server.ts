@@ -1,13 +1,13 @@
 import { redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { verifyPasskeyChallenge } from './verify-passkey-challenge';
+// import { verifyPasskeyChallenge } from './verify-passkey-challenge';
 import { handleAuthFlow } from './handle-auth-flow';
 
-export const load: PageServerLoad = async ({ parent, locals: { getCurrentUser } }) => {
-	const currentUser = await getCurrentUser();
+export const load: PageServerLoad = async ({ parent, locals: { getCurrentProfile } }) => {
+	const currentProfile = await getCurrentProfile();
 
-	if (currentUser) {
-		redirect(302, `/${currentUser.username}`);
+	if (currentProfile) {
+		redirect(302, `/${currentProfile.username}`);
 	}
 
 	return {
@@ -16,6 +16,6 @@ export const load: PageServerLoad = async ({ parent, locals: { getCurrentUser } 
 };
 
 export const actions: Actions = {
-	handleAuthFlow,
-	verifyPasskeyChallenge
+	handleAuthFlow
+	// verifyPasskeyChallenge
 };

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { NotificationTypes } from '$lib/db/schema/notifications';
-	import type { FullUser } from '$lib/db/schema/users';
+	import type { FullProfile } from '$lib/db/schema/types';
 	import Button from '../Button.svelte';
 	import { fly } from 'svelte/transition';
 	import FriendRequestNotification from './notifications/FriendRequestNotification.svelte';
@@ -13,7 +13,7 @@
 		user
 	}: {
 		menuOpen: boolean;
-		user: FullUser;
+		user: FullProfile;
 	} = $props();
 </script>
 
@@ -42,9 +42,9 @@
 				<li class="notification">
 					{#if notification.type === NotificationTypes.Generic}
 						<GenericNotification {notification} />
-					{:else if notification.type === NotificationTypes.FriendRequest && notification.mentionedUsers.length}
+					{:else if notification.type === NotificationTypes.FriendRequest && notification.mentionedProfiles.length}
 						<FriendRequestNotification {notification} />
-					{:else if notification.type === NotificationTypes.FriendRequestAccepted && notification.mentionedUsers.length}
+					{:else if notification.type === NotificationTypes.FriendRequestAccepted && notification.mentionedProfiles.length}
 						<FriendRequestAcceptedNotification {notification} />
 					{:else}
 						Invalid notification... Report this issue to the developers via Discord, Twitter or

@@ -8,7 +8,7 @@
 	let { data, children } = $props();
 
 	// if the user is not purposely offline, send a heartbeat to keep them online
-	if (browser && data.currentUser && data.currentUser.status !== 'offline') {
+	if (browser && data.currentProfile && data.currentProfile.status !== 'offline') {
 		// send a heartbeat every 3 minutes to keep the user online
 		setInterval(async () => {
 			await fetch('/api/heartbeat', {

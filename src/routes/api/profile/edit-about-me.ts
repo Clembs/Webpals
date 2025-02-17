@@ -1,11 +1,11 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { RequestEvent } from './$types';
 import { db } from '$lib/db';
-import { users } from '$lib/db/schema/users';
+import { profiles } from '$lib/db/schema/users';
 import { eq } from 'drizzle-orm';
 
-export async function editAboutMe({ locals: { getCurrentUser }, request }: RequestEvent) {
-	const user = await getCurrentUser();
+export async function editAboutMe({ locals: { getCurrentProfile }, request }: RequestEvent) {
+	const user = await getCurrentProfile();
 
 	if (!user) redirect(302, '/login');
 
@@ -19,7 +19,7 @@ export async function editAboutMe({ locals: { getCurrentUser }, request }: Reque
 	}
 
 	await db
-		.update(users)
+		.update(profiles)
 		.set({
 			widgets: user.widgets.map((column) =>
 				column.map((w) => {
@@ -33,7 +33,7 @@ export async function editAboutMe({ locals: { getCurrentUser }, request }: Reque
 				})
 			)
 		})
-		.where(eq(users.id, user.id));
+		.where(eq(profiles.id, user.id));
 
 	return {};
 }
