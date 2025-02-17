@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { type PublicUser } from '$lib/db/schema/types';
+	import { type Profile } from '$lib/db/schema/types';
 	import { formatDate, formatRelativeTime } from '$lib/helpers/text';
 	import { snowflakeToDate } from '$lib/helpers/users';
 	import {
@@ -23,19 +23,21 @@
 	import { scale } from 'svelte/transition';
 	import { RelationshipTypes } from '$lib/db/schema/users';
 
-	let { user, editing }: { user: PublicUser; editing: boolean } = $props();
-	// If the user set their status to something other than offline AND that the last heartbeat was within the IN (plus a second for safety)
+	let { user, editing }: { user: Profile; editing: boolean } = $props();
+	let avatarInputEl = $state<HTMLInputElement>();
+	let temporaryAvatarSrc = $state();
 
 	let modalOpened = $state(false);
 	let addFriendState = $state<null | 'loading' | 'error'>(null);
 
+	// If the user set their status to something other than offline AND that the last heartbeat was within the IN (plus a second for safety)
 	let userAlive = $derived(
 		user.status !== 'offline' &&
 			user.lastHeartbeat.getTime() > Date.now() - HEARTBEAT_INTERVAL + 1000
 	);
 
 	let relationship = $derived(
-		page.data.currentUser?.initiatedRelationships.find(
+		page.data.currentProfile?.initiatedRelationships.find(
 			(relationship) => relationship.recipientId === user.id
 		)?.status
 	);
@@ -73,64 +75,82 @@
 	</div>
 {/snippet}
 
-{#snippet editMenu()}
-	<form
-		use:enhance={() =>
-			({ update }) => {
-				update({ reset: false });
-				modalOpened = false;
-			}}
-		class="update-profile"
-		enctype="multipart/form-data"
-		method="post"
-		action="/api/profile?/editProfile"
-	>
-		<div class="important-stuff">
-			<!-- TODO: work avatar upload out -->
-			<input type="file" id="avatar" name="avatar" accept="image/*" />
-			<label for="avatar" aria-label="Edit avatar">
-				<span class="hover-text">
-					<PencilSimple />
-				</span>
-				<Avatar {user} />
-			</label>
-			<div class="text-bits">
-				<InlineTextInput
-					type="text"
-					id="display-name"
-					name="display-name"
-					placeholder="Display name"
-					value={user.displayName || user.username}
-					font-size="1.75rem"
-					autofocus
-					required
+<BaseWidget bind:isWidgetEditing={modalOpened} {user} editingMode={editing}>
+	{#snippet editMenu()}
+		<form
+			use:enhance={() =>
+				({ update }) => {
+					update({ reset: false, invalidateAll: true });
+					modalOpened = false;
+				}}
+			class="update-profile"
+			enctype="multipart/form-data"
+			method="post"
+			action="/api/profile?/editProfile"
+		>
+			<div class="important-stuff">
+				<!-- TODO: work avatar upload out -->
+				<input
+					bind:this={avatarInputEl}
+					type="file"
+					id="avatar"
+					name="avatar"
+					accept="image/*"
+					onchange={() => {
+						if (avatarInputEl && avatarInputEl.files?.length) {
+							const file = avatarInputEl.files[0];
+							const reader = new FileReader();
+
+							reader.onload = () => {
+								if (!reader.result) return;
+								temporaryAvatarSrc = reader.result.toString();
+							};
+							reader.readAsDataURL(file);
+						}
+					}}
 				/>
-				<p class="username">
-					<a href="/settings">
-						@{user.username}
-					</a>
-
-					&bull;
-
+				<label for="avatar" aria-label="Edit avatar">
+					<span class="hover-text">
+						<PencilSimple />
+					</span>
+					<Avatar {user} src={temporaryAvatarSrc} />
+				</label>
+				<div class="text-bits">
 					<InlineTextInput
 						type="text"
-						id="pronouns"
-						name="pronouns"
-						placeholder="Set your pronouns"
-						value={user.pronouns || ''}
-						required={false}
+						id="display-name"
+						name="display-name"
+						placeholder="Display name"
+						value={user.displayName || user.username}
+						font-size="1.75rem"
+						autofocus
+						required
 					/>
-				</p>
+					<p class="username">
+						<a href="/settings">
+							@{user.username}
+						</a>
+
+						&bull;
+
+						<InlineTextInput
+							type="text"
+							id="pronouns"
+							name="pronouns"
+							placeholder="Set your pronouns"
+							value={user.pronouns || ''}
+							required={false}
+						/>
+					</p>
+				</div>
 			</div>
-		</div>
 
-		{@render nonInteractive()}
+			{@render nonInteractive()}
 
-		<Button type="submit">Save</Button>
-	</form>
-{/snippet}
+			<Button type="submit">Save</Button>
+		</form>
+	{/snippet}
 
-<BaseWidget bind:isWidgetEditing={modalOpened} {editMenu} {user} editingMode={editing}>
 	<div class="top-part">
 		<div class="important-stuff">
 			<Avatar {user} />
@@ -150,7 +170,7 @@
 
 	{@render nonInteractive()}
 
-	{#if page.data.currentUser}
+	{#if page.data.currentProfile}
 		<div class="buttons-wrapper">
 			<div class="buttons">
 				<!-- TODO: adding friends, more options menu -->
@@ -193,7 +213,7 @@
 					>
 						<Button
 							type="submit"
-							disabled={page.data.currentUser.id === user.id || addFriendState !== null}
+							disabled={page.data.currentProfile.id === user.id || addFriendState !== null}
 						>
 							<UserPlus />
 							Add friend

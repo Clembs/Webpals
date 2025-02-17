@@ -1,12 +1,12 @@
 <script lang="ts">
 	import ConnectionEdit from './WidgetEditConnectionItem.svelte';
 	import ConnectionCreate from './ConnectionCreate.svelte';
-	import type { PublicUser } from '$lib/db/schema/types';
+	import type { Profile } from '$lib/db/schema/types';
 
 	let {
 		user
 	}: {
-		user: PublicUser;
+		user: Profile;
 	} = $props();
 
 	let editingConnectionId = $state<string>();

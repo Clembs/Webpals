@@ -4,20 +4,20 @@ import { db } from '$lib/db';
 import { relationships, RelationshipTypes } from '$lib/db/schema/users';
 import {
 	notifications,
-	notificationsMentionedUsers,
+	notificationsMentionedProfiles,
 	NotificationTypes
 } from '$lib/db/schema/notifications';
 import { and, eq } from 'drizzle-orm';
 import { generateSnowflake } from '$lib/helpers/users';
 
-export async function acceptFriendRequest({ locals: { getCurrentUser }, url }: RequestEvent) {
-	const currentUser = await getCurrentUser();
+export async function acceptFriendRequest({ locals: { getCurrentProfile }, url }: RequestEvent) {
+	const currentUser = await getCurrentProfile();
 
 	if (!currentUser) redirect(401, '/login');
 
 	const recipientId = url.searchParams.get('id');
 
-	const relationship = currentUser.receivedRelationships.find((r) => r.userId === recipientId);
+	const relationship = currentUser.receivedRelationships.find((r) => r.profileId === recipientId);
 
 	if (!recipientId || !relationship) {
 		return fail(400, {
@@ -44,12 +44,12 @@ export async function acceptFriendRequest({ locals: { getCurrentUser }, url }: R
 			status: RelationshipTypes.Friend
 		})
 		.where(
-			and(eq(relationships.userId, recipientId), eq(relationships.recipientId, currentUser.id))
+			and(eq(relationships.profileId, recipientId), eq(relationships.recipientId, currentUser.id))
 		);
 
 	// also create a new relationship for the current user
 	await db.insert(relationships).values({
-		userId: currentUser.id,
+		profileId: currentUser.id,
 		recipientId,
 		status: RelationshipTypes.Friend
 	});
@@ -59,25 +59,26 @@ export async function acceptFriendRequest({ locals: { getCurrentUser }, url }: R
 		.insert(notifications)
 		.values({
 			id: generateSnowflake(),
-			userId: recipientId,
+			profileId: recipientId,
 			type: NotificationTypes.FriendRequestAccepted
 		})
 		.returning();
 
-	await db.insert(notificationsMentionedUsers).values({
+	await db.insert(notificationsMentionedProfiles).values({
 		notificationId: notification.id,
-		userId: currentUser.id
+		profileId: currentUser.id
 	});
 
 	// remove the pending notification from the current user
 	const pendingNotification = currentUser.notifications.find(
-		(n) => n.type === NotificationTypes.FriendRequest && n.mentionedUsers[0].userId === recipientId
+		(n) =>
+			n.type === NotificationTypes.FriendRequest && n.mentionedProfiles[0].profileId === recipientId
 	);
 
 	if (pendingNotification) {
 		await db
-			.delete(notificationsMentionedUsers)
-			.where(eq(notificationsMentionedUsers.notificationId, pendingNotification.id));
+			.delete(notificationsMentionedProfiles)
+			.where(eq(notificationsMentionedProfiles.notificationId, pendingNotification.id));
 
 		await db.delete(notifications).where(eq(notifications.id, pendingNotification.id));
 	}

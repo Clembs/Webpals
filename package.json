@@ -50,6 +50,7 @@
 	"type": "module",
 	"dependencies": {
 		"@jsr/std__collections": "^1.0.10",
+		"@supabase/ssr": "^0.5.2",
 		"drizzle-orm": "^0.39.3",
 		"postgres": "^3.4.5"
 	}

@@ -4,8 +4,8 @@ import { db } from '$lib/db';
 import { connections } from '$lib/db/schema/users';
 import { eq } from 'drizzle-orm';
 
-export async function deleteConnection({ locals: { getCurrentUser }, url }: RequestEvent) {
-	const user = getCurrentUser();
+export async function deleteConnection({ locals: { getCurrentProfile }, url }: RequestEvent) {
+	const user = getCurrentProfile();
 
 	if (!user) redirect(302, '/login');
 

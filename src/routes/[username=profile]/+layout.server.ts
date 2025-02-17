@@ -2,55 +2,48 @@ import { db } from '$lib/db';
 import { error, redirect } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
 import { sql } from 'drizzle-orm';
-import { publicUserQuery } from '$lib/db/schema/users';
+import { publicProfileQuery } from '$lib/db/schema/users';
 import { mergeThemes, plainTheme } from '$lib/themes/mergeThemes';
 
-export const load: LayoutServerLoad = async ({ params: { username }, url, parent }) => {
-	const { currentUser } = await parent();
-	const isCurrentUser =
-		currentUser && currentUser.username.toLowerCase() === username.toLowerCase();
+export const load: LayoutServerLoad = async ({
+	locals: { getCurrentProfile },
+	params: { username },
+	url
+}) => {
+	const currentProfile = getCurrentProfile();
+	const isCurrentProfile =
+		currentProfile && currentProfile.username.toLowerCase() === username.toLowerCase();
 
-	const user = isCurrentUser
-		? currentUser
-		: await db.query.users.findFirst({
-				where: (user, { eq }) => eq(sql`LOWER(${user.username})`, username.toLowerCase()),
-				columns: {
-					id: true,
-					avatar: true,
-					displayName: true,
-					lastHeartbeat: true,
-					pronouns: true,
-					status: true,
-					widgets: true,
-					username: true,
-					theme: true
-				},
+	const profile = isCurrentProfile
+		? currentProfile
+		: await db.query.profiles.findFirst({
+				where: (profile, { eq }) => eq(sql`LOWER(${profile.username})`, username.toLowerCase()),
 				with: {
 					connections: true,
 					initiatedRelationships: {
 						with: {
-							recipient: publicUserQuery
+							recipient: publicProfileQuery
 						}
 					}
 				}
 			});
 
-	if (!user) throw error(404, 'User not found');
+	if (!profile) throw error(404, 'User not found');
 
 	// if the capitalization of the username is incorrect, redirect to the correct URL
-	if (username !== user.username) {
-		redirect(301, `/${user.username}`);
+	if (username !== profile.username) {
+		redirect(301, `/${profile.username}`);
 	}
 
 	if (url.searchParams.has('edit')) {
-		if (!isCurrentUser) {
-			redirect(302, `/${user.username}`);
+		if (!isCurrentProfile) {
+			redirect(302, `/${profile.username}`);
 		}
 	}
 
 	return {
-		user: { ...user, theme: mergeThemes(plainTheme, user?.theme || {}) },
-		editable: isCurrentUser,
-		editing: !!(!url.searchParams.has('view') && isCurrentUser)
+		user: { ...profile, theme: mergeThemes(plainTheme, profile?.theme || {}) },
+		editable: isCurrentProfile,
+		editing: !!(!url.searchParams.has('view') && isCurrentProfile)
 	};
 };

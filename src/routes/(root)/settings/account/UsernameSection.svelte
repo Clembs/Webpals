@@ -6,8 +6,8 @@
 	import { At } from 'phosphor-svelte';
 	import type { LayoutServerData } from '../$types';
 	import { enhance } from '$app/forms';
-	import { USERNAME_REGEX } from '$lib/helpers/constants';
 	import { goto } from '$app/navigation';
+	import { USERNAME_REGEX } from '$lib/db/schema/users';
 
 	let { data }: { data: LayoutServerData } = $props();
 
@@ -15,7 +15,7 @@
 		`${page.url.hostname}${page.url.hostname === 'localhost' ? `:${page.url.port}` : ''}`
 	);
 
-	let username = $state(data.currentUser.username);
+	let username = $state(data.currentProfile.username);
 	let isLoading = $state(false);
 </script>
 
@@ -75,7 +75,7 @@
 			<Button
 				type="submit"
 				inline
-				disabled={username === data.currentUser.username ||
+				disabled={username === data.currentProfile.username ||
 					isLoading ||
 					!username ||
 					username.length < 2 ||
@@ -92,11 +92,11 @@
 	<h3>Username</h3>
 
 	<p>
-		Your username, <span class="heading"> @{data.currentUser.username}</span>, is your unique
+		Your username, <span class="heading"> @{data.currentProfile.username}</span>, is your unique
 		identifier on the platform. It is used to create your profile URL ({baseUrl}/<span
 			class="heading"
 		>
-			{data.currentUser.username}
+			{data.currentProfile.username}
 		</span>).
 	</p>
 
@@ -105,7 +105,7 @@
 	</Button>
 
 	<p>
-		Looking to change your display name? Check your <a href="/{data.currentUser.username}">
+		Looking to change your display name? Check your <a href="/{data.currentProfile.username}">
 			profile settings
 		</a>.
 	</p>

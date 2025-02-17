@@ -3,24 +3,24 @@ import type { RequestEvent } from './$types';
 import { db } from '$lib/db';
 import {
 	notifications,
-	notificationsMentionedUsers,
+	notificationsMentionedProfiles,
 	NotificationTypes
 } from '$lib/db/schema/notifications';
 import { inArray } from 'drizzle-orm';
 
-export async function deleteAllNotifications({ locals: { getCurrentUser } }: RequestEvent) {
-	const user = await getCurrentUser();
+export async function deleteAllNotifications({ locals: { getCurrentProfile } }: RequestEvent) {
+	const currentProfile = getCurrentProfile();
 
-	if (!user) redirect(302, '/login');
+	if (!currentProfile) redirect(302, '/login');
 
 	// filter out friend requests to have the user purposefully take action on them
-	const allNonInteractiveNotifications = user.notifications.filter(
+	const allNonInteractiveNotifications = currentProfile.notifications.filter(
 		(n) => n.type !== NotificationTypes.FriendRequest
 	);
 
-	await db.delete(notificationsMentionedUsers).where(
+	await db.delete(notificationsMentionedProfiles).where(
 		inArray(
-			notificationsMentionedUsers.notificationId,
+			notificationsMentionedProfiles.notificationId,
 			allNonInteractiveNotifications.map((n) => n.id)
 		)
 	);

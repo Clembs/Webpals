@@ -10,7 +10,7 @@ export const inviteCodes = pgTable('invite_codes', {
 		.references(() => profiles.id, { onDelete: 'cascade' }),
 	createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
 	claimedAt: timestamp({ withTimezone: true }),
-	claimedById: uuid().references(() => profiles.id)
+	claimedById: uuid().references(() => profiles.id, { onDelete: 'cascade' })
 });
 
 export const inviteCodesRelations = relations(inviteCodes, ({ one }) => ({

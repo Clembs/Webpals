@@ -1,11 +1,13 @@
 import { redirect } from '@sveltejs/kit';
 
-export async function load({ locals: { getCurrentUser } }) {
-	const currentUser = await getCurrentUser();
+export async function load({ locals: { getCurrentProfile, getSession } }) {
+	const currentProfile = getCurrentProfile();
+	const { user: currentUser } = getSession();
 
-	if (!currentUser) redirect(302, '/login');
+	if (!currentProfile || !currentUser) redirect(302, '/login');
 
 	return {
-		currentUser
+		currentUser,
+		currentProfile
 	};
 }

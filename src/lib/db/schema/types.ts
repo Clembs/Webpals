@@ -12,7 +12,7 @@ export type FullProfile = Profile & {
 		recipient: Profile;
 	})[];
 	receivedRelationships: (Relationship & {
-		user: Profile;
+		profile: Profile;
 	})[];
 	inviteCodes: InviteCode[];
 };
@@ -24,7 +24,7 @@ export type Connection = typeof connections.$inferSelect;
 export type InviteCode = typeof inviteCodes.$inferSelect;
 
 export type Notification = typeof notifications.$inferSelect & {
-	mentionedUsers: (typeof notificationsMentionedProfiles.$inferSelect & {
-		user: Profile | null;
+	mentionedProfiles: (typeof notificationsMentionedProfiles.$inferSelect & {
+		profile: Profile | undefined | null;
 	})[];
 };

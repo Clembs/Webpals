@@ -8,7 +8,6 @@ import {
 	pgEnum,
 	pgPolicy,
 	pgTable,
-	pgView,
 	primaryKey,
 	smallint,
 	text,
@@ -25,6 +24,7 @@ import {
 	defaultMusicWidget
 } from '../../widgets/default-widgets';
 import { authenticatedRole, authUid, authUsers } from 'drizzle-orm/supabase';
+import type { Profile } from './types';
 
 export const USERNAME_REGEX = /^([a-zA-Z0-9_]{2,24})$/;
 
@@ -76,6 +76,15 @@ export const profilesRelations = relations(profiles, ({ many }) => ({
 	inviteCodes: many(inviteCodes)
 }));
 
+export const publicProfileQuery = {
+	with: {
+		connections: true
+	}
+} as const satisfies {
+	columns?: { [key in keyof Profile]?: true };
+	with?: Record<string, true>;
+};
+
 export const connections = pgTable('connections', {
 	id: uuid().defaultRandom().primaryKey(),
 	profileId: uuid()
@@ -94,23 +103,6 @@ export const connectionsRelations = relations(connections, ({ one }) => ({
 		references: [profiles.id]
 	})
 }));
-
-export const publicProfiles = pgView('public_profiles_view').as((qb) =>
-	qb
-		.select({
-			id: profiles.id,
-			username: profiles.username,
-			displayName: profiles.displayName,
-			avatar: profiles.avatar,
-			pronouns: profiles.pronouns,
-			lastHeartbeat: profiles.lastHeartbeat,
-			widgets: profiles.widgets,
-			status: profiles.status,
-			theme: profiles.theme
-		})
-		.from(profiles)
-		.leftJoin(connections, eq(profiles.id, connections.profileId))
-);
 
 export enum RelationshipTypes {
 	FriendPending,

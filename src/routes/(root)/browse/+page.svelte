@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Avatar from '$lib/components/Avatar.svelte';
-	import { type PublicUser } from '$lib/db/schema/types';
+	import { type Profile } from '$lib/db/schema/types';
 	import { HEARTBEAT_INTERVAL } from '$lib/helpers/constants';
 	import { formatDate, formatRelativeTime } from '$lib/helpers/text';
 	import { snowflakeToDate } from '$lib/helpers/users';
@@ -14,7 +14,7 @@
 	let usePlainTheme = $state(false);
 </script>
 
-{#snippet renderUser(user: PublicUser)}
+{#snippet renderProfile(user: Profile)}
 	<ThemeProvider theme={usePlainTheme ? plainTheme : mergeThemes(plainTheme, user.theme || {})}>
 		{@const userAlive =
 			user.status !== 'offline' &&
@@ -67,10 +67,10 @@
 
 <main>
 	<div class="header">
-		<h1>Browse all users</h1>
+		<h1>Browse all profiles</h1>
 
 		<p>
-			{data.count} users total
+			{data.count} profiles total
 		</p>
 	</div>
 
@@ -80,14 +80,14 @@
 	</label>
 
 	<ul id="profiles">
-		{#each data.firstUsers as user}
-			{@render renderUser(user)}
+		{#each data.firstProfiles as profile}
+			{@render renderProfile(profile)}
 		{/each}
-		{#await data.awaitedUsers}
-			Loading more users...
-		{:then users}
-			{#each users as user}
-				{@render renderUser(user)}
+		{#await data.awaitedProfiles}
+			Loading more profiles...
+		{:then profiles}
+			{#each profiles as profile}
+				{@render renderProfile(profile)}
 			{/each}
 		{/await}
 	</ul>

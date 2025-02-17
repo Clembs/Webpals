@@ -1,4 +1,4 @@
-import type { PublicUser } from '$lib/db/schema/types';
+import type { Profile } from '$lib/db/schema/types';
 
 export type BaseDefaultWidget = {
 	id: string;
@@ -113,7 +113,7 @@ export type DefaultWidget =
 export type AnyWidget = DefaultWidget | CustomWidget;
 
 export type WidgetComponentProps<T extends AnyWidget> = {
-	user: PublicUser;
+	user: Profile;
 	widget: T;
 	editing: boolean;
 };
