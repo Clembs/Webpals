@@ -1,11 +1,11 @@
 import { db } from '$lib/db';
-import { USERNAME_REGEX } from '$lib/helpers/constants';
-import { createSession } from '$lib/helpers/sessions';
 import { EMAIL_REGEX } from 'valibot';
 import type { Actions, PageServerLoad } from './$types';
 import { fail, redirect } from '@sveltejs/kit';
-import { authCodes } from '$lib/db/schema/auth';
-import { eq } from 'drizzle-orm';
+import { eq, or, sql } from 'drizzle-orm';
+import { profiles, USERNAME_REGEX } from '$lib/db/schema/users';
+import type { User } from '@supabase/supabase-js';
+import { authUsers } from 'drizzle-orm/supabase';
 
 export const load: PageServerLoad = async ({ parent }) => {
 	const { login } = await parent();
@@ -18,12 +18,19 @@ export const load: PageServerLoad = async ({ parent }) => {
 export const actions: Actions = {
 	// TODO
 	async resendOTP() {},
-	async verifyOTP({ cookies, request }) {
+	async verifyOTP({ locals: { supabase }, request }) {
 		const formData = await request.formData();
 		const originUrl = new URL(request.headers.get('referer')!);
 
 		const login = originUrl.searchParams.get('login')?.toString();
 		const otp = formData.get('otp')?.toString();
+		const loginType: 'email' | 'username' | undefined = login
+			? EMAIL_REGEX.test(login)
+				? 'email'
+				: USERNAME_REGEX.test(login)
+					? 'username'
+					: undefined
+			: undefined;
 
 		if (!otp || !/\d{6}$/.test(otp)) {
 			return fail(400, {
@@ -31,18 +38,25 @@ export const actions: Actions = {
 			});
 		}
 
-		if (!login || (!EMAIL_REGEX.test(login) && !USERNAME_REGEX.test(login))) {
+		if (!login || !loginType) {
 			return fail(400, {
 				message: 'Invalid email address or username. Go back and try again.'
 			});
 		}
 
-		const user = await db.query.users.findFirst({
-			where: ({ email, username }, { or, eq }) => or(eq(email, login), eq(username, login))
-		});
+		const [user] = await db
+			.select({
+				username: profiles.username,
+				email: authUsers.email
+			})
+			.from(authUsers)
+			.leftJoin(profiles, eq(profiles.id, authUsers.id))
+			.where(
+				or(eq(sql`LOWER(${profiles.username})`, login.toLowerCase()), eq(authUsers.email, login))
+			);
 
 		if (!user) {
-			if (EMAIL_REGEX.test(login) || USERNAME_REGEX.test(login)) {
+			if (loginType) {
 				throw redirect(
 					307,
 					USERNAME_REGEX.test(login) ? `/register?username=${login}` : `/register?email=${login}`
@@ -54,22 +68,18 @@ export const actions: Actions = {
 			}
 		}
 
-		const code = await db.query.authCodes.findFirst({
-			where: ({ code, email: dbEmail }, { eq, and }) => and(eq(code, otp), eq(dbEmail, user?.email))
+		const { data, error } = await supabase.auth.verifyOtp({
+			email: user.email!,
+			type: 'email',
+			token: otp
 		});
 
-		if (!code || code.expiresAt < new Date()) {
+		if (!data || !data.user || error) {
 			return fail(400, {
 				message: 'Invalid or expired OTP. Please check your email and try again.'
 			});
 		}
 
-		await db.delete(authCodes).where(eq(authCodes.id, code.id));
-
-		const userAgent = request.headers.get('user-agent') || '';
-
-		await createSession(cookies, userAgent, user.id);
-
-		throw redirect(302, `/${user.username}`);
+		redirect(302, `/${user.username!}`);
 	}
 };

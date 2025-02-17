@@ -3,7 +3,7 @@
 	import { replaceState } from '$app/navigation';
 	import Button from '$lib/components/Button.svelte';
 	import TextInput from '$lib/components/TextInput.svelte';
-	import { USERNAME_REGEX } from '$lib/helpers/constants';
+	import { USERNAME_REGEX } from '$lib/db/schema/users';
 	import { At } from 'phosphor-svelte';
 
 	let { data: initialData, form } = $props();
@@ -12,10 +12,6 @@
 	// do that so you can bind the value to the input
 	let data = $state(initialData);
 </script>
-
-{#snippet usernameIcon(size: number)}
-	<At {size} weight="regular" />
-{/snippet}
 
 <header>
 	<div class="eyebrow">Create an account - Step 1/3</div>
@@ -45,7 +41,6 @@
 			form = { message: '' };
 			replaceState(`?username=${data.username}${data.email ? `&email=${data.email}` : ''}`, {});
 		}}
-		prefixIcon={usernameIcon}
 		label="Username"
 		placeholder="Clembs"
 		minlength={2}
@@ -56,6 +51,9 @@
 		bind:value={data.username}
 		error={form?.message}
 	/>
+	{#snippet prefixIcon(size: number)}
+		<At {size} weight="regular" />
+	{/snippet}
 
 	<div class="buttons">
 		<Button variant="secondary" href="/login" tabindex={3}>Back to login</Button>
