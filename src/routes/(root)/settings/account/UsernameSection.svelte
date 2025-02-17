@@ -25,8 +25,6 @@
 			isLoading = true;
 
 			return async ({ result, update }) => {
-				isLoading = false;
-
 				if (result.type === 'success') {
 					dialogPortal.closeDialog();
 				}
@@ -42,6 +40,7 @@
 				await update({
 					reset: false
 				});
+				isLoading = false;
 			};
 		}}
 		action="/api/settings?/updateUsername"

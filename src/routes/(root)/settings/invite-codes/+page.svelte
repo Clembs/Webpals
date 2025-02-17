@@ -84,15 +84,18 @@
 						'code' in result.data &&
 						typeof result.data.code === 'string'
 					) {
+						await update({
+							invalidateAll: true
+						});
 						generateStatus = 'success';
 						navigator.clipboard.writeText(result.data.code);
 						setTimeout(() => (generateStatus = null), 2000);
 					} else {
+						await update({
+							invalidateAll: true
+						});
 						generateStatus = 'error';
 					}
-					await update({
-						invalidateAll: true
-					});
 				};
 			}}
 			method="post"

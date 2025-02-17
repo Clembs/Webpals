@@ -24,8 +24,6 @@
 			use:enhance={() => {
 				isLoading = true;
 				return async ({ result, update }) => {
-					isLoading = false;
-
 					// if (result.type === 'success' && result.data && result.data.authType === 'webauthn') {
 					// 	const resultValidation = object({
 					// 		authType: literal('webauthn'),
@@ -72,6 +70,8 @@
 						invalidateAll: false
 					});
 					// }
+
+					isLoading = false;
 				};
 			}}
 			action="?/handleAuthFlow"
