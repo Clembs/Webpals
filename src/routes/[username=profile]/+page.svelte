@@ -124,8 +124,13 @@
 	</main>
 </ThemeProvider>
 
-{#if data.editable && data.currentProfile}
-	<ProfileEditBar bind:editing user={data.currentProfile} bind:theme />
+{#if data.editable && data.currentProfile && data.currentUser}
+	<ProfileEditBar
+		currentUser={data.currentUser}
+		bind:editing
+		profile={data.currentProfile}
+		bind:theme
+	/>
 {/if}
 
 <style lang="scss">

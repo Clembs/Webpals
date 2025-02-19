@@ -9,15 +9,18 @@
 	import { plainTheme } from '$lib/themes/mergeThemes';
 	import { replaceState } from '$app/navigation';
 	import MattMenu from './MattMenu.svelte';
+	import type { User } from '@supabase/supabase-js';
 
 	let {
 		editing = $bindable(),
-		user = $bindable(),
-		theme = $bindable()
+		profile = $bindable(),
+		theme = $bindable(),
+		currentUser
 	}: {
 		editing: boolean;
-		user: FullProfile;
+		profile: FullProfile;
 		theme: Theme;
+		currentUser: User;
 	} = $props();
 
 	let widgetPickerOpen = $state(false);
@@ -39,7 +42,7 @@
 
 		// switch to editing
 		if (editing) {
-			replaceState(`/${user.username}`, {});
+			replaceState(`/${profile.username}`, {});
 
 			// expand animation
 			editBarWrapperEl.style.width = `${toggleModesButtonEl.clientWidth}px`;
@@ -61,7 +64,7 @@
 		}
 		// switch to viewing
 		else {
-			replaceState(`/${user.username}?view`, {});
+			replaceState(`/${profile.username}?view`, {});
 
 			// collapse animation
 			editBarWrapperEl.style.transition = `width 500ms cubic-bezier(0.75, -0.2, 0.15, 1)`;
@@ -83,12 +86,18 @@
 
 <ThemeProvider theme={plainTheme}>
 	<div id="edit-bar-wrapper" bind:this={editBarWrapperEl} class:viewing={!editing}>
-		<WidgetPickerMenu {user} {editBarEl} {editBarWrapperEl} bind:menuOpen={widgetPickerOpen} />
+		<WidgetPickerMenu
+			user={profile}
+			{editBarEl}
+			{editBarWrapperEl}
+			bind:menuOpen={widgetPickerOpen}
+		/>
 
 		<ThemeEditorMenu bind:theme {editBarEl} {editBarWrapperEl} bind:menuOpen={themeEditorOpen} />
 
 		<AccountSettingsMenu
-			{user}
+			{currentUser}
+			{profile}
 			{editBarEl}
 			{editBarWrapperEl}
 			bind:menuOpen={accountSettingsOpen}

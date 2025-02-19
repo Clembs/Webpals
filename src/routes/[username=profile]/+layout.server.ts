@@ -6,11 +6,13 @@ import { publicProfileQuery } from '$lib/db/schema/users';
 import { mergeThemes, plainTheme } from '$lib/themes/mergeThemes';
 
 export const load: LayoutServerLoad = async ({
-	locals: { getCurrentProfile },
+	locals: { getCurrentProfile, getSession },
 	params: { username },
 	url
 }) => {
 	const currentProfile = getCurrentProfile();
+	const currentUser = getSession()?.user;
+
 	const isCurrentProfile =
 		currentProfile && currentProfile.username.toLowerCase() === username.toLowerCase();
 
@@ -42,6 +44,7 @@ export const load: LayoutServerLoad = async ({
 	}
 
 	return {
+		currentUser,
 		profile: { ...profile, theme: mergeThemes(plainTheme, profile?.theme || {}) },
 		editable: isCurrentProfile,
 		editing: !!(!url.searchParams.has('view') && isCurrentProfile)

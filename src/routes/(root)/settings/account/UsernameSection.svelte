@@ -4,10 +4,10 @@
 	import TextInput from '$lib/components/TextInput.svelte';
 	import { dialogPortal } from '$lib/portals/dialog.svelte';
 	import { At } from 'phosphor-svelte';
-	import type { LayoutServerData } from '../$types';
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import { USERNAME_REGEX } from '$lib/db/schema/users';
+	import type { LayoutServerData } from '../$types';
 
 	let { data }: { data: LayoutServerData } = $props();
 
@@ -52,19 +52,18 @@
 			Pick something short and sweet, between 2 and 24 characters. You can only use letters, numbers
 			and underscores.
 		</p>
-
-		{#snippet at(size: number)}
-			<At {size} weight="regular" />
-		{/snippet}
 		<TextInput
 			name="username"
 			bind:value={username}
-			prefixIcon={at}
 			pattern={USERNAME_REGEX.source}
 			minlength={2}
 			maxlength={24}
 			error={page.form?.message}
-		/>
+		>
+			{#snippet prefixIcon(size: number)}
+				<At {size} weight="regular" />
+			{/snippet}
+		</TextInput>
 
 		<div class="buttons">
 			<Button type="button" onclick={() => dialogPortal.closeDialog()} variant="secondary" inline>

@@ -1,15 +1,18 @@
 <script lang="ts">
 	import type { FullProfile } from '$lib/db/schema/types';
+	import type { User } from '@supabase/supabase-js';
 	import AccountSettings from '../(root)/settings/account/AccountSettings.svelte';
 	import BaseEditBarMenu from './BaseEditBarMenu.svelte';
 
 	let {
-		user,
+		profile,
+		currentUser,
 		menuOpen = $bindable(false),
 		editBarEl,
 		editBarWrapperEl
 	}: {
-		user: FullProfile;
+		profile: FullProfile;
+		currentUser: User;
 		menuOpen: boolean;
 		editBarEl: HTMLDivElement | undefined;
 		editBarWrapperEl: HTMLDivElement | undefined;
@@ -25,7 +28,8 @@
 >
 	<AccountSettings
 		data={{
-			currentProfile: user
+			currentProfile: profile,
+			currentUser
 		}}
 	/>
 </BaseEditBarMenu>

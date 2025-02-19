@@ -1,9 +1,9 @@
 <script lang="ts">
 	import Button from '$lib/components/Button.svelte';
 	import TextInput from '$lib/components/TextInput.svelte';
-	import type { LayoutServerData } from '../$types';
 	import UsernameSection from './UsernameSection.svelte';
 	import { Envelope } from 'phosphor-svelte';
+	import type { LayoutServerData } from '../$types';
 	import '../layout.scss';
 
 	let { data }: { data: LayoutServerData } = $props();
