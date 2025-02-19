@@ -9,7 +9,7 @@
 </script>
 
 <script lang="ts">
-	import type { Profile } from '$lib/db/schema/types';
+	import type { Profile } from '$lib/db/types';
 	import type { AnyWidget } from '$lib/widgets/types';
 	import { tick, type Snippet } from 'svelte';
 	import { enhance } from '$app/forms';

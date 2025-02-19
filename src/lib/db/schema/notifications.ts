@@ -1,6 +1,6 @@
 import { boolean, pgTable, primaryKey, smallint, timestamp, uuid } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
-import { profiles } from './users';
+import { profiles } from './profiles';
 
 export enum NotificationTypes {
 	Generic = 0,

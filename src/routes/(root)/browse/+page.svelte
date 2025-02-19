@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Avatar from '$lib/components/Avatar.svelte';
-	import { type Profile } from '$lib/db/schema/types';
+	import { type Profile } from '$lib/db/types';
 	import { HEARTBEAT_INTERVAL } from '$lib/helpers/constants';
 	import { formatDate, formatRelativeTime } from '$lib/helpers/text';
 	import { mergeThemes, plainTheme } from '$lib/themes/mergeThemes';

@@ -5,7 +5,7 @@ import { db } from '$lib/db';
 import { _getValidInviteCode } from '../verify-invite-code/+page.server';
 import { authUsers } from 'drizzle-orm/supabase';
 import { eq } from 'drizzle-orm';
-import { USERNAME_REGEX } from '$lib/db/schema/users';
+import { USERNAME_REGEX } from '$lib/db/schema/profiles';
 
 export const load: PageServerLoad = async ({ url, cookies }) => {
 	const username = url.searchParams.get('username')?.toString();

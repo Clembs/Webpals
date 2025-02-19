@@ -2,7 +2,7 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { RequestEvent } from './$types';
 import { defaultWidgets } from '$lib/widgets/default-widgets';
 import { db } from '$lib/db';
-import { profiles } from '$lib/db/schema/users';
+import { profiles } from '$lib/db/schema/profiles';
 import { eq } from 'drizzle-orm';
 
 export async function addWidget({ locals: { getCurrentProfile }, url }: RequestEvent) {

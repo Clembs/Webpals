@@ -1,6 +1,6 @@
 import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_PROJECT_URL } from '$env/static/public';
 import { db } from '$lib/db';
-import { publicProfileQuery } from '$lib/db/schema/users';
+import { publicProfileQuery } from '$lib/db/schema/profiles';
 import { createServerClient } from '@supabase/ssr';
 import type { User } from '@supabase/supabase-js';
 import type { Handle } from '@sveltejs/kit';

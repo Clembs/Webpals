@@ -1,7 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { RequestEvent } from './$types';
 import { db } from '$lib/db';
-import { connections } from '$lib/db/schema/users';
+import { connections } from '$lib/db/schema/profiles';
 import { connectionProviders } from '$lib/widgets/connections';
 import type { ConnectionProvider } from '$lib/widgets/types';
 

@@ -3,7 +3,7 @@
 	import { replaceState } from '$app/navigation';
 	import Button from '$lib/components/Button.svelte';
 	import TextInput from '$lib/components/TextInput.svelte';
-	import { USERNAME_REGEX } from '$lib/db/schema/users';
+	import { USERNAME_REGEX } from '$lib/db/schema/profiles';
 	import { At } from 'phosphor-svelte';
 
 	let { data: initialData, form } = $props();

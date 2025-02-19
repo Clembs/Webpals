@@ -1,4 +1,4 @@
-import type { FullProfile } from '$lib/db/schema/types';
+import type { FullProfile } from '$lib/db/types';
 import type { SupabaseClient, User } from '@supabase/supabase-js';
 
 declare global {

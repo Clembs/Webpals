@@ -3,7 +3,7 @@ import type { RequestEvent } from './$types';
 import { parse, isValiError } from 'valibot';
 import { ThemeStructure } from '$lib/themes/theme-structure';
 import { db } from '$lib/db';
-import { profiles } from '$lib/db/schema/users';
+import { profiles } from '$lib/db/schema/profiles';
 import type { Theme } from '$lib/themes/types';
 import { eq } from 'drizzle-orm';
 import sharp from 'sharp';

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Profile } from '$lib/db/schema/types';
+	import type { Profile } from '$lib/db/types';
 	import { Island } from 'phosphor-svelte';
 
 	let {

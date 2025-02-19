@@ -3,7 +3,7 @@ import type { RequestEvent } from './$types';
 import { db } from '$lib/db';
 import { eq, or, sql } from 'drizzle-orm';
 import { EMAIL_REGEX } from 'valibot';
-import { profiles, USERNAME_REGEX } from '$lib/db/schema/users';
+import { profiles, USERNAME_REGEX } from '$lib/db/schema/profiles';
 import { authUsers } from 'drizzle-orm/supabase';
 
 // This function:

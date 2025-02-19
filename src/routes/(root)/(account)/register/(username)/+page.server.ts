@@ -2,7 +2,7 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { db } from '$lib/db';
 import { _getValidInviteCode } from '../verify-invite-code/+page.server';
-import { USERNAME_REGEX } from '$lib/db/schema/users';
+import { USERNAME_REGEX } from '$lib/db/schema/profiles';
 
 export const actions: Actions = {
 	async validateUsername({ request, url, cookies }) {

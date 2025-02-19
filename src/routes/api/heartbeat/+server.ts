@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import { db } from '$lib/db';
-import { profiles } from '$lib/db/schema/users';
+import { profiles } from '$lib/db/schema/profiles';
 import { eq } from 'drizzle-orm';
 import type { RequestHandler } from './$types';
 import { HEARTBEAT_INTERVAL } from '$lib/helpers/constants';

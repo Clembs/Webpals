@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Avatar from '$lib/components/Avatar.svelte';
-	import type { Profile, Relationship } from '$lib/db/schema/types';
-	import { RelationshipTypes } from '$lib/db/schema/users';
+	import type { Profile, Relationship } from '$lib/db/types';
+	import { RelationshipTypes } from '$lib/db/schema/profiles';
 	import BaseWidget from '../BaseWidget.svelte';
 	import type { FriendsWidget, WidgetComponentProps } from '../types';
 

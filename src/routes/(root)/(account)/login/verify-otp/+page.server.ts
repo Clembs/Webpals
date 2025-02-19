@@ -3,7 +3,7 @@ import { EMAIL_REGEX } from 'valibot';
 import type { Actions, PageServerLoad } from './$types';
 import { fail, redirect } from '@sveltejs/kit';
 import { eq, or, sql } from 'drizzle-orm';
-import { profiles, USERNAME_REGEX } from '$lib/db/schema/users';
+import { profiles, USERNAME_REGEX } from '$lib/db/schema/profiles';
 import type { User } from '@supabase/supabase-js';
 import { authUsers } from 'drizzle-orm/supabase';
 

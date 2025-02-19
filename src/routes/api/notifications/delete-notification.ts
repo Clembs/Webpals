@@ -7,7 +7,7 @@ import {
 	NotificationTypes
 } from '$lib/db/schema/notifications';
 import { and, eq } from 'drizzle-orm';
-import { relationships, RelationshipTypes } from '$lib/db/schema/users';
+import { relationships, RelationshipTypes } from '$lib/db/schema/profiles';
 
 export async function deleteNotification({ url, locals: { getCurrentProfile } }: RequestEvent) {
 	const currentProfile = getCurrentProfile();

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { FullProfile } from '$lib/db/schema/types';
+	import type { FullProfile } from '$lib/db/types';
 	import type { User } from '@supabase/supabase-js';
 	import AccountSettings from '../(root)/settings/account/AccountSettings.svelte';
 	import BaseEditBarMenu from './BaseEditBarMenu.svelte';

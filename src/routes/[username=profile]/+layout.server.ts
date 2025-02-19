@@ -2,7 +2,7 @@ import { db } from '$lib/db';
 import { error, redirect } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
 import { sql } from 'drizzle-orm';
-import { publicProfileQuery } from '$lib/db/schema/users';
+import { publicProfileQuery } from '$lib/db/schema/profiles';
 import { mergeThemes, plainTheme } from '$lib/themes/mergeThemes';
 
 export const load: LayoutServerLoad = async ({

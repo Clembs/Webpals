@@ -5,7 +5,7 @@
 	import { ArrowSquareOut, Check, CopySimple, SealCheck, TextAlignLeft } from 'phosphor-svelte';
 	import ConnectionsWidgetEditComponent from '../default-edit-menus/ConnectionsWidgetEditComponent.svelte';
 	import { SvelteMap } from 'svelte/reactivity';
-	import type { Connection } from '$lib/db/schema/types';
+	import type { Connection } from '$lib/db/types';
 
 	let { profile, widget, editing }: WidgetComponentProps<ConnectionsWidget> = $props();
 

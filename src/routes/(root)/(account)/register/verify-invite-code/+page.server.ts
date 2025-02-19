@@ -1,7 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { db } from '$lib/db';
-import { USERNAME_REGEX } from '$lib/db/schema/users';
+import { USERNAME_REGEX } from '$lib/db/schema/profiles';
 
 export const load: PageServerLoad = async ({ url }) => {
 	const username = url.searchParams.get('username')?.toString();

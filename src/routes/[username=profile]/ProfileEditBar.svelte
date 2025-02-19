@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { FullProfile } from '$lib/db/schema/types';
+	import type { FullProfile } from '$lib/db/types';
 	import type { Theme } from '$lib/themes/types';
 	import { Eye, PencilSimple, Plus, Gear, Palette, Hexagon } from 'phosphor-svelte';
 	import WidgetPickerMenu from './WidgetPickerMenu.svelte';

@@ -1,6 +1,6 @@
 import { relations } from 'drizzle-orm';
 import { pgTable, timestamp, text, uuid } from 'drizzle-orm/pg-core';
-import { profiles } from './users';
+import { profiles } from './profiles';
 
 export const inviteCodes = pgTable('invite_codes', {
 	id: uuid().notNull().primaryKey().defaultRandom(),

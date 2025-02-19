@@ -1,4 +1,4 @@
-import type { Profile } from '$lib/db/schema/types';
+import type { Profile } from '$lib/db/types';
 
 export type BaseDefaultWidget = {
 	id: string;

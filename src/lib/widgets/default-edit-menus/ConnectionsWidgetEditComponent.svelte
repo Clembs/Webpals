@@ -1,7 +1,7 @@
 <script lang="ts">
 	import ConnectionEdit from './WidgetEditConnectionItem.svelte';
 	import ConnectionCreate from './ConnectionCreate.svelte';
-	import type { Profile } from '$lib/db/schema/types';
+	import type { Profile } from '$lib/db/types';
 
 	let {
 		user

@@ -1,5 +1,5 @@
 import { db } from '$lib/db';
-import { publicProfileQuery, profiles } from '$lib/db/schema/users';
+import { publicProfileQuery, profiles } from '$lib/db/schema/profiles';
 import { count } from 'drizzle-orm';
 
 export async function load() {

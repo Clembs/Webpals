@@ -2,7 +2,7 @@
 	import { enhance } from '$app/forms';
 	import Avatar from '$lib/components/Avatar.svelte';
 	import Button from '$lib/components/Button.svelte';
-	import type { Notification } from '$lib/db/schema/types';
+	import type { Notification } from '$lib/db/types';
 	import { Check, X } from 'phosphor-svelte';
 
 	let {

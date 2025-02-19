@@ -1,7 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { RequestEvent } from './$types';
 import { db } from '$lib/db';
-import { relationships, RelationshipTypes } from '$lib/db/schema/users';
+import { relationships, RelationshipTypes } from '$lib/db/schema/profiles';
 import {
 	notifications,
 	notificationsMentionedProfiles,

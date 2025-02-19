@@ -24,7 +24,7 @@ import MastodonLogo from '$icons/brands/MastodonLogo.svelte';
 import PatreonLogo from '$icons/brands/PatreonLogo.svelte';
 import StartGgLogo from '$icons/brands/StartGgLogo.svelte';
 import ThreadsLogo from '$icons/brands/ThreadsLogo.svelte';
-import { USERNAME_REGEX } from '$lib/db/schema/users';
+import { USERNAME_REGEX } from '$lib/db/schema/profiles';
 
 export const connectionProviders: Record<
 	ConnectionProvider,

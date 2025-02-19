@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Check, PencilSimple, SealCheck, Trash, X } from 'phosphor-svelte';
 	import { connectionProviders } from '../connections';
-	import type { Connection } from '$lib/db/schema/types';
+	import type { Connection } from '$lib/db/types';
 	import InlineTextInput from '$lib/components/InlineTextInput.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import { enhance } from '$app/forms';

@@ -6,7 +6,7 @@
 	import { At } from 'phosphor-svelte';
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
-	import { USERNAME_REGEX } from '$lib/db/schema/users';
+	import { USERNAME_REGEX } from '$lib/db/schema/profiles';
 	import type { LayoutServerData } from '../$types';
 
 	let { data }: { data: LayoutServerData } = $props();

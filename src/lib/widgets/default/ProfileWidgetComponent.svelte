@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { type Profile } from '$lib/db/schema/types';
+	import { type Profile } from '$lib/db/types';
 	import { formatDate, formatRelativeTime } from '$lib/helpers/text';
 	import {
 		PencilSimple,
@@ -20,7 +20,7 @@
 	import { page } from '$app/state';
 	import Avatar from '$lib/components/Avatar.svelte';
 	import { scale } from 'svelte/transition';
-	import { RelationshipTypes } from '$lib/db/schema/users';
+	import { RelationshipTypes } from '$lib/db/schema/profiles';
 
 	let { profile, editing }: { profile: Profile; editing: boolean } = $props();
 	let avatarInputEl = $state<HTMLInputElement>();

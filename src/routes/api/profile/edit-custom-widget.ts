@@ -2,7 +2,7 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { RequestEvent } from './$types';
 import type { CustomWidget } from '$lib/widgets/types';
 import { db } from '$lib/db';
-import { profiles } from '$lib/db/schema/users';
+import { profiles } from '$lib/db/schema/profiles';
 import { eq } from 'drizzle-orm';
 import { parse } from 'valibot';
 import { CustomWidgetStructure } from '$lib/widgets/custom-widget-structure';

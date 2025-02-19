@@ -1,7 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { RequestEvent } from './$types';
 import { and, eq, sql } from 'drizzle-orm';
-import { relationships, RelationshipTypes, profiles } from '$lib/db/schema/users';
+import { relationships, RelationshipTypes, profiles } from '$lib/db/schema/profiles';
 import { db } from '$lib/db';
 import {
 	notifications,

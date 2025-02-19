@@ -1,6 +1,6 @@
-import type { inviteCodes } from './auth';
-import type { notifications, notificationsMentionedProfiles } from './notifications';
-import type { profiles, relationships, connections } from './users';
+import type { inviteCodes } from './schema/auth';
+import type { notifications, notificationsMentionedProfiles } from './schema/notifications';
+import type { profiles, relationships, connections } from './schema/profiles';
 
 export type Profile = typeof profiles.$inferSelect & {
 	connections: Connection[];
