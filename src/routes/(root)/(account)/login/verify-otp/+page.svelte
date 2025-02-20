@@ -21,8 +21,8 @@
 			use:enhance={() => {
 				isLoading = true;
 				return ({ update }) => {
-					isLoading = false;
 					update({ reset: false });
+					isLoading = false;
 				};
 			}}
 			action="?/verifyOTP"

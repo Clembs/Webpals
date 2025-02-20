@@ -1,12 +1,11 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { EMAIL_REGEX } from 'valibot';
-import { USERNAME_REGEX } from '$lib/helpers/constants';
-import { sendEmail } from '$lib/helpers/email';
 import { db } from '$lib/db';
-import { authCodes } from '$lib/db/schema/auth';
-import { randomInt } from 'crypto';
 import { _getValidInviteCode } from '../verify-invite-code/+page.server';
+import { authUsers } from 'drizzle-orm/supabase';
+import { eq } from 'drizzle-orm';
+import { USERNAME_REGEX } from '$lib/db/schema/profiles';
 
 export const load: PageServerLoad = async ({ url, cookies }) => {
 	const username = url.searchParams.get('username')?.toString();
@@ -17,15 +16,13 @@ export const load: PageServerLoad = async ({ url, cookies }) => {
 
 	const inviteCodeCookie = cookies.get('invite-code');
 
-	console.log(await _getValidInviteCode(inviteCodeCookie));
-
-	if (!inviteCodeCookie || !_getValidInviteCode(inviteCodeCookie)) {
+	if (!inviteCodeCookie || !(await _getValidInviteCode(inviteCodeCookie))) {
 		redirect(302, '/register');
 	}
 };
 
 export const actions: Actions = {
-	async validateEmail({ request, fetch }) {
+	async validateEmail({ locals: { supabase }, request }) {
 		const formData = await request.formData();
 		const originUrl = new URL(request.headers.get('referer')!);
 
@@ -50,9 +47,7 @@ export const actions: Actions = {
 			});
 		}
 
-		const userWithEmail = await db.query.users.findFirst({
-			where: ({ email: dbEmail }, { eq }) => eq(dbEmail, email)
-		});
+		const [userWithEmail] = await db.select().from(authUsers).where(eq(authUsers.email, email));
 
 		if (userWithEmail) {
 			return fail(400, {
@@ -60,24 +55,17 @@ export const actions: Actions = {
 			});
 		}
 
-		const [{ code }] = await db
-			.insert(authCodes)
-			.values({
-				code: randomInt(0, 999999).toString().padStart(6, '0'),
-				email,
-				expiresAt: new Date(Date.now() + 10 * 60 * 1000)
-			})
-			.returning();
-
-		await sendEmail({
-			address: email,
-			subject: 'Webpals Email Verification',
-			bodyHTML: `
-				<p>Enter the code below on the website to verify your email address and continue with your registration:</p>
-				<h1>${code}</h1>
-							`,
-			fetch
+		const { error } = await supabase.auth.signInWithOtp({
+			email
 		});
+
+		if (error) {
+			console.error(error);
+
+			return fail(400, {
+				message: 'Error sending OTP. Please try again later.'
+			});
+		}
 
 		redirect(302, `/register/verify-otp?username=${username}&email=${email}`);
 	}

@@ -5,29 +5,28 @@
 	import { enhance } from '$app/forms';
 	import { parseMarkdown } from '$lib/helpers/text';
 
-	let { user, widget, editing }: WidgetComponentProps<AboutMeWidget> = $props();
+	let { profile, widget, editing }: WidgetComponentProps<AboutMeWidget> = $props();
 
 	let modalOpened = $state(false);
 </script>
 
-{#snippet editMenu()}
-	<form
-		use:enhance={() =>
-			({ update }) => {
-				update({ reset: false });
-				modalOpened = false;
-			}}
-		class="about-me-edit"
-		action="/api/profile?/editAboutMe"
-		method="post"
-	>
-		<h2>About me</h2>
-		<textarea class:big-text={modalOpened} name="content" value={widget.content}></textarea>
-		<Button type="submit">Save</Button>
-	</form>
-{/snippet}
-
-<BaseWidget bind:isWidgetEditing={modalOpened} {editMenu} {user} {widget} editingMode={editing}>
+<BaseWidget bind:isWidgetEditing={modalOpened} {profile} {widget} editingMode={editing}>
+	{#snippet editMenu()}
+		<form
+			use:enhance={() =>
+				({ update }) => {
+					update({ reset: false });
+					modalOpened = false;
+				}}
+			class="about-me-edit"
+			action="/api/profile?/editAboutMe"
+			method="post"
+		>
+			<h2>About me</h2>
+			<textarea class:big-text={modalOpened} name="content" value={widget.content}></textarea>
+			<Button type="submit">Save</Button>
+		</form>
+	{/snippet}
 	<div class="about-me">
 		<h2>About me</h2>
 		{@html parseMarkdown(widget.content)}

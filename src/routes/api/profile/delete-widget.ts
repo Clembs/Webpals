@@ -1,11 +1,11 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { RequestEvent } from './$types';
 import { db } from '$lib/db';
-import { users } from '$lib/db/schema/users';
+import { profiles } from '$lib/db/schema/profiles';
 import { eq } from 'drizzle-orm';
 
-export async function deleteWidget({ locals: { getCurrentUser }, url }: RequestEvent) {
-	const user = await getCurrentUser();
+export async function deleteWidget({ locals: { getCurrentProfile }, url }: RequestEvent) {
+	const user = await getCurrentProfile();
 
 	if (!user) redirect(302, '/login');
 
@@ -18,11 +18,11 @@ export async function deleteWidget({ locals: { getCurrentUser }, url }: RequestE
 	}
 
 	await db
-		.update(users)
+		.update(profiles)
 		.set({
 			widgets: user.widgets.map((column) => column.filter((w) => w.id !== widgetId))
 		})
-		.where(eq(users.id, user.id));
+		.where(eq(profiles.id, user.id));
 
 	return {};
 }

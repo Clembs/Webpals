@@ -4,10 +4,10 @@
 	import TextInput from '$lib/components/TextInput.svelte';
 	import { dialogPortal } from '$lib/portals/dialog.svelte';
 	import { At } from 'phosphor-svelte';
-	import type { LayoutServerData } from '../$types';
 	import { enhance } from '$app/forms';
-	import { USERNAME_REGEX } from '$lib/helpers/constants';
 	import { goto } from '$app/navigation';
+	import { USERNAME_REGEX } from '$lib/db/schema/profiles';
+	import type { LayoutServerData } from '../$types';
 
 	let { data }: { data: LayoutServerData } = $props();
 
@@ -15,7 +15,7 @@
 		`${page.url.hostname}${page.url.hostname === 'localhost' ? `:${page.url.port}` : ''}`
 	);
 
-	let username = $state(data.currentUser.username);
+	let username = $state(data.currentProfile.username);
 	let isLoading = $state(false);
 </script>
 
@@ -25,8 +25,6 @@
 			isLoading = true;
 
 			return async ({ result, update }) => {
-				isLoading = false;
-
 				if (result.type === 'success') {
 					dialogPortal.closeDialog();
 				}
@@ -42,6 +40,7 @@
 				await update({
 					reset: false
 				});
+				isLoading = false;
 			};
 		}}
 		action="/api/settings?/updateUsername"
@@ -53,19 +52,18 @@
 			Pick something short and sweet, between 2 and 24 characters. You can only use letters, numbers
 			and underscores.
 		</p>
-
-		{#snippet at(size: number)}
-			<At {size} weight="regular" />
-		{/snippet}
 		<TextInput
 			name="username"
 			bind:value={username}
-			prefixIcon={at}
 			pattern={USERNAME_REGEX.source}
 			minlength={2}
 			maxlength={24}
 			error={page.form?.message}
-		/>
+		>
+			{#snippet prefixIcon(size: number)}
+				<At {size} weight="regular" />
+			{/snippet}
+		</TextInput>
 
 		<div class="buttons">
 			<Button type="button" onclick={() => dialogPortal.closeDialog()} variant="secondary" inline>
@@ -75,7 +73,7 @@
 			<Button
 				type="submit"
 				inline
-				disabled={username === data.currentUser.username ||
+				disabled={username === data.currentProfile.username ||
 					isLoading ||
 					!username ||
 					username.length < 2 ||
@@ -92,11 +90,11 @@
 	<h3>Username</h3>
 
 	<p>
-		Your username, <span class="heading"> @{data.currentUser.username}</span>, is your unique
+		Your username, <span class="heading"> @{data.currentProfile.username}</span>, is your unique
 		identifier on the platform. It is used to create your profile URL ({baseUrl}/<span
 			class="heading"
 		>
-			{data.currentUser.username}
+			{data.currentProfile.username}
 		</span>).
 	</p>
 
@@ -105,7 +103,7 @@
 	</Button>
 
 	<p>
-		Looking to change your display name? Check your <a href="/{data.currentUser.username}">
+		Looking to change your display name? Check your <a href="/{data.currentProfile.username}">
 			profile settings
 		</a>.
 	</p>

@@ -50,7 +50,7 @@
 			]
 		},
 		// hardcode this bc idrc lol
-		...(data.currentUser.username.toLowerCase() === 'clembs'
+		...(data.currentProfile.username.toLowerCase() === 'clembs'
 			? [
 					{
 						name: 'Tester Secrets',
@@ -60,8 +60,8 @@
 								href: '/settings/invite-codes',
 								icon: Numpad,
 								badge: {
-									label: data.currentUser.inviteCodes
-										.filter(({ status }) => status !== 'claimed')
+									label: data.currentProfile.inviteCodes
+										.filter(({ claimedAt }) => !claimedAt)
 										.length.toString(),
 									color: 'var(--color-heading)'
 								}

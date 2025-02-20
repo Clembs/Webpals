@@ -2,11 +2,11 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { RequestEvent } from './$types';
 import { defaultWidgets } from '$lib/widgets/default-widgets';
 import { db } from '$lib/db';
-import { users } from '$lib/db/schema/users';
+import { profiles } from '$lib/db/schema/profiles';
 import { eq } from 'drizzle-orm';
 
-export async function addWidget({ locals: { getCurrentUser }, url }: RequestEvent) {
-	const user = await getCurrentUser();
+export async function addWidget({ locals: { getCurrentProfile }, url }: RequestEvent) {
+	const user = await getCurrentProfile();
 
 	if (!user) redirect(302, '/login');
 
@@ -20,11 +20,11 @@ export async function addWidget({ locals: { getCurrentUser }, url }: RequestEven
 	}
 
 	await db
-		.update(users)
+		.update(profiles)
 		.set({
 			widgets: [user.widgets[0], [...user.widgets[1], widget]]
 		})
-		.where(eq(users.id, user.id));
+		.where(eq(profiles.id, user.id));
 
 	return {};
 }

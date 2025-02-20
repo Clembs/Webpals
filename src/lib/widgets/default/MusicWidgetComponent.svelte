@@ -1,20 +1,19 @@
 <script lang="ts">
-	import { MusicNote, PencilSimple, SpotifyLogo, Warning } from 'phosphor-svelte';
+	import { PencilSimple, SpotifyLogo, Warning } from 'phosphor-svelte';
 	import BaseWidget from '../BaseWidget.svelte';
 	import type { MusicWidget, WidgetComponentProps } from '../types';
 	import MusicEditWidgetComponent from '../default-edit-menus/MusicWidgetEditComponent.svelte';
 	import AudioPlayer from '$lib/components/AudioPlayer.svelte';
 
-	let { user, widget, editing }: WidgetComponentProps<MusicWidget> = $props();
+	let { profile, widget, editing }: WidgetComponentProps<MusicWidget> = $props();
 
 	let modalOpened = $state(false);
 </script>
 
-{#snippet editMenu()}
-	<MusicEditWidgetComponent bind:modalOpened />
-{/snippet}
-
-<BaseWidget bind:isWidgetEditing={modalOpened} {editMenu} {widget} {user} editingMode={editing}>
+<BaseWidget bind:isWidgetEditing={modalOpened} {widget} {profile} editingMode={editing}>
+	{#snippet editMenu()}
+		<MusicEditWidgetComponent bind:modalOpened />
+	{/snippet}
 	<div class="music-widget">
 		<div class="heading">
 			<img

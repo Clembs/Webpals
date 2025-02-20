@@ -4,17 +4,17 @@ import { db } from '$lib/db';
 import { notifications } from '$lib/db/schema/notifications';
 import { eq } from 'drizzle-orm';
 
-export async function markAllAsRead({ locals: { getCurrentUser } }: RequestEvent) {
-	const currentUser = await getCurrentUser();
+export async function markAllAsRead({ locals: { getCurrentProfile } }: RequestEvent) {
+	const currentProfile = await getCurrentProfile();
 
-	if (!currentUser) redirect(302, '/login');
+	if (!currentProfile) redirect(302, '/login');
 
 	await db
 		.update(notifications)
 		.set({
 			read: true
 		})
-		.where(eq(notifications.userId, currentUser.id));
+		.where(eq(notifications.profileId, currentProfile.id));
 
 	return {};
 }

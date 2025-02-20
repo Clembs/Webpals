@@ -2,6 +2,7 @@
 	import { Image } from 'phosphor-svelte';
 	import type { Theme } from '../types';
 	import ColorPicker from 'svelte-awesome-color-picker';
+	import { PUBLIC_STORAGE_BASE_URL } from '$env/static/public';
 
 	let { theme = $bindable() }: { theme: Theme } = $props();
 </script>
@@ -39,7 +40,13 @@
 			</div>
 
 			{#if theme.background.image_url}
-				<img class="current-background" src={theme.background.image_url} alt="Background" />
+				<img
+					class="current-background"
+					src={theme.background.image_url.startsWith('blob:')
+						? theme.background.image_url
+						: `${PUBLIC_STORAGE_BASE_URL}/${theme.background.image_url}`}
+					alt="Background"
+				/>
 			{:else}
 				<div class="no-background"></div>
 			{/if}

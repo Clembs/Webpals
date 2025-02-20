@@ -28,13 +28,9 @@
 <form
 	use:enhance={() => {
 		isLoading = true;
-
 		return ({ update }) => {
+			update({ reset: false });
 			isLoading = false;
-
-			update({
-				reset: false
-			});
 		};
 	}}
 	action="?/validateInviteCode"

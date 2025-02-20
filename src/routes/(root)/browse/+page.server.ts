@@ -1,21 +1,21 @@
 import { db } from '$lib/db';
-import { publicUserQuery, users } from '$lib/db/schema/users';
+import { publicProfileQuery, profiles } from '$lib/db/schema/profiles';
 import { count } from 'drizzle-orm';
 
 export async function load() {
-	const firstUsers = await db.query.users.findMany({
-		...publicUserQuery,
+	const firstProfiles = await db.query.profiles.findMany({
+		...publicProfileQuery,
 		orderBy: ({ lastHeartbeat }, { desc }) => desc(lastHeartbeat),
 		limit: 10
 	});
 
-	const [{ count: userCount }] = await db.select({ count: count() }).from(users);
+	const [{ count: profileCount }] = await db.select({ count: count() }).from(profiles);
 
 	return {
-		firstUsers,
-		count: userCount,
-		awaitedUsers: db.query.users.findMany({
-			...publicUserQuery,
+		firstProfiles,
+		count: profileCount,
+		awaitedProfiles: db.query.profiles.findMany({
+			...publicProfileQuery,
 			orderBy: ({ lastHeartbeat }, { desc }) => desc(lastHeartbeat),
 			offset: 10
 		})

@@ -1,12 +1,11 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { RequestEvent } from './$types';
-import { USERNAME_REGEX } from '$lib/helpers/constants';
 import { db } from '$lib/db';
-import { users } from '$lib/db/schema/users';
+import { profiles, USERNAME_REGEX } from '$lib/db/schema/profiles';
 import { eq } from 'drizzle-orm';
 
-export async function updateUsername({ locals: { getCurrentUser }, request }: RequestEvent) {
-	const user = await getCurrentUser();
+export async function updateUsername({ locals: { getCurrentProfile }, request }: RequestEvent) {
+	const user = await getCurrentProfile();
 
 	if (!user) redirect(302, '/login');
 
@@ -19,7 +18,7 @@ export async function updateUsername({ locals: { getCurrentUser }, request }: Re
 		});
 	}
 
-	const userWithUsername = await db.query.users.findFirst({
+	const userWithUsername = await db.query.profiles.findFirst({
 		where: ({ username: dbUsername }, { eq }) => eq(dbUsername, username)
 	});
 
@@ -30,11 +29,11 @@ export async function updateUsername({ locals: { getCurrentUser }, request }: Re
 	}
 
 	await db
-		.update(users)
+		.update(profiles)
 		.set({
 			username
 		})
-		.where(eq(users.id, user.id));
+		.where(eq(profiles.id, user.id));
 
 	const originUrl = new URL(request.headers.get('referer') || '/settings/account');
 

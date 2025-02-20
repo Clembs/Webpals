@@ -1,52 +1,73 @@
+import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_PROJECT_URL } from '$env/static/public';
 import { db } from '$lib/db';
-import { publicUserQuery } from '$lib/db/schema/users';
+import { publicProfileQuery } from '$lib/db/schema/profiles';
+import { createServerClient } from '@supabase/ssr';
+import type { User } from '@supabase/supabase-js';
 import type { Handle } from '@sveltejs/kit';
 
 export const handle: Handle = async ({ event, resolve }) => {
-	const sessionId = event.cookies.get('sessionId');
+	event.locals.supabase = createServerClient(
+		PUBLIC_SUPABASE_PROJECT_URL,
+		PUBLIC_SUPABASE_ANON_KEY,
+		{
+			cookies: {
+				getAll: () => event.cookies.getAll(),
+				setAll: (cookiesToSet) => {
+					cookiesToSet.forEach(({ name, value, options }) => {
+						event.cookies.set(name, value, { ...options, path: '/' });
+					});
+				}
+			}
+		}
+	);
 
-	const session = !sessionId
-		? null
-		: await db.query.sessions.findFirst({
-				where: ({ id }, { eq }) => eq(id, sessionId)
-			});
+	const { data: sessionData } = await event.locals.supabase.auth.getSession();
+	const session = sessionData?.session;
+	let user: User | null = null;
 
-	const user = !session
-		? null
-		: await db.query.users.findFirst({
-				where: ({ id }, { eq }) => eq(id, session.userId),
+	if (session) {
+		const { data: userData, error } = await event.locals.supabase.auth.getUser();
+
+		if (userData && !error) {
+			user = userData.user;
+		}
+	}
+	const profile = user
+		? await db.query.profiles.findFirst({
+				where: ({ id }, { eq }) => eq(id, user?.id),
 				with: {
-					sessions: true,
-					passkeys: true,
 					inviteCodes: true,
 					connections: true,
 					notifications: {
 						with: {
-							mentionedUsers: {
+							mentionedProfiles: {
 								with: {
-									user: publicUserQuery
+									profile: publicProfileQuery
 								}
 							}
 						}
 					},
 					initiatedRelationships: {
 						with: {
-							recipient: publicUserQuery
+							recipient: publicProfileQuery
 						}
 					},
 					receivedRelationships: {
 						with: {
-							user: publicUserQuery
+							profile: publicProfileQuery
 						}
 					}
 				}
-			});
+			})
+		: null;
 
-	event.locals.getCurrentUser = () => {
-		return user && { ...user, lastHeartbeat: new Date() };
+	event.locals.getSession = () => {
+		return { session, user };
 	};
 
-	event.locals.getSession = () => session;
+	event.locals.getCurrentProfile = () => {
+		return profile && { ...profile, lastHeartbeat: new Date() };
+	};
 
 	return await resolve(event);
 };

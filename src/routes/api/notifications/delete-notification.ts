@@ -3,19 +3,19 @@ import type { RequestEvent } from './$types';
 import { db } from '$lib/db';
 import {
 	notifications,
-	notificationsMentionedUsers,
+	notificationsMentionedProfiles,
 	NotificationTypes
 } from '$lib/db/schema/notifications';
 import { and, eq } from 'drizzle-orm';
-import { relationships, RelationshipTypes } from '$lib/db/schema/users';
+import { relationships, RelationshipTypes } from '$lib/db/schema/profiles';
 
-export async function deleteNotification({ url, locals: { getCurrentUser } }: RequestEvent) {
-	const user = await getCurrentUser();
+export async function deleteNotification({ url, locals: { getCurrentProfile } }: RequestEvent) {
+	const currentProfile = getCurrentProfile();
 
-	if (!user) redirect(302, '/login');
+	if (!currentProfile) redirect(302, '/login');
 
 	const notificationId = url.searchParams.get('id');
-	const notification = user.notifications.find((n) => n.id === notificationId);
+	const notification = currentProfile.notifications.find((n) => n.id === notificationId);
 
 	if (!notificationId || !notification) {
 		return fail(400, {
@@ -24,21 +24,21 @@ export async function deleteNotification({ url, locals: { getCurrentUser } }: Re
 	}
 
 	await db
-		.delete(notificationsMentionedUsers)
-		.where(eq(notificationsMentionedUsers.notificationId, notificationId));
+		.delete(notificationsMentionedProfiles)
+		.where(eq(notificationsMentionedProfiles.notificationId, notificationId));
 
 	await db.delete(notifications).where(eq(notifications.id, notificationId));
 
 	// if the notification was a friend request, delete the friend request relationship
 	if (notification.type === NotificationTypes.FriendRequest) {
-		const sourceUser = notification.mentionedUsers[0].user!;
+		const sourceProfile = notification.mentionedProfiles[0].profile!;
 
 		await db
 			.delete(relationships)
 			.where(
 				and(
-					eq(relationships.recipientId, user.id),
-					eq(relationships.userId, sourceUser.id),
+					eq(relationships.recipientId, currentProfile.id),
+					eq(relationships.profileId, sourceProfile.id),
 					eq(relationships.status, RelationshipTypes.FriendPending)
 				)
 			);

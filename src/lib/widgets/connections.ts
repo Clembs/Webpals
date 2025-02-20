@@ -6,7 +6,6 @@ import { Envelope, Globe, Island, Phone, type IconContextProps } from 'phosphor-
 import DiscordLogo from '$icons/brands/DiscordLogo.svelte';
 import { EMAIL_REGEX } from 'valibot';
 import PretendoLogo from '$icons/brands/PretendoLogo.svelte';
-import { USERNAME_REGEX } from '$lib/helpers/constants';
 import BlueskyLogo from '$icons/brands/BlueskyLogo.svelte';
 import XLogo from '$icons/brands/XLogo.svelte';
 import SteamLogo from '$icons/brands/SteamLogo.svelte';
@@ -25,6 +24,7 @@ import MastodonLogo from '$icons/brands/MastodonLogo.svelte';
 import PatreonLogo from '$icons/brands/PatreonLogo.svelte';
 import StartGgLogo from '$icons/brands/StartGgLogo.svelte';
 import ThreadsLogo from '$icons/brands/ThreadsLogo.svelte';
+import { USERNAME_REGEX } from '$lib/db/schema/profiles';
 
 export const connectionProviders: Record<
 	ConnectionProvider,

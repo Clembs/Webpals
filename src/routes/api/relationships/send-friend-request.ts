@@ -1,19 +1,18 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { RequestEvent } from './$types';
 import { and, eq, sql } from 'drizzle-orm';
-import { relationships, RelationshipTypes, users } from '$lib/db/schema/users';
+import { relationships, RelationshipTypes, profiles } from '$lib/db/schema/profiles';
 import { db } from '$lib/db';
 import {
 	notifications,
-	notificationsMentionedUsers,
+	notificationsMentionedProfiles,
 	NotificationTypes
 } from '$lib/db/schema/notifications';
-import { generateSnowflake } from '$lib/helpers/users';
 
-export async function sendFriendRequest({ locals: { getCurrentUser }, request }: RequestEvent) {
-	const currentUser = await getCurrentUser();
+export async function sendFriendRequest({ locals: { getCurrentProfile }, request }: RequestEvent) {
+	const currentProfile = await getCurrentProfile();
 
-	if (!currentUser) redirect(401, '/login');
+	if (!currentProfile) redirect(401, '/login');
 
 	const originUrl = new URL(request.headers.get('referer')!);
 	const recipientUsername = originUrl.pathname.split('/').at(-1);
@@ -24,29 +23,26 @@ export async function sendFriendRequest({ locals: { getCurrentUser }, request }:
 		});
 	}
 
-	if (recipientUsername === currentUser.username) {
+	if (recipientUsername === currentProfile.username) {
 		return fail(400, {
 			message: 'You cannot send a friend request to yourself.'
 		});
 	}
 
-	const recipientUser = await db.query.users.findFirst({
-		where: eq(sql`LOWER(${users.username})`, recipientUsername.toLowerCase())
+	const recipient = await db.query.profiles.findFirst({
+		where: eq(sql`LOWER(${profiles.username})`, recipientUsername.toLowerCase())
 	});
 
-	if (!recipientUser) {
+	if (!recipient) {
 		return fail(400, {
 			message: 'Recipient user not found.'
 		});
 	}
 
 	// find relationships where the current user is the initiator
-	const existingFriendship = currentUser.initiatedRelationships.find(
-		(relationship) => relationship.recipientId === recipientUser.id
+	const existingFriendship = currentProfile.initiatedRelationships.find(
+		(relationship) => relationship.recipientId === recipient.id
 	);
-
-	// console.log(currentUser.initiatedRelationships);
-	// console.log(currentUser.receivedRelationships);
 
 	if (existingFriendship?.status === RelationshipTypes.FriendPending) {
 		return fail(400, {
@@ -61,8 +57,8 @@ export async function sendFriendRequest({ locals: { getCurrentUser }, request }:
 	}
 
 	// find relationships where the current user is the recipient
-	const receivedFriendship = currentUser.receivedRelationships.find(
-		(relationship) => relationship.recipientId === currentUser.id
+	const receivedFriendship = currentProfile.receivedRelationships.find(
+		(relationship) => relationship.recipientId === currentProfile.id
 	);
 
 	// if either user has blocked the other
@@ -85,15 +81,15 @@ export async function sendFriendRequest({ locals: { getCurrentUser }, request }:
 			})
 			.where(
 				and(
-					eq(relationships.userId, recipientUser.id),
-					eq(relationships.recipientId, currentUser.id)
+					eq(relationships.profileId, recipient.id),
+					eq(relationships.recipientId, currentProfile.id)
 				)
 			);
 
 		// also create a new relationship for the current user
 		await db.insert(relationships).values({
-			userId: currentUser.id,
-			recipientId: recipientUser.id,
+			profileId: currentProfile.id,
+			recipientId: recipient.id,
 			status: RelationshipTypes.Friend
 		});
 
@@ -101,35 +97,34 @@ export async function sendFriendRequest({ locals: { getCurrentUser }, request }:
 		const [notification] = await db
 			.insert(notifications)
 			.values({
-				id: generateSnowflake(),
-				userId: recipientUser.id,
+				profileId: recipient.id,
 				type: NotificationTypes.FriendRequestAccepted
 			})
 			.returning();
 
-		await db.insert(notificationsMentionedUsers).values({
+		await db.insert(notificationsMentionedProfiles).values({
 			notificationId: notification.id,
-			userId: currentUser.id
+			profileId: currentProfile.id
 		});
 
 		// remove the pending notification from the current user
-		const pendingNotification = currentUser.notifications.find(
+		const pendingNotification = currentProfile.notifications.find(
 			(n) =>
 				n.type === NotificationTypes.FriendRequest &&
-				n.mentionedUsers[0].userId === recipientUser.id
+				n.mentionedProfiles[0].profileId === recipient.id
 		);
 		if (pendingNotification) {
 			await db
-				.delete(notificationsMentionedUsers)
-				.where(eq(notificationsMentionedUsers.notificationId, pendingNotification.id));
+				.delete(notificationsMentionedProfiles)
+				.where(eq(notificationsMentionedProfiles.notificationId, pendingNotification.id));
 
 			await db.delete(notifications).where(eq(notifications.id, pendingNotification.id));
 		}
 	} else {
 		// otherwise, create a new relationship with the status of pending
 		await db.insert(relationships).values({
-			userId: currentUser.id,
-			recipientId: recipientUser.id,
+			profileId: currentProfile.id,
+			recipientId: recipient.id,
 			status: RelationshipTypes.FriendPending
 		});
 
@@ -137,15 +132,14 @@ export async function sendFriendRequest({ locals: { getCurrentUser }, request }:
 		const [notification] = await db
 			.insert(notifications)
 			.values({
-				id: generateSnowflake(),
-				userId: recipientUser.id,
+				profileId: recipient.id,
 				type: NotificationTypes.FriendRequest
 			})
 			.returning();
 
-		await db.insert(notificationsMentionedUsers).values({
+		await db.insert(notificationsMentionedProfiles).values({
 			notificationId: notification.id,
-			userId: currentUser.id
+			profileId: currentProfile.id
 		});
 	}
 

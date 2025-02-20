@@ -1,14 +1,11 @@
-import { USERNAME_REGEX } from '$lib/helpers/constants';
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { EMAIL_REGEX } from 'valibot';
 import { db } from '$lib/db';
-import { users } from '$lib/db/schema/users';
-import { generateSnowflake } from '$lib/helpers/users';
-import { createSession } from '$lib/helpers/sessions';
 import { _getValidInviteCode } from '../verify-invite-code/+page.server';
 import { inviteCodes } from '$lib/db/schema/auth';
 import { eq } from 'drizzle-orm';
+import { profiles, USERNAME_REGEX } from '$lib/db/schema/profiles';
 
 export const load: PageServerLoad = async ({ url }) => {
 	const username = url.searchParams.get('username')?.toString();
@@ -26,7 +23,7 @@ export const load: PageServerLoad = async ({ url }) => {
 export const actions: Actions = {
 	// TODO
 	async resendOTP() {},
-	async verifyOTP({ cookies, request }) {
+	async verifyOTP({ locals: { supabase }, cookies, request }) {
 		const formData = await request.formData();
 		const originUrl = new URL(request.headers.get('referer')!);
 
@@ -60,30 +57,29 @@ export const actions: Actions = {
 			});
 		}
 
-		const code = await db.query.authCodes.findFirst({
-			where: ({ code, email: dbEmail }, { eq, and }) => and(eq(code, otp), eq(dbEmail, email))
+		const { data, error } = await supabase.auth.verifyOtp({
+			email,
+			type: 'email',
+			token: otp
 		});
 
-		if (!code || code.expiresAt < new Date()) {
+		if (!data || !data.user || error) {
 			return fail(400, {
 				message: 'Invalid or expired OTP. Please check your email and try again.'
 			});
 		}
 
-		const [newUser] = await db
-			.insert(users)
-			.values({
-				id: generateSnowflake(),
-				email,
-				username
-			})
-			.returning();
+		await db.insert(profiles).values({
+			id: data.user.id,
+			username
+		});
 
 		// mark the invite code as claimed
 		await db
 			.update(inviteCodes)
 			.set({
-				status: 'claimed'
+				claimedById: data.user.id,
+				claimedAt: new Date()
 			})
 			.where(eq(inviteCodes.code, inviteCodeCookie));
 
@@ -92,10 +88,6 @@ export const actions: Actions = {
 			path: '/'
 		});
 
-		const userAgent = request.headers.get('user-agent') || '';
-
-		await createSession(cookies, userAgent, newUser.id);
-
-		throw redirect(302, `/${username}`);
+		redirect(302, `/${username}`);
 	}
 };

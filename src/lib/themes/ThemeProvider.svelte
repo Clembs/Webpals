@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import type { Theme } from './types';
+	import { PUBLIC_STORAGE_BASE_URL } from '$env/static/public';
 
 	let {
 		theme,
@@ -25,7 +26,7 @@
 				break;
 			}
 			case 'image':
-				return `url(${theme.background.image_url})`;
+				return `url(${theme.background.image_url.startsWith('blob') ? theme.background.image_url : `${PUBLIC_STORAGE_BASE_URL}/${theme.background.image_url}`})`;
 		}
 	}
 </script>

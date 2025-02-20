@@ -9,10 +9,9 @@
 </script>
 
 <script lang="ts">
-	import type { PublicUser } from '$lib/db/schema/types';
+	import type { Profile } from '$lib/db/types';
 	import type { AnyWidget } from '$lib/widgets/types';
 	import { tick, type Snippet } from 'svelte';
-	import Card from '$lib/components/Card.svelte';
 	import { enhance } from '$app/forms';
 	import { PencilSimple, TrashSimple } from 'phosphor-svelte';
 	import Button from '$lib/components/Button.svelte';
@@ -28,7 +27,7 @@
 	}: {
 		editingMode?: boolean;
 		isWidgetEditing?: boolean;
-		user: PublicUser;
+		profile: Profile;
 		widget?: AnyWidget;
 		editMenu?: Snippet;
 		children: Snippet;

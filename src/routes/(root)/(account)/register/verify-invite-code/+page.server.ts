@@ -1,7 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { USERNAME_REGEX } from '$lib/helpers/constants';
 import { db } from '$lib/db';
+import { USERNAME_REGEX } from '$lib/db/schema/profiles';
 
 export const load: PageServerLoad = async ({ url }) => {
 	const username = url.searchParams.get('username')?.toString();
@@ -13,8 +13,7 @@ export const load: PageServerLoad = async ({ url }) => {
 
 export async function _getValidInviteCode(inputCode: string) {
 	const dbInviteCode = await db.query.inviteCodes.findFirst({
-		where: ({ code, status }, { eq, and, not }) =>
-			and(eq(code, inputCode), not(eq(status, 'claimed')))
+		where: ({ code, claimedAt }, { isNull, eq, and }) => and(eq(code, inputCode), isNull(claimedAt))
 	});
 
 	return dbInviteCode;

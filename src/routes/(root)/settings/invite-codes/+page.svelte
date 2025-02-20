@@ -25,7 +25,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#each data.currentUser.inviteCodes as code, index (code.code)}
+			{#each data.currentProfile.inviteCodes as code, index (code.code)}
 				<tr>
 					<td>
 						<div class="index">
@@ -48,7 +48,7 @@
 								icon
 								size="small"
 								variant="secondary"
-								disabled={code.status !== 'available'}
+								disabled={!!code.claimedAt}
 							>
 								<Clipboard weight="regular" size={18} />
 							</Button>
@@ -56,7 +56,7 @@
 					</td>
 					<td>
 						<div class="status">
-							{#if code.status === 'available'}
+							{#if !code.claimedAt}
 								<Check color="var(--color-success)" weight="regular" />
 								Available
 							{:else}
@@ -70,7 +70,7 @@
 		</tbody>
 	</table>
 
-	{#if data.currentUser.inviteCodes.length >= 10}
+	{#if data.currentProfile.inviteCodes.length >= 10}
 		<Button variant="secondary" disabled>Out of invite codes!</Button>
 	{:else}
 		<form
@@ -84,15 +84,18 @@
 						'code' in result.data &&
 						typeof result.data.code === 'string'
 					) {
+						await update({
+							invalidateAll: true
+						});
 						generateStatus = 'success';
 						navigator.clipboard.writeText(result.data.code);
 						setTimeout(() => (generateStatus = null), 2000);
 					} else {
+						await update({
+							invalidateAll: true
+						});
 						generateStatus = 'error';
 					}
-					await update({
-						invalidateAll: true
-					});
 				};
 			}}
 			method="post"
@@ -120,7 +123,7 @@
 	{/if}
 
 	<span class="subtext centered">
-		{10 - data.currentUser.inviteCodes.length}/10 codes remaining
+		{10 - data.currentProfile.inviteCodes.length}/10 codes remaining
 	</span>
 </section>
 

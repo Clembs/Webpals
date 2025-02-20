@@ -1,11 +1,11 @@
 import type { LayoutServerLoad } from './$types';
 
-export const load: LayoutServerLoad = async ({ locals: { getCurrentUser }, depends }) => {
-	const currentUser = await getCurrentUser();
+export const load: LayoutServerLoad = async ({ locals: { getCurrentProfile }, depends }) => {
+	const currentProfile = getCurrentProfile();
 
-	depends('layout:user');
+	depends('layout:profile');
 
 	return {
-		currentUser
+		currentProfile
 	};
 };

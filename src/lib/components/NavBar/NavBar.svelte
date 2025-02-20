@@ -1,25 +1,27 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { Island, House, Palette, Bell, BellRinging } from 'phosphor-svelte';
+	import { Island, House, Bell, BellRinging } from 'phosphor-svelte';
 	import Avatar from '../Avatar.svelte';
 	import NotificationsMenu from './NotificationsMenu.svelte';
 	import { clickoutside } from '@svelte-put/clickoutside';
 	import { enhance } from '$app/forms';
 	import AccountMenu from './AccountMenu.svelte';
-	import { supabase } from '$lib/db/supabase';
+	import { clientSupabase } from '$lib/db/supabase';
 	import { onDestroy, onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
-	import { RealtimeChannel } from '@supabase/supabase-js';
+	import type { RealtimeChannel } from '@supabase/supabase-js';
 
 	let accountMenuOpen = $state(false);
 	let notificationsMenuOpen = $state(false);
 
-	let unreadNotifications = $derived(page.data.currentUser?.notifications.filter((n) => !n.read));
+	let unreadNotifications = $derived(
+		page.data.currentProfile?.notifications.filter((n) => !n.read)
+	);
 
 	let supabaseChannel = $state<RealtimeChannel>();
 
 	onMount(() => {
-		supabaseChannel = supabase
+		supabaseChannel = clientSupabase
 			.channel('notification-updates')
 			.on(
 				'postgres_changes',
@@ -28,7 +30,7 @@
 					table: 'notifications',
 					schema: 'public',
 					// TODO: figure out better security
-					filter: `user_id = ${page.data.currentUser?.id}`
+					filter: `user_id = ${page.data.currentProfile?.id}`
 				},
 				(payload) => invalidate('layout:user')
 			)
@@ -56,7 +58,7 @@
 						<Palette weight="regular" />
 					</button>
 				</li> -->
-				{#if page.data.currentUser}
+				{#if page.data.currentProfile}
 					<li
 						data-submenu="true"
 						use:clickoutside
@@ -83,13 +85,13 @@
 						{#if notificationsMenuOpen}
 							<NotificationsMenu
 								bind:menuOpen={notificationsMenuOpen}
-								user={page.data.currentUser}
+								user={page.data.currentProfile}
 							/>
 						{/if}
 					</li>
 				{/if}
 			</ul>
-			{#if !page.data.currentUser}
+			{#if !page.data.currentProfile}
 				<a href="/login"> Join Webpals </a>
 			{:else}
 				<div
@@ -103,10 +105,10 @@
 						aria-label="Profile"
 						title="Profile"
 					>
-						<Avatar user={page.data.currentUser} size="40px" />
+						<Avatar user={page.data.currentProfile} size="40px" />
 					</button>
 					{#if accountMenuOpen}
-						<AccountMenu bind:menuOpen={accountMenuOpen} user={page.data.currentUser} />
+						<AccountMenu bind:menuOpen={accountMenuOpen} user={page.data.currentProfile} />
 					{/if}
 				</div>
 			{/if}

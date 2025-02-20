@@ -1,8 +1,8 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
-import { USERNAME_REGEX } from '$lib/helpers/constants';
 import { db } from '$lib/db';
 import { _getValidInviteCode } from '../verify-invite-code/+page.server';
+import { USERNAME_REGEX } from '$lib/db/schema/profiles';
 
 export const actions: Actions = {
 	async validateUsername({ request, url, cookies }) {
@@ -17,7 +17,7 @@ export const actions: Actions = {
 			});
 		}
 
-		const userWithUsername = await db.query.users.findFirst({
+		const userWithUsername = await db.query.profiles.findFirst({
 			where: ({ username: dbUsername }, { eq, sql }) =>
 				eq(sql`LOWER(${dbUsername})`, username.toLowerCase())
 		});

@@ -2,7 +2,7 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { RequestEvent } from './$types';
 import type { CustomWidget } from '$lib/widgets/types';
 import { db } from '$lib/db';
-import { users } from '$lib/db/schema/users';
+import { profiles } from '$lib/db/schema/profiles';
 import { eq } from 'drizzle-orm';
 import { parse } from 'valibot';
 import { CustomWidgetStructure } from '$lib/widgets/custom-widget-structure';
@@ -34,8 +34,12 @@ function mutateObject(
 	return obj;
 }
 
-export async function editCustomWidget({ url, locals: { getCurrentUser }, request }: RequestEvent) {
-	const user = await getCurrentUser();
+export async function editCustomWidget({
+	url,
+	locals: { getCurrentProfile },
+	request
+}: RequestEvent) {
+	const user = await getCurrentProfile();
 
 	if (!user) redirect(302, '/login');
 
@@ -70,11 +74,11 @@ export async function editCustomWidget({ url, locals: { getCurrentUser }, reques
 	}
 
 	await db
-		.update(users)
+		.update(profiles)
 		.set({
 			widgets: [...user.widgets.map((c) => c.map((w) => (w.id === widgetId ? widget : w)))]
 		})
-		.where(eq(users.id, user.id));
+		.where(eq(profiles.id, user.id));
 
 	return {};
 }

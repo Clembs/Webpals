@@ -3,15 +3,18 @@ import type { RequestEvent } from './$types';
 import { parse, isValiError } from 'valibot';
 import { ThemeStructure } from '$lib/themes/theme-structure';
 import { db } from '$lib/db';
-import { users } from '$lib/db/schema/users';
+import { profiles } from '$lib/db/schema/profiles';
 import type { Theme } from '$lib/themes/types';
 import { eq } from 'drizzle-orm';
-import { supabase } from '$lib/db/supabase';
 import sharp from 'sharp';
 import { generateSnowflake } from '$lib/helpers/users';
 
-export async function editTheme({ locals: { getCurrentUser }, request, url }: RequestEvent) {
-	const user = getCurrentUser();
+export async function editTheme({
+	locals: { getCurrentProfile, supabase },
+	request,
+	url
+}: RequestEvent) {
+	const user = getCurrentProfile();
 
 	if (!user) redirect(302, '/login');
 
@@ -100,9 +103,16 @@ export async function editTheme({ locals: { getCurrentUser }, request, url }: Re
 		// delete the previous image from storage
 		if (user.theme?.background?.type === 'image' && user.theme?.background?.image_url) {
 			const previousImageName = user.theme.background.image_url.split('/').pop();
+			const fullPath = `${user.id}/${previousImageName}`;
 
 			try {
-				await supabase.storage.from('backgrounds').remove([`/${user.id}/${previousImageName}`]);
+				const { data, error } = await supabase.storage.from('backgrounds').remove([fullPath]);
+
+				if (!data || !data.length || error) {
+					return fail(500, {
+						message: 'Failed to remove previous background image'
+					});
+				}
 			} catch (e) {
 				console.error(e);
 				return fail(500, {
@@ -126,9 +136,7 @@ export async function editTheme({ locals: { getCurrentUser }, request, url }: Re
 				});
 			}
 
-			const url = supabase.storage.from('backgrounds').getPublicUrl(storageObject.data.path);
-
-			themeObject.background.image_url = url.data.publicUrl;
+			themeObject.background.image_url = storageObject.data.fullPath;
 		} catch (e) {
 			console.error(e);
 			return fail(500, {
@@ -142,11 +150,11 @@ export async function editTheme({ locals: { getCurrentUser }, request, url }: Re
 		themeObject.background.image_url = user.theme.background.image_url;
 	}
 	await db
-		.update(users)
+		.update(profiles)
 		.set({
 			theme: themeObject
 		})
-		.where(eq(users.id, user.id));
+		.where(eq(profiles.id, user.id));
 
 	return {};
 }

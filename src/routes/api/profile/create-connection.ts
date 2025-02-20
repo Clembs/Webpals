@@ -1,12 +1,12 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { RequestEvent } from './$types';
 import { db } from '$lib/db';
-import { connections } from '$lib/db/schema/users';
+import { connections } from '$lib/db/schema/profiles';
 import { connectionProviders } from '$lib/widgets/connections';
 import type { ConnectionProvider } from '$lib/widgets/types';
 
-export async function createConnection({ locals: { getCurrentUser }, request }: RequestEvent) {
-	const user = getCurrentUser();
+export async function createConnection({ locals: { getCurrentProfile }, request }: RequestEvent) {
+	const user = getCurrentProfile();
 
 	if (!user) redirect(302, '/login');
 
@@ -58,7 +58,7 @@ export async function createConnection({ locals: { getCurrentUser }, request }: 
 
 	try {
 		await db.insert(connections).values({
-			userId: user.id,
+			profileId: user.id,
 			provider: rawProvider,
 			label,
 			identifiable,

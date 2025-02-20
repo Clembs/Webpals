@@ -1,17 +1,17 @@
 import { error } from '@sveltejs/kit';
 import { db } from '$lib/db';
-import { users } from '$lib/db/schema/users';
+import { profiles } from '$lib/db/schema/profiles';
 import { eq } from 'drizzle-orm';
 import type { RequestHandler } from './$types';
 import { HEARTBEAT_INTERVAL } from '$lib/helpers/constants';
 
-export const POST: RequestHandler = async ({ locals: { getCurrentUser } }) => {
-	const user = await getCurrentUser();
+export const POST: RequestHandler = async ({ locals: { getCurrentProfile } }) => {
+	const user = await getCurrentProfile();
 
 	if (!user) return error(401, 'Unauthorized');
 
-	// fetch the user from the database since we update the last heartbeat on the getCurrentUser method
-	const actualUser = await db.query.users.findFirst({
+	// fetch the user from the database since we update the last heartbeat on the getCurrentProfile method
+	const actualUser = await db.query.profiles.findFirst({
 		where: ({ id }, { eq }) => eq(id, user.id),
 		columns: {
 			lastHeartbeat: true
@@ -26,11 +26,11 @@ export const POST: RequestHandler = async ({ locals: { getCurrentUser } }) => {
 	if (user.status === 'offline') return new Response(null, { status: 204 });
 
 	await db
-		.update(users)
+		.update(profiles)
 		.set({
 			lastHeartbeat: new Date()
 		})
-		.where(eq(users.id, user.id));
+		.where(eq(profiles.id, user.id));
 
 	return new Response(null, { status: 204 });
 };

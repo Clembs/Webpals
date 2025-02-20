@@ -17,13 +17,13 @@
 
 	let { data } = $props();
 
-	let theme = $state(data.user.theme);
-	let userWidgets = $state(data.user.widgets);
+	let theme = $state(data.profile.theme);
+	let userWidgets = $state(data.profile.widgets);
 	let editing = $state(data.editing);
 
 	$effect(() => {
-		theme = data.user.theme;
-		userWidgets = data.user.widgets;
+		theme = data.profile.theme;
+		userWidgets = data.profile.widgets;
 		editing = data.editing;
 	});
 
@@ -48,7 +48,7 @@
 </script>
 
 <Meta
-	title={data.user.displayName || data.user.username}
+	title={data.profile.displayName || data.profile.username}
 	description={(
 		userWidgets
 			.find((c) => c.find((w) => w.id === 'about_me'))
@@ -68,7 +68,7 @@
 	{:else if 'blocks' in widget}
 		<CustomWidgetComponent {widget} {...data} {editing} />
 	{:else if editing}
-		<BaseWidget editingMode={editing} user={data.user} {widget}>
+		<BaseWidget editingMode={editing} profile={data.profile} {widget}>
 			I didn't code this widget in yet (type {widget.id}).<br />
 			Other users won't see this widget, but once it's coded it'll render properly!
 		</BaseWidget>
@@ -124,8 +124,13 @@
 	</main>
 </ThemeProvider>
 
-{#if data.editable && data.currentUser}
-	<ProfileEditBar bind:editing user={data.currentUser} bind:theme />
+{#if data.editable && data.currentProfile && data.currentUser}
+	<ProfileEditBar
+		currentUser={data.currentUser}
+		bind:editing
+		profile={data.currentProfile}
+		bind:theme
+	/>
 {/if}
 
 <style lang="scss">

@@ -1,12 +1,12 @@
 <script lang="ts">
-	import type { PublicUser } from '$lib/db/schema/users';
+	import type { Profile } from '$lib/db/types';
 	import { Island } from 'phosphor-svelte';
 
 	let {
 		user,
 		size
 	}: {
-		user?: Partial<PublicUser>;
+		user?: Partial<Profile>;
 		size?: string;
 	} = $props();
 </script>
