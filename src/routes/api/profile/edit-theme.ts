@@ -103,9 +103,16 @@ export async function editTheme({
 		// delete the previous image from storage
 		if (user.theme?.background?.type === 'image' && user.theme?.background?.image_url) {
 			const previousImageName = user.theme.background.image_url.split('/').pop();
+			const fullPath = `${user.id}/${previousImageName}`;
 
 			try {
-				await supabase.storage.from('backgrounds').remove([`/${user.id}/${previousImageName}`]);
+				const { data, error } = await supabase.storage.from('backgrounds').remove([fullPath]);
+
+				if (!data || !data.length || error) {
+					return fail(500, {
+						message: 'Failed to remove previous background image'
+					});
+				}
 			} catch (e) {
 				console.error(e);
 				return fail(500, {
@@ -129,9 +136,7 @@ export async function editTheme({
 				});
 			}
 
-			const url = supabase.storage.from('backgrounds').getPublicUrl(storageObject.data.path);
-
-			themeObject.background.image_url = url.data.publicUrl;
+			themeObject.background.image_url = storageObject.data.fullPath;
 		} catch (e) {
 			console.error(e);
 			return fail(500, {
