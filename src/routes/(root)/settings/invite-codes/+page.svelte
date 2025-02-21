@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import Button from '$lib/components/Button.svelte';
+	import { formatDate } from '$lib/helpers/text';
 	import { ArrowsClockwise, Check, Clipboard, X } from 'phosphor-svelte';
 
 	let { data } = $props();
@@ -19,20 +20,18 @@
 	<table>
 		<thead>
 			<tr>
-				<th>#</th>
+				<th>Issued on</th>
 				<th>Invite code</th>
 				<th>Status</th>
 			</tr>
 		</thead>
 		<tbody>
-			{#each data.currentProfile.inviteCodes as code, index (code.code)}
+			{#each data.currentProfile.inviteCodes as code (code.code)}
 				<tr>
 					<td>
-						<div class="index">
-							<code>
-								{index + 1}
-							</code>
-						</div>
+						<time datetime={code.createdAt.toISOString()}>
+							{formatDate(code.createdAt, 'en-US')}
+						</time>
 					</td>
 					<td>
 						<div class="code">
@@ -61,7 +60,7 @@
 								Available
 							{:else}
 								<X color="var(--color-urgent)" weight="regular" />
-								Claimed
+								Claimed by <a href="/{code.claimedBy}">@{code.claimedBy}</a>
 							{/if}
 						</div>
 					</td>
@@ -70,7 +69,7 @@
 		</tbody>
 	</table>
 
-	{#if data.currentProfile.inviteCodes.length >= 10}
+	{#if !data.isClembs && data.currentProfile.inviteCodes.length >= 10}
 		<Button variant="secondary" disabled>Out of invite codes!</Button>
 	{:else}
 		<form
@@ -122,9 +121,11 @@
 		</form>
 	{/if}
 
-	<span class="subtext centered">
-		{10 - data.currentProfile.inviteCodes.length}/10 codes remaining
-	</span>
+	{#if !data.isClembs}
+		<span class="subtext centered">
+			{10 - data.currentProfile.inviteCodes.length}/10 codes remaining
+		</span>
+	{/if}
 </section>
 
 <style lang="scss">

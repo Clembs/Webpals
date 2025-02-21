@@ -14,7 +14,6 @@ export type FullProfile = Profile & {
 	receivedRelationships: (Relationship & {
 		profile: Profile;
 	})[];
-	inviteCodes: InviteCode[];
 };
 
 export type Relationship = typeof relationships.$inferSelect;

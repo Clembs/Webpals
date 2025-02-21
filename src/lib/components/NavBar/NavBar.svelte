@@ -117,6 +117,10 @@
 </header>
 
 <style lang="scss">
+	:root {
+		--navbar-height: calc(40px + var(--base-padding) * 1.5);
+	}
+
 	nav {
 		display: flex;
 		justify-content: space-between;
@@ -124,7 +128,7 @@
 		padding: calc(var(--base-padding) * 0.25) var(--base-padding);
 		gap: var(--base-gap);
 		background-color: var(--widgets-background-color);
-		height: calc(40px + var(--base-padding) * 1.5);
+		height: var(--navbar-height);
 
 		a,
 		button {

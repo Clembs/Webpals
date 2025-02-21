@@ -36,7 +36,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 		? await db.query.profiles.findFirst({
 				where: ({ id }, { eq }) => eq(id, user?.id),
 				with: {
-					inviteCodes: true,
 					connections: true,
 					notifications: {
 						with: {
