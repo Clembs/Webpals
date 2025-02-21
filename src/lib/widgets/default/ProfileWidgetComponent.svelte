@@ -10,7 +10,8 @@
 		UserPlus,
 		DotsThree,
 		Clock,
-		Users
+		Users,
+		WarningCircle
 	} from 'phosphor-svelte';
 	import BaseWidget from '../BaseWidget.svelte';
 	import Button from '$lib/components/Button.svelte';
@@ -19,12 +20,16 @@
 	import { HEARTBEAT_INTERVAL } from '$lib/helpers/constants';
 	import { page } from '$app/state';
 	import Avatar from '$lib/components/Avatar.svelte';
-	import { scale } from 'svelte/transition';
+	import { scale, slide } from 'svelte/transition';
 	import { RelationshipTypes } from '$lib/db/schema/profiles';
+	import Spinner from '$icons/Spinner.svelte';
 
 	let { profile, editing }: { profile: Profile; editing: boolean } = $props();
 	let avatarInputEl = $state<HTMLInputElement>();
-	let temporaryAvatarSrc = $state();
+	let temporaryAvatarSrc = $state<string>();
+
+	let error = $state<string>();
+	let isLoading = $state(false);
 
 	let modalOpened = $state(false);
 	let addFriendState = $state<null | 'loading' | 'error'>(null);
@@ -71,24 +76,39 @@
 				{formatDate(profile.createdAt, 'en-US')}
 			</span>
 		</p>
+		{#if error}
+			<p class="line error" transition:slide>
+				<WarningCircle />
+				{error}
+			</p>
+		{/if}
 	</div>
 {/snippet}
 
 <BaseWidget bind:isWidgetEditing={modalOpened} {profile} editingMode={editing}>
 	{#snippet editMenu()}
 		<form
-			use:enhance={() =>
-				({ update }) => {
+			use:enhance={() => {
+				error = '';
+				isLoading = true;
+
+				return ({ update, result }) => {
+					if (result.type === 'failure' && typeof result.data?.message === 'string') {
+						error = result.data.message;
+						return;
+					}
+
 					update({ reset: false, invalidateAll: true });
 					modalOpened = false;
-				}}
+					isLoading = false;
+				};
+			}}
 			class="update-profile"
 			enctype="multipart/form-data"
 			method="post"
 			action="/api/profile?/editProfile"
 		>
 			<div class="important-stuff">
-				<!-- TODO: work avatar upload out -->
 				<input
 					bind:this={avatarInputEl}
 					type="file"
@@ -97,14 +117,24 @@
 					accept="image/*"
 					onchange={() => {
 						if (avatarInputEl && avatarInputEl.files?.length) {
-							const file = avatarInputEl.files[0];
+							const avatar = avatarInputEl.files[0];
+
+							if (avatar && !avatar.type.startsWith('image/')) {
+								error = 'Please pick an image file for your avatar.';
+							}
+
+							if (avatar.size > 1024 * 1024) {
+								error = "Please pick an avatar image that's less than 1MB.";
+								return;
+							}
+
 							const reader = new FileReader();
 
 							reader.onload = () => {
 								if (!reader.result) return;
 								temporaryAvatarSrc = reader.result.toString();
 							};
-							reader.readAsDataURL(file);
+							reader.readAsDataURL(avatar);
 						}
 					}}
 				/>
@@ -146,7 +176,14 @@
 
 			{@render nonInteractive()}
 
-			<Button type="submit">Save</Button>
+			<Button type="submit" disabled={isLoading}>
+				{#if isLoading}
+					<Spinner />
+					Saving...
+				{:else}
+					Save
+				{/if}
+			</Button>
 		</form>
 	{/snippet}
 
@@ -313,6 +350,10 @@
 			display: flex;
 			gap: calc(var(--base-gap) / 4);
 			align-items: center;
+
+			&.error {
+				color: var(--color-urgent);
+			}
 		}
 	}
 </style>
