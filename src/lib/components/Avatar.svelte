@@ -1,24 +1,27 @@
 <script lang="ts">
+	import { PUBLIC_STORAGE_BASE_URL } from '$env/static/public';
 	import type { Profile } from '$lib/db/types';
 	import { Island } from 'phosphor-svelte';
 
 	let {
 		user,
+		src,
 		size
 	}: {
-		user?: Partial<Profile>;
+		user: Partial<Profile>;
+		src?: string;
 		size?: string;
 	} = $props();
 </script>
 
-{#if user?.avatar}
+{#if user.avatar || src}
 	<img
 		height={size}
 		width={size}
 		loading="lazy"
 		style:--size={size}
 		class="avatar"
-		src={user.avatar}
+		src={src ?? `${PUBLIC_STORAGE_BASE_URL}/avatars/${user.id}/${user.avatar}.webp`}
 		alt="@{user.username}'s avatar"
 	/>
 {:else}
