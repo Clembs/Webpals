@@ -14,8 +14,12 @@ export const inviteCodes = pgTable('invite_codes', {
 });
 
 export const inviteCodesRelations = relations(inviteCodes, ({ one }) => ({
-	user: one(profiles, {
+	issuer: one(profiles, {
 		fields: [inviteCodes.issuerId],
+		references: [profiles.id]
+	}),
+	claimedBy: one(profiles, {
+		fields: [inviteCodes.claimedById],
 		references: [profiles.id]
 	})
 }));
