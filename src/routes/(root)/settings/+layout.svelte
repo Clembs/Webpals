@@ -149,7 +149,7 @@
 		display: flex;
 		max-width: 900px;
 		margin: 0 auto;
-		flex: 1;
+		height: calc(100vh - var(--navbar-height));
 
 		aside {
 			padding: calc(var(--base-padding) * 1.25) calc(var(--base-padding) * 0.75);
