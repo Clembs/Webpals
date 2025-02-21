@@ -1,13 +1,23 @@
 import { db } from '$lib/db';
 import { inviteCodes } from '$lib/db/schema/auth';
+import type { Profile } from '$lib/db/types';
 import { redirect, fail } from '@sveltejs/kit';
 
-export async function load({ locals: { getCurrentProfile } }) {
-	const user = await getCurrentProfile();
+function isClembs(profile: Profile | null | undefined) {
+	return profile?.username.toLowerCase() === 'clembs';
+}
 
-	if (user?.username.toLowerCase() !== 'clembs') {
+export async function load({ locals: { getCurrentProfile } }) {
+	const currentProfile = getCurrentProfile();
+	const clembs = isClembs(currentProfile);
+
+	if (!currentProfile || !isClembs(currentProfile)) {
 		redirect(301, '/settings/account');
 	}
+
+	return {
+		isClembs: clembs
+	};
 }
 
 export const actions = {
@@ -16,7 +26,11 @@ export const actions = {
 
 		if (!currentProfile) redirect(301, '/login');
 
-		if (currentProfile.inviteCodes.length >= 10) {
+		const issuerInviteCodes = await db.query.inviteCodes.findMany({
+			where: ({ issuerId }, { eq }) => eq(issuerId, currentProfile.id)
+		});
+
+		if (!isClembs(currentProfile) && issuerInviteCodes.length >= 10) {
 			return fail(403, {
 				message: 'You have reached the maximum number of invite codes'
 			});
