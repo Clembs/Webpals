@@ -56,30 +56,46 @@ export async function editProfile({
 	let avatarId = profile.avatar;
 
 	if (hasUpdatedAvatar && avatar.name) {
-		const resized = await sharp(await avatar.arrayBuffer())
-			.resize(128, 128, {
-				fit: 'cover'
-			})
-			.webp({
-				quality: 75
-			})
-			.toBuffer();
+		try {
+			const resized = await sharp(await avatar.arrayBuffer())
+				.resize(128, 128, {
+					fit: 'cover'
+				})
+				.webp({
+					quality: 75
+				})
+				.toBuffer();
 
-		if (profile.avatar) {
-			await supabase.storage.from('avatars').remove([`${profile.id}/${avatarId}`]);
-		}
+			if (profile.avatar) {
+				const { error } = await supabase.storage
+					.from('avatars')
+					.remove([`${profile.id}/${avatarId}.webp`]);
 
-		avatarId = generateSnowflake();
+				if (error) {
+					console.error(error);
+					return fail(500, {
+						message: 'Failed to delete the previous avatar.'
+					});
+				}
+			}
 
-		const { error } = await supabase.storage
-			.from('avatars')
-			.upload(`${profile.id}/${avatarId}.webp`, resized, {
-				contentType: 'image/webp',
-				cacheControl: 'public, max-age=31536000, immutable'
-			});
+			avatarId = generateSnowflake();
 
-		if (error) {
-			console.error(error);
+			const { error } = await supabase.storage
+				.from('avatars')
+				.upload(`${profile.id}/${avatarId}.webp`, resized, {
+					contentType: 'image/webp',
+					cacheControl: 'public, max-age=31536000, immutable'
+				});
+
+			if (error) {
+				console.error(error);
+				return fail(500, {
+					message: 'Failed to upload avatar.'
+				});
+			}
+		} catch (e) {
+			console.error(e);
 			return fail(500, {
 				message: 'Failed to upload avatar.'
 			});
