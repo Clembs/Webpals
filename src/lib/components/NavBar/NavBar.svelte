@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { Island, House, Bell, BellRinging } from 'phosphor-svelte';
+	import { House, Bell, BellRinging } from 'phosphor-svelte';
 	import Avatar from '../Avatar.svelte';
 	import NotificationsMenu from './NotificationsMenu.svelte';
 	import { clickoutside } from '@svelte-put/clickoutside';
@@ -10,6 +10,7 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { invalidate } from '$app/navigation';
 	import type { RealtimeChannel } from '@supabase/supabase-js';
+	import Webpals from '$icons/Webpals.svelte';
 
 	let accountMenuOpen = $state(false);
 	let notificationsMenuOpen = $state(false);
@@ -43,7 +44,7 @@
 <header>
 	<nav>
 		<a class="logo" href="/" aria-label="Home" title="Home">
-			<Island />
+			<Webpals />
 		</a>
 
 		<div class="right">

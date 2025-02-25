@@ -3,11 +3,17 @@
 </script>
 
 <script lang="ts">
+	import BlueskyLogo from '$icons/brands/BlueskyLogo.svelte';
+	import XLogo from '$icons/brands/XLogo.svelte';
 	import DiscordLogo from '$icons/brands/DiscordLogo.svelte';
+	import Webpals from '$icons/Webpals.svelte';
 	import type { FullProfile } from '$lib/db/types';
 	import { dialogPortal } from '$lib/portals/dialog.svelte';
-	import { Butterfly, Code, DoorOpen, Gear, Island, UserSquare, XLogo } from 'phosphor-svelte';
+	import { ArrowSquareOut, DoorOpen, EyeSlash, Gear, Scroll, UserSquare } from 'phosphor-svelte';
 	import { fly } from 'svelte/transition';
+	import WebpalsThumbup from '$icons/WebpalsThumbup.svelte';
+	import GitHubLogo from '$icons/brands/GitHubLogo.svelte';
+	import type { Component } from 'svelte';
 
 	let {
 		menuOpen = $bindable(false),
@@ -26,47 +32,52 @@
 	}}
 />
 
+{#snippet link(href: string, label: string, Icon: Component)}
+	<li>
+		<a {href} target="_blank" rel="noopener noreferrer">
+			<div class="label">
+				<Icon />
+				{label}
+			</div>
+
+			<ArrowSquareOut weight="regular" />
+		</a>
+	</li>
+{/snippet}
+
 {#snippet aboutWebpalsDialog()}
-	<div class="about-webpals">
-		<Island size={64} />
+	<div id="about-webpals">
+		<div class="header">
+			<WebpalsThumbup size={64} />
 
-		<h1>
-			Webpals
-			<span class="label" aria-label="(private alpha)"> private alpha </span>
-		</h1>
+			<h1>Webpals</h1>
 
-		<p>Developed by Clembs</p>
+			<p id="copyright-blurb">
+				&copy; 2024-{new Date().getFullYear()} Clembs
+			</p>
 
-		<ul class="socials">
-			<li>
-				<a
-					href="https://bsky.app/profile/did:plc:ywcz5zihn4hxynh6wmxk4f4y"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					<Butterfly />
-					Bluesky
-				</a>
-			</li>
-			<li>
-				<a href="https://x.com/clembsv" target="_blank" rel="noopener noreferrer">
-					<XLogo weight="regular" />
-					X/Twitter
-				</a>
-			</li>
-			<li>
-				<a href="https://discord.gg/Mauurzxvrp" target="_blank" rel="noopener noreferrer">
-					<DiscordLogo />
-					Discord
-				</a>
-			</li>
-			<li>
-				<a href="https://github.com/Clembs/webpals" target="_blank" rel="noopener noreferrer">
-					<Code weight="regular" />
-					Source code
-				</a>
-			</li>
+			<div id="version-badge">Private Alpha</div>
+		</div>
+
+		<ul aria-label="Issues">
+			{@render link('https://discord.gg/Mauurzxvrp', 'Community', DiscordLogo)}
+			{@render link('https://github.com/Clembs/Webpals/issues', 'Report an Issue', GitHubLogo)}
 		</ul>
+
+		<ul aria-label="Socials">
+			{@render link(
+				'https://bsky.app/profile/did:plc:ywcz5zihn4hxynh6wmxk4f4y',
+				'Bluesky',
+				BlueskyLogo
+			)}
+			{@render link('https://x.com/clembsv', 'X/Twitter', XLogo)}
+		</ul>
+
+		<!-- TODO -->
+		<!-- <ul aria-label="Legal">
+			{@render link('/terms-of-service', 'Terms of Service', Scroll)}
+			{@render link('/privacy-policy', 'Privacy Policy', EyeSlash)}
+		</ul> -->
 	</div>
 {/snippet}
 
@@ -100,7 +111,7 @@
 					dialogPortal.openDialog(aboutWebpalsDialog);
 				}}
 			>
-				<Island />
+				<Webpals />
 				About Webpals
 			</button>
 		</li>
@@ -162,30 +173,42 @@
 		}
 	}
 
-	.about-webpals {
+	#about-webpals {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: var(--base-gap);
+		gap: calc(var(--base-gap) * 1.25);
+		width: 350px;
 
-		h1 {
-			font-size: 1.5rem;
+		.header {
 			display: flex;
-
-			.label {
-				font-size: 0.625rem;
-				background-color: #987fff;
-				padding: calc(var(--base-padding) * 0.125) calc(var(--base-padding) * 0.375);
-				align-items: center;
-				height: fit-content;
-				margin-left: calc(var(--base-gap) * 0.25);
-				border-radius: 99px;
-				color: var(--inputs-background-color);
-				transform: translateY(-4px);
-			}
+			flex-direction: column;
+			align-items: center;
 		}
 
-		.socials {
+		h1 {
+			font-size: 1.75rem;
+			display: flex;
+			margin-top: var(--base-gap);
+			margin-bottom: calc(var(--base-gap) * 0.25);
+		}
+
+		#copyright-blurb {
+			margin-bottom: calc(var(--base-gap) * 0.75);
+		}
+
+		#version-badge {
+			background-color: #987fff;
+			padding: calc(var(--base-padding) * 0.25) calc(var(--base-padding) * 0.75);
+			align-items: center;
+			height: fit-content;
+			margin-left: calc(var(--base-gap) * 0.25);
+			border-radius: 99px;
+			color: var(--inputs-background-color);
+			transform: translateY(-4px);
+		}
+
+		ul {
 			@include mixins.fancy-list;
 			width: 100%;
 
@@ -195,6 +218,17 @@
 				gap: var(--base-gap);
 				text-decoration: none;
 				padding: var(--base-padding);
+				justify-content: space-between;
+
+				.label {
+					display: flex;
+					align-items: center;
+					gap: calc(var(--base-gap) * 0.75);
+				}
+
+				&:hover {
+					backdrop-filter: brightness(0.95);
+				}
 			}
 		}
 	}

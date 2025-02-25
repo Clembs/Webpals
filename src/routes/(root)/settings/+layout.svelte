@@ -2,8 +2,10 @@
 	import { page } from '$app/state';
 	import { aboutWebpalsDialog } from '$lib/components/NavBar/AccountMenu.svelte';
 	import { dialogPortal } from '$lib/portals/dialog.svelte';
-	import { Bell, DoorOpen, EyeSlash, Island, Numpad, Palette, User } from 'phosphor-svelte';
+	import { Bell, DoorOpen, EyeSlash, Numpad, Palette, User } from 'phosphor-svelte';
 	import './layout.scss';
+	import type { Component } from 'svelte';
+	import Webpals from '$icons/Webpals.svelte';
 
 	let { data, children } = $props();
 
@@ -12,7 +14,7 @@
 		settings: {
 			label: string;
 			href: string;
-			icon: typeof Island;
+			icon: Component;
 			badge?: {
 				label: string;
 				color?: string;
@@ -117,7 +119,7 @@
 					>
 						<div class="left">
 							<div class="icon">
-								<Island />
+								<Webpals />
 							</div>
 							<div class="label">About Webpals</div>
 						</div>
