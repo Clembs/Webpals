@@ -8,7 +8,6 @@
 	import ThemeProvider from '$lib/themes/ThemeProvider.svelte';
 	import { plainTheme } from '$lib/themes/mergeThemes';
 	import { replaceState } from '$app/navigation';
-	import MattMenu from './MattMenu.svelte';
 	import type { User } from '@supabase/supabase-js';
 
 	let {
@@ -26,7 +25,6 @@
 	let widgetPickerOpen = $state(false);
 	let themeEditorOpen = $state(false);
 	let accountSettingsOpen = $state(false);
-	let mattOpen = $state(false);
 
 	let editBarEl = $state<HTMLDivElement>();
 	let editBarWrapperEl = $state<HTMLDivElement>();
@@ -103,17 +101,13 @@
 			bind:menuOpen={accountSettingsOpen}
 		/>
 
-		<MattMenu {editBarEl} {editBarWrapperEl} bind:menuOpen={mattOpen} />
-
 		<div id="edit-bar" bind:this={editBarEl}>
 			<!-- commands -->
-			<div id="edit-commands">
+			<div id="edit-commands" inert={!editing} aria-hidden={!editing}>
 				<button
 					class="edit-command"
 					onclick={() => (widgetPickerOpen = true)}
 					aria-label="Add widget"
-					inert={!editing}
-					aria-hidden={!editing}
 				>
 					<Plus weight="regular" />
 					<span class="label"> Add widget </span>
@@ -122,8 +116,6 @@
 					class="edit-command"
 					onclick={() => (themeEditorOpen = true)}
 					aria-label="Theme settings"
-					inert={!editing}
-					aria-hidden={!editing}
 				>
 					<Palette />
 					<span class="label"> Theme settings </span>
@@ -132,22 +124,9 @@
 					class="edit-command"
 					onclick={() => (accountSettingsOpen = true)}
 					aria-label="Account settings"
-					inert={!editing}
-					aria-hidden={!editing}
 				>
 					<Gear />
 					<span class="label"> Account settings </span>
-				</button>
-				<button
-					class="edit-command"
-					onclick={() => (mattOpen = true)}
-					aria-label="Matt"
-					inert={!editing}
-					aria-hidden={!editing}
-				>
-					<Hexagon />
-
-					<div class="label">Matt</div>
 				</button>
 			</div>
 
