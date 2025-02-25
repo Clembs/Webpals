@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Pause, Play, SpeakerHigh, SpeakerNone } from 'phosphor-svelte';
+	import { AudioPlayer } from './headless.svelte';
 
 	let {
 		src,
@@ -12,68 +13,25 @@
 	} = $props();
 
 	let audioEl = $state<HTMLAudioElement>();
-	let paused = $state<boolean>();
 	let rangeValue = $state(0);
 	let currentTime = $state(0);
 	let duration = $state(0);
 	let muted = $state(false);
 
-	function togglePlayback() {
-		if (paused) {
-			audioEl?.play();
-			createMediaSession();
-			// stop audio from all other players
-			document.querySelectorAll('audio').forEach((el) => {
-				if (el !== audioEl) el.pause();
-			});
-		} else {
-			audioEl?.pause();
-		}
-	}
-
-	function mute() {
-		muted = !muted;
-	}
-
-	function createMediaSession() {
-		if (!navigator.mediaSession || !metadata) return;
-		navigator.mediaSession.metadata = new MediaMetadata(metadata);
-
-		navigator.mediaSession.setActionHandler('play', () => audioEl?.play());
-		navigator.mediaSession.setActionHandler('pause', () => audioEl?.pause());
-		navigator.mediaSession.setActionHandler('seekbackward', () => {
-			currentTime -= 10;
-		});
-		navigator.mediaSession.setActionHandler('seekforward', () => {
-			currentTime += 10;
-		});
-		navigator.mediaSession.setActionHandler('previoustrack', () => {
-			currentTime = 0;
-		});
-		navigator.mediaSession.setActionHandler('nexttrack', () => {
-			currentTime = audioEl!.duration;
-		});
-		navigator.mediaSession.setActionHandler('stop', () => {
-			if (!audioEl) return;
-			audioEl.pause();
-			currentTime = 0;
-		});
-	}
+	let audioPlayer = $derived(audioEl ? new AudioPlayer(audioEl, metadata) : undefined);
 </script>
 
-<!-- TODO: link this to the actual audio player -->
-<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div class="audio-player">
 	<div class="buttons">
-		<button type="button" onclick={togglePlayback} class="toggle-playback">
-			{#if paused}
+		<button type="button" onclick={() => audioPlayer?.togglePlayback()} class="toggle-playback">
+			{#if audioPlayer?.paused}
 				<Play />
 			{:else}
 				<Pause />
 			{/if}
 		</button>
 
-		<button type="button" onclick={mute} class="mute">
+		<button type="button" onclick={() => audioPlayer?.toggleMute()} class="mute">
 			{#if muted}
 				<SpeakerNone />
 			{:else}
@@ -84,11 +42,11 @@
 
 	<input
 		onchange={(ev) => {
-			if (!audioEl) return;
+			if (!audioPlayer?.audioEl) return;
 			currentTime = (duration * rangeValue) / 100;
 		}}
 		onkeydown={(ev) => {
-			if (ev.key === ' ') togglePlayback();
+			if (ev.key === ' ') audioPlayer?.togglePlayback();
 		}}
 		bind:value={rangeValue}
 		type="range"
@@ -100,7 +58,6 @@
 	bind:this={audioEl}
 	controls
 	bind:muted
-	bind:paused
 	bind:currentTime
 	bind:duration
 	ontimeupdate={() => (rangeValue = (currentTime / duration) * 100)}
