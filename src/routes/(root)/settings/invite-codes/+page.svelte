@@ -55,12 +55,12 @@
 					</td>
 					<td>
 						<div class="status">
-							{#if !code.claimedAt}
+							{#if !code.claimedAt || !code.claimedBy}
 								<Check color="var(--color-success)" weight="regular" />
 								Available
 							{:else}
 								<X color="var(--color-urgent)" weight="regular" />
-								Claimed by <a href="/{code.claimedBy}">@{code.claimedBy}</a>
+								Claimed by <a href="/{code.claimedBy.username}">@{code.claimedBy.username}</a>
 							{/if}
 						</div>
 					</td>
@@ -134,24 +134,12 @@
 	table {
 		@include mixins.fancy-table;
 
-		.index {
-			code {
-				display: block;
-				width: 3ch;
-				text-align: end;
-			}
-		}
-
 		.code,
 		.status {
 			display: flex;
 			align-items: center;
 			gap: calc(var(--base-gap) * 0.5);
 		}
-
-		// .status {
-
-		// }
 	}
 
 	.icon.loading {
