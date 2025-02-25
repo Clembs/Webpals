@@ -1,9 +1,10 @@
 <script lang="ts">
-	import { PencilSimple, SpotifyLogo, Warning } from 'phosphor-svelte';
+	import { MusicNote, PencilSimple, Warning } from 'phosphor-svelte';
 	import BaseWidget from '../BaseWidget.svelte';
 	import type { MusicWidget, WidgetComponentProps } from '../types';
 	import MusicEditWidgetComponent from '../default-edit-menus/MusicWidgetEditComponent.svelte';
-	import AudioPlayer from '$lib/components/AudioPlayer.svelte';
+	import AudioPlayer from '$lib/components/AudioPlayer/AudioPlayer.svelte';
+	import SpotifyLogo from '$icons/brands/SpotifyLogo.svelte';
 
 	let { profile, widget, editing }: WidgetComponentProps<MusicWidget> = $props();
 
@@ -12,18 +13,22 @@
 
 <BaseWidget bind:isWidgetEditing={modalOpened} {widget} {profile} editingMode={editing}>
 	{#snippet editMenu()}
-		<MusicEditWidgetComponent bind:modalOpened />
+		<MusicEditWidgetComponent {widget} bind:modalOpened />
 	{/snippet}
 	<div class="music-widget">
 		<div class="heading">
-			<img
-				draggable={false}
-				src={widget.album_art_url}
-				alt="{widget.title} Cover art"
-				height={48}
-				width={48}
-				class="album-art"
-			/>
+			{#if widget.album_art_url}
+				<img
+					draggable={false}
+					src={widget.album_art_url}
+					alt="{widget.title} Cover art"
+					height={48}
+					width={48}
+					class="album-art"
+				/>
+			{:else}
+				<MusicNote />
+			{/if}
 
 			<div class="text">
 				<h2>
@@ -40,8 +45,8 @@
 			</div>
 		</div>
 
-		{#if widget.content_type && widget.content_url && widget.album_art_url && widget.title && widget.artist}
-			{#if widget.content_type === 'spotify'}
+		{#if widget.content_url && widget.title}
+			{#if widget.provider === 'spotify' && widget.album_art_url && widget.artist}
 				<AudioPlayer
 					src={widget.content_url}
 					type="audio/mp3"
@@ -119,7 +124,7 @@
 			display: flex;
 			align-items: center;
 			align-self: flex-end;
-			gap: calc(var(--base-gap) * 0.25);
+			gap: calc(var(--base-gap) * 0.5);
 			max-width: fit-content;
 			padding: 1rem;
 			margin: -1rem;

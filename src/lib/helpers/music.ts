@@ -1,3 +1,6 @@
+import SpotifyLogo from '$icons/brands/SpotifyLogo.svelte';
+import { FileAudio } from 'phosphor-svelte';
+
 export async function getSpotifyToken(): Promise<string> {
 	const re =
 		/<script id="session" data-testid="session" type="application\/json"[^>]*>(.*?)<\/script>/;
@@ -20,3 +23,18 @@ export type SpotifyTrack = {
 	external_urls: { spotify: string };
 	preview_url: string;
 };
+
+export const musicProviders = [
+	{
+		label: 'Spotify',
+		value: 'spotify',
+		icon: SpotifyLogo
+	},
+	{
+		label: 'Local file',
+		value: 'local',
+		icon: FileAudio
+	}
+] as const;
+
+export type MusicProvider = (typeof musicProviders)[number]['value'];

@@ -51,7 +51,7 @@ export async function editMusic({ locals: { getCurrentProfile }, url }: RequestE
 							...w,
 							album_art_url: track.album.images[0].url,
 							content_url: track.preview_url,
-							content_type: 'spotify',
+							provider: 'spotify',
 							title: track.name,
 							artist: track.artists.map((a) => a.name).join(', '),
 							external_url: track.external_urls.spotify

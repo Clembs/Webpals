@@ -1,4 +1,5 @@
 import type { Profile } from '$lib/db/types';
+import type { MusicProvider } from '$lib/helpers/music';
 
 export type BaseDefaultWidget = {
 	id: string;
@@ -35,16 +36,16 @@ export type AnyBlock = TextBlock | LayoutBlock | KeyValueBlock;
 export type MusicWidget = BaseDefaultWidget & {
 	id: 'music';
 	content_url: string | null;
-	content_type:
-		| 'spotify'
+	provider:
+		| MusicProvider
 		// | 'youtube'
 		// | 'soundcloud'
 		// | 'tidal'
 		// | 'apple-music'
 		// | 'deezer'
 		// | 'bandcamp'
-		// | `audio/${string}`
 		| null;
+	content_type: `audio/${string}` | null;
 	title: string | null;
 	artist: string | null;
 	album_art_url: string | null;
