@@ -3,7 +3,7 @@ import type { RequestEvent } from './$types';
 import { db } from '$lib/db';
 import { profiles } from '$lib/db/schema/profiles';
 import { eq } from 'drizzle-orm';
-import { getSpotifyToken, type SpotifyTrack } from '$lib/helpers/music';
+import { getSpotifyToken, type Track } from '$lib/helpers/music';
 
 export async function editMusic({ locals: { getCurrentProfile }, url }: RequestEvent) {
 	const user = await getCurrentProfile();
@@ -33,7 +33,7 @@ export async function editMusic({ locals: { getCurrentProfile }, url }: RequestE
 		});
 	}
 
-	const track: SpotifyTrack = await res.json();
+	const track: Track = await res.json();
 
 	if (!track) {
 		return fail(400, {
