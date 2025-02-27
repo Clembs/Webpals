@@ -34,15 +34,19 @@
 
 	{#if theme.background.type === 'image'}
 		<label for="background.image">
-			<div class="hover-text">
+			<div class="cover-text">
 				<Image />
-				Upload image
+				{#if theme.background.image_url}
+					Replace image
+				{:else}
+					Upload image
+				{/if}
 			</div>
 
 			{#if theme.background.image_url}
 				<img
 					class="current-background"
-					src={theme.background.image_url.startsWith('blob:')
+					src={theme.background.image_url?.startsWith('blob:')
 						? theme.background.image_url
 						: `${PUBLIC_STORAGE_BASE_URL}/${theme.background.image_url}`}
 					alt="Background"
@@ -52,7 +56,10 @@
 			{/if}
 		</label>
 
-		Recommended size: 1920x1080 pixels
+		<div id="file-recommendations">
+			Recommended dimensions: 1920x1080 pixels. <br />
+			Maximum size of 5MB.
+		</div>
 
 		<label for="background.image_position">
 			Align image to
@@ -153,9 +160,10 @@
 	}
 
 	[for='background.image'] {
-		display: block;
+		display: block !important;
 		position: relative;
 		cursor: pointer;
+		aspect-ratio: 16 / 9;
 
 		.current-background {
 			width: 100%;
@@ -165,26 +173,26 @@
 			object-fit: cover;
 		}
 
-		&:has(.current-background) {
-			.hover-text {
-				display: none;
-			}
+		.cover-text {
+			display: flex;
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			align-items: center;
+			justify-content: center;
+			gap: 0.5rem;
+			padding: calc(var(--base-padding) * 0.75) calc(var(--base-padding) * 1.5);
+			border-radius: var(--widgets-border-base-radius);
+			background: rgba(0, 0, 0, 0.5);
+			backdrop-filter: blur(5px);
+			color: var(--buttons-primary-on-background-color);
+		}
 
-			&:hover .hover-text {
-				position: absolute;
-				top: 0;
-				left: 0;
-				width: 100%;
-				height: 100%;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				gap: 0.5rem;
-				padding: calc(var(--base-padding) * 0.75) calc(var(--base-padding) * 1.5);
-				border-radius: var(--widgets-border-base-radius);
-				background: rgba(0, 0, 0, 0.5);
-				backdrop-filter: blur(5px);
-				color: var(--buttons-primary-on-background-color);
+		&:has(.current-background) {
+			&:not(:hover) .cover-text {
+				display: none;
 			}
 		}
 	}
