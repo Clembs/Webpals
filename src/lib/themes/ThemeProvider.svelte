@@ -26,7 +26,9 @@
 				break;
 			}
 			case 'image':
-				return `url(${theme.background.image_url.startsWith('blob') ? theme.background.image_url : `${PUBLIC_STORAGE_BASE_URL}/${theme.background.image_url}`})`;
+				return theme.background.image_url
+					? `url(${theme.background.image_url?.startsWith('blob') ? theme.background.image_url : `${PUBLIC_STORAGE_BASE_URL}/${theme.background.image_url}`})`
+					: 'none';
 		}
 	}
 </script>
