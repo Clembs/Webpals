@@ -55,8 +55,10 @@
 	--color-paragraph: {theme.font.color_paragraph};
   --color-heading: {theme.font.color_heading};
   color: {theme.font.color_paragraph};
-  font-family: '{theme.font.family}', var(--font-family);
-  
+	--font-paragraph: '{theme.font.style_paragraph}', var(--font-fallbacks);
+	--font-heading: '{theme.font.style_heading}', var(--font-fallbacks);
+	font-family: var(--font-paragraph); /* idk why this is needed, but it is */
+	
 	--base-padding: {theme.spacing.padding}rem;
   --base-gap: {theme.spacing.gap}rem;
   
