@@ -15,9 +15,10 @@ export const plainTheme: Theme = {
 		}
 	},
 	font: {
-		family: 'var(--font-family)',
 		color_paragraph: '#656565',
-		color_heading: '#000'
+		color_heading: '#000',
+		style_heading: 'Public Sans',
+		style_paragraph: 'Public Sans'
 	},
 	spacing: {
 		gap: 1,

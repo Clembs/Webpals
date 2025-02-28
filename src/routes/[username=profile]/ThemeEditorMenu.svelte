@@ -6,6 +6,7 @@
 	import Button from '$lib/components/Button.svelte';
 	import { page } from '$app/state';
 	import { ArrowClockwise } from 'phosphor-svelte';
+	import { mergeThemes, plainTheme } from '$lib/themes/mergeThemes';
 
 	let {
 		theme = $bindable(),
@@ -71,7 +72,9 @@
 				variant="secondary"
 				type="button"
 				onclick={() => {
-					theme = page.data.user.theme;
+					theme = page.data.currentProfile?.theme
+						? mergeThemes(plainTheme, page.data.currentProfile?.theme)
+						: plainTheme;
 				}}
 				disabled={formState === 'loading'}
 				aria-label="Undo all"
