@@ -13,7 +13,8 @@ import {
 	omit,
 	minValue,
 	maxValue,
-	partial
+	partial,
+	optional
 } from 'valibot';
 
 const HexColorStructure = pipe(string(), hexColor());
@@ -72,6 +73,43 @@ const BackgroundStructure = union([
 	})
 ]);
 
+export const fontStyles = [
+	{
+		label: 'Default',
+		value: 'Public Sans'
+	},
+	{
+		label: 'Fancy',
+		value: 'EB Garamond'
+	},
+	{
+		label: 'Cute',
+		value: 'Playpen Sans'
+	},
+	{
+		label: 'Handwritten',
+		value: 'Merienda'
+	},
+	{
+		label: 'Retro',
+		value: 'Handjet'
+	},
+	{
+		label: 'Gothic',
+		value: 'Grenze Gotisch'
+	},
+	{
+		label: 'Code',
+		value: 'JetBrains Mono'
+	},
+	{
+		label: 'Gummy',
+		value: 'Averia Libre'
+	}
+] as const;
+
+const FontStylesStructure = picklist(fontStyles.map((style) => style.value));
+
 export const ThemeStructure = strictObject({
 	background: BackgroundStructure,
 	avatar: strictObject({
@@ -79,7 +117,9 @@ export const ThemeStructure = strictObject({
 		border: nullable(BorderStructure)
 	}),
 	font: strictObject({
-		family: string(),
+		family: optional(literal('var(--font-family)')), // legacy, shouldn't be used anymore
+		style_paragraph: FontStylesStructure,
+		style_heading: FontStylesStructure,
 		color_paragraph: HexColorStructure,
 		color_heading: HexColorStructure
 	}),

@@ -3,34 +3,20 @@
 	import type { Theme } from '../types';
 	import ColorPicker from 'svelte-awesome-color-picker';
 	import { PUBLIC_STORAGE_BASE_URL } from '$env/static/public';
+	import Tabs from '$lib/components/Tabs.svelte';
 
 	let { theme = $bindable() }: { theme: Theme } = $props();
 </script>
 
 <section>
-	<ul class="tabs">
-		<li>
-			<input
-				type="radio"
-				id="color"
-				name="background.type"
-				value="color"
-				bind:group={theme.background.type}
-			/>
-			<label for="color"> Color </label>
-		</li>
-
-		<li>
-			<input
-				type="radio"
-				id="image"
-				name="background.type"
-				value="image"
-				bind:group={theme.background.type}
-			/>
-			<label for="image"> Image </label>
-		</li>
-	</ul>
+	<Tabs
+		name="background.type"
+		bind:selectedTab={theme.background.type}
+		tabs={[
+			{ value: 'color', label: 'Color' },
+			{ value: 'image', label: 'Image' }
+		]}
+	/>
 
 	{#if theme.background.type === 'image'}
 		<label for="background.image">
@@ -120,45 +106,6 @@
 </section>
 
 <style lang="scss">
-	.tabs {
-		display: flex;
-		gap: calc(var(--base-gap) * 0.5);
-		list-style: none;
-		background-color: var(--widgets-background-color-dim);
-		border-radius: calc(var(--widgets-border-base-radius) + var(--base-padding) * 0.5);
-		padding: calc(var(--base-padding) * 0.5);
-
-		li {
-			width: 100%;
-		}
-
-		label {
-			width: 100%;
-			padding: calc(var(--base-padding) * 0.75) calc(var(--base-padding) * 1.5);
-			border-radius: var(--widgets-border-base-radius);
-			cursor: pointer;
-			text-align: center;
-
-			&:hover {
-				backdrop-filter: brightness(0.95);
-			}
-		}
-
-		input {
-			position: fixed;
-			top: -1000px;
-
-			&:checked + label {
-				background: var(--buttons-primary-background-color);
-				color: var(--buttons-primary-on-background-color);
-			}
-
-			&:focus + label {
-				backdrop-filter: brightness(0.95);
-			}
-		}
-	}
-
 	[for='background.image'] {
 		display: block !important;
 		position: relative;

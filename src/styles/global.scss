@@ -7,6 +7,52 @@
 	font-display: swap;
 }
 
+// TODO: add Averia Libre as a non-variable font
+// TODO: subset the fonts to only include latin alphanumeric characters & convert to woff2
+// TODO: adjust font display for certain fonts using a class or something on the theme provider (bc some fonts look bad by default)
+
+@font-face {
+	font-family: 'Grenze Gotisch';
+	src: url('/fonts/GrenzeGotisch.ttf') format('truetype');
+	font-weight: 100 900;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'EB Garamond';
+	src: url('/fonts/EBGaramond.ttf') format('truetype');
+	font-weight: 400 800;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Playpen Sans';
+	src: url('/fonts/PlaypenSans.ttf') format('truetype');
+	font-weight: 100 800;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Merienda';
+	src: url('/fonts/Merienda.ttf') format('truetype');
+	font-weight: 300 900;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Handjet';
+	src: url('/fonts/Handjet.ttf') format('truetype');
+	font-weight: 100 900;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'JetBrains Mono';
+	src: url('/fonts/JetBrainsMono.ttf') format('truetype');
+	font-weight: 100 800;
+	font-display: swap;
+}
+
 :root {
 	--color-success: #2f9126;
 	--color-urgent: #e90000;
@@ -26,7 +72,7 @@ html {
 }
 
 body {
-	font-family: var(--font-family);
+	font-family: var(--font-paragraph);
 	line-height: 1.5;
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
@@ -73,6 +119,7 @@ h4,
 h5,
 h6,
 .heading {
+	font-family: var(--font-heading);
 	font-weight: 500;
 	color: var(--color-heading);
 }
