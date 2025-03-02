@@ -102,13 +102,21 @@ export type ConnectionsWidget = BaseDefaultWidget & {
 	id: 'connections';
 };
 
+export type ClockWidget = BaseDefaultWidget & {
+	timezone: string;
+	hour_format: '12h' | '24h';
+	city: string;
+	country: string;
+};
+
 export type DefaultWidget =
 	| MusicWidget
 	| AboutMeWidget
 	| FriendsWidget
 	| PostsWidget
 	| CommentsWidget
-	| ConnectionsWidget;
+	| ConnectionsWidget
+	| ClockWidget;
 
 export type AnyWidget = DefaultWidget | CustomWidget;
 
