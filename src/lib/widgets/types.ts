@@ -104,6 +104,7 @@ export type ConnectionsWidget = BaseDefaultWidget & {
 
 export type ClockWidget = BaseDefaultWidget & {
 	timezone: string;
+	show_seconds: boolean;
 	hour_format: '12h' | '24h';
 	city: string;
 	country: string;

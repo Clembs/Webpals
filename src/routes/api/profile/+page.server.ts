@@ -4,6 +4,7 @@ import { createConnection } from './create-connection';
 import { deleteConnection } from './delete-connection';
 import { deleteWidget } from './delete-widget';
 import { editAboutMe } from './edit-about-me';
+import { editClock } from './edit-clock';
 import { editConnection } from './edit-connection';
 import { editCustomWidget } from './edit-custom-widget';
 import { editMusic } from './edit-music';
@@ -23,6 +24,7 @@ export const actions: Actions = {
 	// edit widgets
 	editAboutMe,
 	editMusic,
+	editClock,
 	editCustomWidget,
 
 	// connections

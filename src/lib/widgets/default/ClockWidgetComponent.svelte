@@ -18,6 +18,7 @@
 		new Intl.DateTimeFormat('en-US', {
 			hour: 'numeric',
 			minute: 'numeric',
+			...(widget.show_seconds ? { second: 'numeric' } : {}),
 			hour12: widget.hour_format === '12h',
 			timeZoneName: 'short',
 			timeZone: widget.timezone
@@ -25,7 +26,10 @@
 	);
 
 	let timeString = $derived(
-		`${timeParts.find(({ type }) => type === 'hour')?.value}:${timeParts.find(({ type }) => type === 'minute')?.value}`
+		timeParts.find(({ type }) => type === 'hour')?.value +
+			':' +
+			timeParts.find(({ type }) => type === 'minute')?.value +
+			`${widget.show_seconds ? ':' + timeParts.find(({ type }) => type === 'second')?.value : ''}`
 	);
 
 	let dayPeriod = $derived(
@@ -48,7 +52,7 @@
 <BaseWidget bind:isWidgetEditing={modalOpened} {profile} {widget} editingMode={editing}>
 	{#snippet editMenu()}
 		<div id="clock-edit-menu">
-			<h2>Clock Settings</h2>
+			<h2>Edit Clock</h2>
 
 			<form
 				use:enhance={() => {
@@ -77,7 +81,12 @@
 				action="/api/search/places"
 				method="post"
 			>
-				<TextInput placeholder="Search cities, countries" name="query" value={widget.city} {error}>
+				<TextInput
+					placeholder="Search cities or countries to set the clock"
+					name="query"
+					defaultValue={widget.city}
+					{error}
+				>
 					{#snippet prefixIcon()}
 						<Globe />
 					{/snippet}
@@ -96,29 +105,45 @@
 				<ul class="cities">
 					{#each cities as city}
 						<li>
-							<div class="city-left">
-								<div class="city-country">
-									{city.city}, {city.country}
-								</div>
+							<form
+								use:enhance={() =>
+									async ({ result, update }) => {
+										console.log(result);
+										await update({ reset: false });
+										if (result.type === 'success') {
+											modalOpened = false;
+										}
+									}}
+								action="/api/profile?/editClock"
+								method="post"
+							>
+								<button type="submit">
+									<input type="hidden" name="city" value={city.city} />
+									<div class="city-left">
+										<div class="city-country">
+											{city.city}, {city.country}
+										</div>
 
-								<div class="timezone subtext">
-									{new Intl.DateTimeFormat('en-US', {
-										timeZoneName: 'shortOffset',
-										timeZone: city.timezone
-									})
-										.formatToParts(date)
-										.find(({ type }) => type === 'timeZoneName')?.value}
-								</div>
-							</div>
+										<div class="timezone subtext">
+											{new Intl.DateTimeFormat('en-US', {
+												timeZoneName: 'shortOffset',
+												timeZone: city.timezone
+											})
+												.formatToParts(date)
+												.find(({ type }) => type === 'timeZoneName')?.value}
+										</div>
+									</div>
 
-							<time class="city-time" datetime={date.toISOString()}>
-								{date.toLocaleTimeString('en-US', {
-									hour: 'numeric',
-									minute: 'numeric',
-									timeZone: city.timezone,
-									hour12: true
-								})}
-							</time>
+									<time class="city-time" datetime={date.toISOString()}>
+										{date.toLocaleTimeString('en-US', {
+											hour: 'numeric',
+											minute: 'numeric',
+											timeZone: city.timezone,
+											hour12: true
+										})}
+									</time>
+								</button>
+							</form>
 						</li>
 					{/each}
 				</ul>
@@ -161,18 +186,34 @@
 			overflow-y: scroll;
 
 			li {
-				display: flex;
-				padding: var(--base-padding);
-				justify-content: space-between;
-				align-items: center;
+				form {
+					display: contents;
 
-				.city-left {
-					display: flex;
-					flex-direction: column;
-				}
+					button {
+						display: flex;
+						padding: var(--base-padding);
+						justify-content: space-between;
+						align-items: center;
+						cursor: pointer;
+						appearance: none;
+						border: none;
+						background-color: transparent;
+						width: 100%;
+						text-align: left;
 
-				.city-time {
-					font-size: 1.25rem;
+						.city-left {
+							display: flex;
+							flex-direction: column;
+						}
+
+						.city-time {
+							font-size: 1.25rem;
+						}
+
+						&:hover {
+							backdrop-filter: brightness(0.95);
+						}
+					}
 				}
 			}
 		}
@@ -189,7 +230,9 @@
 
 			.time-string {
 				font-size: 3.25rem;
-				letter-spacing: 0.05em;
+				letter-spacing: -0.05em;
+				font-family: 'JetBrains Mono', monospace;
+				margin-right: 0.1em;
 			}
 
 			.day-period {
