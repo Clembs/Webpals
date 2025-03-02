@@ -2,7 +2,7 @@
 	import { MusicNote, PencilSimple, Warning } from 'phosphor-svelte';
 	import BaseWidget from '../BaseWidget.svelte';
 	import type { MusicWidget, WidgetComponentProps } from '../types';
-	import MusicEditWidgetComponent from '../default-edit-menus/MusicWidgetEditComponent.svelte';
+	import MusicEditWidgetComponent from '../default-edit-menus/MusicWidgetEdit/MusicWidgetEditComponent.svelte';
 	import AudioPlayer from '$lib/components/AudioPlayer/AudioPlayer.svelte';
 	import SpotifyLogo from '$icons/brands/SpotifyLogo.svelte';
 
