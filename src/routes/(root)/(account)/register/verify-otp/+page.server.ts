@@ -4,8 +4,10 @@ import { EMAIL_REGEX } from 'valibot';
 import { db } from '$lib/db';
 import { _getValidInviteCode } from '../verify-invite-code/+page.server';
 import { inviteCodes } from '$lib/db/schema/auth';
-import { eq } from 'drizzle-orm';
+import { count, eq } from 'drizzle-orm';
 import { profiles, USERNAME_REGEX } from '$lib/db/schema/profiles';
+import { DISCORD_WEBHOOK_URL } from '$env/static/private';
+import { PUBLIC_STORAGE_BASE_URL } from '$env/static/public';
 
 export const load: PageServerLoad = async ({ url }) => {
 	const username = url.searchParams.get('username')?.toString();
@@ -23,7 +25,7 @@ export const load: PageServerLoad = async ({ url }) => {
 export const actions: Actions = {
 	// TODO
 	async resendOTP() {},
-	async verifyOTP({ locals: { supabase }, cookies, request }) {
+	async verifyOTP({ locals: { supabase }, cookies, request, fetch, url }) {
 		const formData = await request.formData();
 		const originUrl = new URL(request.headers.get('referer')!);
 
@@ -69,6 +71,7 @@ export const actions: Actions = {
 			});
 		}
 
+		// insert the profile
 		await db.insert(profiles).values({
 			id: data.user.id,
 			username
@@ -86,6 +89,43 @@ export const actions: Actions = {
 		// delete the invite code cookie
 		cookies.delete('invite-code', {
 			path: '/'
+		});
+
+		const [{ count: profileCount }] = await db
+			.select({
+				count: count()
+			})
+			.from(profiles);
+
+		const ordinalRules = new Intl.PluralRules('en-US', { type: 'ordinal' });
+		const ordinals = new Map([
+			['one', 'st'],
+			['two', 'nd'],
+			['few', 'rd'],
+			['other', 'th']
+		]);
+		const ordinal = ordinals.get(ordinalRules.select(profileCount));
+
+		// post to the community's discord webhook
+		await fetch(DISCORD_WEBHOOK_URL, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				embeds: [
+					{
+						title: `${username} joined Webpals!`,
+						url: `${url.origin}/${username}`,
+						description: `Welcome to the community, ${username}.\nYou're the ${profileCount}${ordinal} member to join Webpals!`,
+						color: 0xffffff,
+						timestamp: new Date().toISOString(),
+						thumbnail: {
+							url: `${PUBLIC_STORAGE_BASE_URL}/static/logo-simplified.png`
+						}
+					}
+				]
+			})
 		});
 
 		redirect(302, `/${username}`);

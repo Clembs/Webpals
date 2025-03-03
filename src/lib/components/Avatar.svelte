@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { PUBLIC_STORAGE_BASE_URL } from '$env/static/public';
+	import Webpals from '$icons/Webpals.svelte';
 	import type { Profile } from '$lib/db/types';
-	import { Island } from 'phosphor-svelte';
 
 	let {
 		user,
@@ -26,7 +26,7 @@
 	/>
 {:else}
 	<div style:--size={size} class="avatar fallback">
-		<Island />
+		<Webpals />
 	</div>
 {/if}
 

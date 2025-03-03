@@ -173,13 +173,13 @@
 		}
 
 		.header {
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
+			display: grid;
+			grid-template-columns: 1fr 2fr 1fr;
 			gap: var(--base-gap);
 			padding: calc(var(--base-padding) * 1.25);
 			border-bottom: var(--widgets-border-width) solid transparent;
 			transition: border-color 200ms;
+			color: var(--color-heading);
 
 			.third {
 				width: 100%;

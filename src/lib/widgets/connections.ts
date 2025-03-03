@@ -2,7 +2,7 @@
 // if you're a regex wizard reading this and something doesn't work, help me by submitting an issue.
 
 import type { ConnectionProvider } from './types';
-import { Envelope, Globe, Island, Phone, type IconContextProps } from 'phosphor-svelte';
+import { Envelope, Globe, Phone, type IconContextProps } from 'phosphor-svelte';
 import DiscordLogo from '$icons/brands/DiscordLogo.svelte';
 import { EMAIL_REGEX } from 'valibot';
 import PretendoLogo from '$icons/brands/PretendoLogo.svelte';
@@ -25,6 +25,7 @@ import PatreonLogo from '$icons/brands/PatreonLogo.svelte';
 import StartGgLogo from '$icons/brands/StartGgLogo.svelte';
 import ThreadsLogo from '$icons/brands/ThreadsLogo.svelte';
 import { USERNAME_REGEX } from '$lib/db/schema/profiles';
+import Webpals from '$icons/Webpals.svelte';
 
 export const connectionProviders: Record<
 	ConnectionProvider,
@@ -231,7 +232,7 @@ export const connectionProviders: Record<
 	},
 	webpals: {
 		name: 'Webpals',
-		icon: Island,
+		icon: Webpals,
 		identifiablePattern: USERNAME_REGEX,
 		identifiablePrefix: 'webpals.me/',
 		identifiablePlaceholder: 'webpals username',
