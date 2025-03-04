@@ -17,6 +17,7 @@
 	let currentTime = $state(0);
 	let duration = $state(0);
 	let muted = $state(false);
+	let paused = $state(true);
 
 	let audioPlayer = $derived(audioEl ? new AudioPlayer(audioEl, metadata) : undefined);
 </script>
@@ -24,7 +25,7 @@
 <div class="audio-player">
 	<div class="buttons">
 		<button type="button" onclick={() => audioPlayer?.togglePlayback()} class="toggle-playback">
-			{#if audioPlayer?.paused}
+			{#if paused}
 				<Play />
 			{:else}
 				<Pause />
@@ -57,6 +58,7 @@
 <audio
 	bind:this={audioEl}
 	controls
+	bind:paused
 	bind:muted
 	bind:currentTime
 	bind:duration
