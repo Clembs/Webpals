@@ -69,7 +69,7 @@
 								update({ reset: false });
 								modalOpened = false;
 							}}
-						action="/api/profile?/editMusic&content-type={selectedProvider}&track-id={track.id}"
+						action="/api/profile?/setExternalMusic&provider={selectedProvider}&track-id={track.id}"
 						method="post"
 					>
 						<button type="submit">

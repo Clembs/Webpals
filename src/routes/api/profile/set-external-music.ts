@@ -5,17 +5,17 @@ import { profiles } from '$lib/db/schema/profiles';
 import { eq } from 'drizzle-orm';
 import { getSpotifyToken, type Track } from '$lib/helpers/music';
 
-export async function editMusic({ locals: { getCurrentProfile }, url }: RequestEvent) {
+export async function setExternalMusic({ locals: { getCurrentProfile }, url }: RequestEvent) {
 	const user = await getCurrentProfile();
 
 	if (!user) redirect(302, '/login');
 
-	const contentType = url.searchParams.get('content-type');
+	const provider = url.searchParams.get('provider');
 	const trackId = url.searchParams.get('track-id');
 
-	if (!contentType || !trackId || contentType !== 'spotify') {
+	if (!provider || !trackId || provider !== 'spotify') {
 		return fail(400, {
-			message: 'Invalid content type or track ID.'
+			message: 'Invalid provider or track ID.'
 		});
 	}
 
