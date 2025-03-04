@@ -45,7 +45,6 @@ export type MusicWidget = BaseDefaultWidget & {
 		// | 'deezer'
 		// | 'bandcamp'
 		| null;
-	content_type: `audio/${string}` | null;
 	title: string | null;
 	artist: string | null;
 	album_art_url: string | null;

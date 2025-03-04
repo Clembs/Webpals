@@ -4,7 +4,7 @@
 	import type { MusicWidget, WidgetComponentProps } from '../types';
 	import MusicEditWidgetComponent from '../default-edit-menus/MusicWidgetEdit/MusicWidgetEditComponent.svelte';
 	import AudioPlayer from '$lib/components/AudioPlayer/AudioPlayer.svelte';
-	import type { Profile } from '$lib/db/types';
+	import { PUBLIC_STORAGE_BASE_URL } from '$env/static/public';
 
 	let { profile, widget, editing }: WidgetComponentProps<MusicWidget> = $props();
 
@@ -42,10 +42,10 @@
 		</div>
 
 		{#if widget.content_url}
-			<!-- {#if widget.provider === 'spotify' && widget.album_art_url && widget.artist} -->
 			<AudioPlayer
-				src={widget.content_url}
-				type="audio/mp3"
+				src={widget.provider === 'local' && widget.content_url.includes('music/')
+					? `${PUBLIC_STORAGE_BASE_URL}/${widget.content_url}`
+					: widget.content_url}
 				metadata={{
 					title: widget.title || '',
 					artist: widget.artist || '',
@@ -61,16 +61,6 @@
 						: {})
 				}}
 			/>
-
-			<!-- <a
-					class="external-url-cta subtext"
-					href={widget.external_url}
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					<SpotifyLogo size={20} /> Listen on Spotify
-				</a> -->
-			<!-- {/if} -->
 		{:else}
 			<div class="error">
 				<p>

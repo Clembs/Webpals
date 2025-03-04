@@ -48,7 +48,7 @@
 		{#if selectedProvider !== 'local' && selectedProviderData}
 			<MusicProviderSearch {selectedProvider} bind:modalOpened />
 		{:else}
-			<MusicUpload {profile} bind:modalOpened />
+			<MusicUpload {profile} {widget} editing={false} bind:modalOpened />
 		{/if}
 	</div>
 </div>
