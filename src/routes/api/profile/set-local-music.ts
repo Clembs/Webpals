@@ -60,15 +60,17 @@ export async function setLocalMusic({
 	// if the user is uploading a new audio file, validate it
 	if (audioFile && audioFile instanceof File && audioFile.size > 0) {
 		// delete the previous audio file if it exists
-		const { error: deleteError } = await supabase.storage
-			.from('music')
-			.remove(previousAudioFilesData.data.map((f) => f.name));
+		if (previousAudioFilesData.data.length > 0) {
+			const { error: deleteError } = await supabase.storage
+				.from('music')
+				.remove(previousAudioFilesData.data.map((f) => f.name));
 
-		if (deleteError) {
-			console.error(deleteError);
-			return fail(500, {
-				message: 'Failed to delete previous audio file.'
-			});
+			if (deleteError) {
+				console.error(deleteError);
+				return fail(500, {
+					message: 'Failed to delete previous audio file.'
+				});
+			}
 		}
 
 		if (!audioFile.type.startsWith('audio/')) {
