@@ -52,6 +52,7 @@
 		"@jsr/std__collections": "^1.0.10",
 		"@supabase/ssr": "^0.5.2",
 		"drizzle-orm": "^0.39.3",
+		"music-metadata": "^11.0.0",
 		"postgres": "^3.4.5"
 	}
 }

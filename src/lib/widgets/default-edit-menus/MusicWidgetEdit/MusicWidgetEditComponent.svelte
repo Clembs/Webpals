@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { MusicNote } from 'phosphor-svelte';
 	import { type MusicProvider, musicProviders } from '$lib/helpers/music';
-	import type { MusicWidget } from '../../types';
+	import type { MusicWidget, WidgetComponentProps } from '../../types';
 	import MusicProviderSearch from './MusicProviderSearch.svelte';
+	import MusicUpload from './MusicUpload.svelte';
 
 	let {
 		widget,
 		modalOpened = $bindable(false)
-	}: {
-		widget: MusicWidget;
+	}: WidgetComponentProps<MusicWidget> & {
 		modalOpened: boolean;
 	} = $props();
 
@@ -47,7 +47,7 @@
 		{#if selectedProvider !== 'local' && selectedProviderData}
 			<MusicProviderSearch {selectedProvider} bind:modalOpened />
 		{:else}
-			<p>Unknown provider.</p>
+			<MusicUpload bind:modalOpened />
 		{/if}
 	</div>
 </div>
