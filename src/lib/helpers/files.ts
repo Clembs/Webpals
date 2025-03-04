@@ -73,7 +73,7 @@ export type MimeTypes = (typeof signatures)[number]['mime'];
 export function validateFileSignatures(file: File, mimes: MimeTypes[]): Promise<boolean> {
 	const signaturesToCheck = signatures.filter((s) => mimes.includes(s.mime));
 
-	return new Promise((resolve) => {
+	return new Promise(async (resolve) => {
 		if (signaturesToCheck.length === 0) {
 			resolve(false);
 			return;
@@ -81,55 +81,28 @@ export function validateFileSignatures(file: File, mimes: MimeTypes[]): Promise<
 
 		// get the biggest pattern of all signatures
 		const maxBytes = Math.max(...signaturesToCheck.map((s) => s.pattern.length));
-		const blob = file.slice(0, maxBytes);
-		const reader = new FileReader();
+		const buffer = new Uint8Array(await file.arrayBuffer()).slice(0, maxBytes);
 
-		reader.addEventListener('loadend', (e) => {
-			if (!e.target) {
-				resolve(false);
+		for (const signature of signaturesToCheck) {
+			const { pattern, mask } = signature;
+			// skip if we don't have enough bytes to check this pattern
+			if (buffer.length < pattern.length) continue;
+
+			// check if the signature matches
+			let match = true;
+			for (let i = 0; i < pattern.length; i++) {
+				if ((buffer[i] & mask[i]) !== pattern[i]) {
+					match = false;
+					break;
+				}
+			}
+
+			if (match) {
+				resolve(true);
 				return;
 			}
+		}
 
-			if (e.target.readyState === FileReader.DONE) {
-				if (!(e.target.result instanceof ArrayBuffer)) {
-					resolve(false);
-					return;
-				}
-
-				const bytes = new Uint8Array(e.target.result);
-
-				for (const signature of signaturesToCheck) {
-					const { pattern, mask } = signature;
-
-					// skip if we don't have enough bytes to check this pattern
-					if (bytes.length < pattern.length) continue;
-
-					// check if the signature matches
-					let match = true;
-					for (let i = 0; i < pattern.length; i++) {
-						if ((bytes[i] & mask[i]) !== pattern[i]) {
-							match = false;
-							break;
-						}
-					}
-
-					if (match) {
-						resolve(true);
-						return;
-					}
-				}
-
-				// No matches found
-				resolve(false);
-			} else {
-				resolve(false);
-			}
-		});
-
-		reader.addEventListener('error', () => {
-			resolve(false);
-		});
-
-		reader.readAsArrayBuffer(blob);
+		resolve(false);
 	});
 }
