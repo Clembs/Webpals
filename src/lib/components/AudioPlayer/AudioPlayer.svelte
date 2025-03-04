@@ -4,11 +4,9 @@
 
 	let {
 		src,
-		type,
 		metadata
 	}: {
 		src: string;
-		type: string;
 		metadata?: MediaMetadataInit;
 	} = $props();
 
@@ -64,7 +62,7 @@
 	bind:duration
 	ontimeupdate={() => (rangeValue = (currentTime / duration) * 100)}
 >
-	<source {src} {type} />
+	<source {src} />
 	Your browser does not support the audio element.
 </audio>
 
