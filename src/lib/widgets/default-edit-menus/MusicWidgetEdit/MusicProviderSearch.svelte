@@ -6,7 +6,7 @@
 	import ButtonGroup from '$lib/components/ButtonGroup.svelte';
 	import TextInput from '$lib/components/TextInput.svelte';
 	import { musicProviders, type MusicProvider, type Track } from '$lib/helpers/music';
-	import { MagnifyingGlass, ArrowSquareOut, Pause, Play } from 'phosphor-svelte';
+	import { MagnifyingGlass, ArrowSquareOut, Pause, Play, MusicNote } from 'phosphor-svelte';
 	import { onDestroy } from 'svelte';
 	import { slide } from 'svelte/transition';
 
@@ -62,6 +62,7 @@
 	{#if tracks}
 		<ul id="results" transition:slide>
 			{#each tracks as track (track.id)}
+				{@const albumCoverArt = track.album.images?.[0]?.url}
 				<li>
 					<form
 						use:enhance={() =>
@@ -74,13 +75,17 @@
 					>
 						<button type="submit">
 							<div class="text-image">
-								<img
-									height={48}
-									width={48}
-									src={track.album.images[0].url}
-									alt="Cover art for {track.album.name}"
-									draggable="false"
-								/>
+								{#if albumCoverArt}
+									<img
+										height={48}
+										width={48}
+										src={albumCoverArt}
+										alt="Cover art for {track.album.name}"
+										draggable="false"
+									/>
+								{:else}
+									<MusicNote />
+								{/if}
 
 								<div class="text">
 									<h3>
@@ -126,12 +131,14 @@
 												title: track.name,
 												artist: track.artists.map(({ name }) => name).join(', '),
 												album: track.album.name,
-												artwork: [
-													{
-														src: track.album.images[0].url,
-														type: 'image/jpeg'
-													}
-												]
+												artwork: albumCoverArt
+													? [
+															{
+																src: albumCoverArt,
+																type: 'image/jpeg'
+															}
+														]
+													: []
 											});
 
 											currentlyPlaying.togglePlayback();
