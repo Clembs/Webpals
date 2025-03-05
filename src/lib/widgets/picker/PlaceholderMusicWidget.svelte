@@ -11,10 +11,7 @@
 		<h3>Music <span class="subtext"> Artist </span></h3>
 	</div>
 
-	<!-- <AudioPlayer
-  file="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
-  type="audio/mpeg"
-/> -->
+	<!-- <AudioPlayer src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" /> -->
 </BasePlaceholderWidget>
 
 <style lang="scss">

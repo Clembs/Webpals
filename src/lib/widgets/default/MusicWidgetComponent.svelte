@@ -1,9 +1,10 @@
 <script lang="ts">
-	import { PencilSimple, SpotifyLogo, Warning } from 'phosphor-svelte';
+	import { MusicNote, PencilSimple, Warning } from 'phosphor-svelte';
 	import BaseWidget from '../BaseWidget.svelte';
 	import type { MusicWidget, WidgetComponentProps } from '../types';
-	import MusicEditWidgetComponent from '../default-edit-menus/MusicWidgetEditComponent.svelte';
-	import AudioPlayer from '$lib/components/AudioPlayer.svelte';
+	import MusicEditWidgetComponent from '../default-edit-menus/MusicWidgetEdit/MusicWidgetEditComponent.svelte';
+	import AudioPlayer from '$lib/components/AudioPlayer/AudioPlayer.svelte';
+	import { PUBLIC_STORAGE_BASE_URL } from '$env/static/public';
 
 	let { profile, widget, editing }: WidgetComponentProps<MusicWidget> = $props();
 
@@ -12,26 +13,26 @@
 
 <BaseWidget bind:isWidgetEditing={modalOpened} {widget} {profile} editingMode={editing}>
 	{#snippet editMenu()}
-		<MusicEditWidgetComponent bind:modalOpened />
+		<MusicEditWidgetComponent {widget} {profile} {editing} bind:modalOpened />
 	{/snippet}
 	<div class="music-widget">
 		<div class="heading">
-			<img
-				draggable={false}
-				src={widget.album_art_url}
-				alt="{widget.title} Cover art"
-				height={48}
-				width={48}
-				class="album-art"
-			/>
+			{#if widget.album_art_url}
+				<img
+					draggable={false}
+					src={widget.album_art_url}
+					alt="{widget.title} Cover art"
+					height={48}
+					width={48}
+					class="album-art"
+				/>
+			{:else}
+				<MusicNote />
+			{/if}
 
 			<div class="text">
 				<h2>
-					{#if widget.title}
-						{widget.title.length > 40 ? widget.title.slice(0, 40) + '...' : widget.title}
-					{:else}
-						Music
-					{/if}
+					{widget.title || 'Music'}
 				</h2>
 
 				<span class="subtext">
@@ -40,32 +41,26 @@
 			</div>
 		</div>
 
-		{#if widget.content_type && widget.content_url && widget.album_art_url && widget.title && widget.artist}
-			{#if widget.content_type === 'spotify'}
-				<AudioPlayer
-					src={widget.content_url}
-					type="audio/mp3"
-					metadata={{
-						title: widget.title,
-						artist: widget.artist,
-						artwork: [
-							{
-								src: widget.album_art_url,
-								type: 'image/jpeg'
+		{#if widget.content_url}
+			<AudioPlayer
+				src={widget.provider === 'local' && widget.content_url.includes('music/')
+					? `${PUBLIC_STORAGE_BASE_URL}/${widget.content_url}`
+					: widget.content_url}
+				metadata={{
+					title: widget.title || '',
+					artist: widget.artist || '',
+					...(widget.album_art_url
+						? {
+								artwork: [
+									{
+										src: widget.album_art_url,
+										type: 'image/jpeg'
+									}
+								]
 							}
-						]
-					}}
-				/>
-
-				<a
-					class="external-url-cta subtext"
-					href={widget.external_url}
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					<SpotifyLogo size={20} /> Listen on Spotify
-				</a>
-			{/if}
+						: {})
+				}}
+			/>
 		{:else}
 			<div class="error">
 				<p>
@@ -105,6 +100,19 @@
 			h2 {
 				font-size: 1.25rem;
 				flex: 1;
+				display: -webkit-box;
+				-webkit-line-clamp: 2;
+				line-clamp: 2;
+				-webkit-box-orient: vertical;
+				overflow: hidden;
+			}
+
+			.subtext {
+				display: -webkit-box;
+				-webkit-line-clamp: 1;
+				line-clamp: 1;
+				-webkit-box-orient: vertical;
+				overflow: hidden;
 			}
 		}
 
@@ -115,19 +123,19 @@
 			gap: calc(var(--base-gap) * 0.25);
 		}
 
-		.external-url-cta {
-			display: flex;
-			align-items: center;
-			align-self: flex-end;
-			gap: calc(var(--base-gap) * 0.25);
-			max-width: fit-content;
-			padding: 1rem;
-			margin: -1rem;
-			text-decoration: none;
+		// .external-url-cta {
+		// 	display: flex;
+		// 	align-items: center;
+		// 	align-self: flex-end;
+		// 	gap: calc(var(--base-gap) * 0.5);
+		// 	max-width: fit-content;
+		// 	padding: 1rem;
+		// 	margin: -1rem;
+		// 	text-decoration: none;
 
-			&:hover {
-				text-decoration: underline;
-			}
-		}
+		// 	&:hover {
+		// 		text-decoration: underline;
+		// 	}
+		// }
 	}
 </style>

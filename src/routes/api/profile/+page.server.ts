@@ -6,10 +6,11 @@ import { deleteWidget } from './delete-widget';
 import { editAboutMe } from './edit-about-me';
 import { editConnection } from './edit-connection';
 import { editCustomWidget } from './edit-custom-widget';
-import { editMusic } from './edit-music';
+import { setExternalMusic } from './set-external-music';
 import { editProfile } from './edit-profile';
 import { editTheme } from './edit-theme';
 import { updateWidgetPosition } from './update-widget-position';
+import { setLocalMusic } from './set-local-music';
 
 export const actions: Actions = {
 	// profile
@@ -22,8 +23,11 @@ export const actions: Actions = {
 
 	// edit widgets
 	editAboutMe,
-	editMusic,
 	editCustomWidget,
+
+	// music
+	setExternalMusic,
+	setLocalMusic,
 
 	// connections
 	createConnection,

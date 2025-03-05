@@ -3,19 +3,19 @@ import type { RequestEvent } from './$types';
 import { db } from '$lib/db';
 import { profiles } from '$lib/db/schema/profiles';
 import { eq } from 'drizzle-orm';
-import { getSpotifyToken, type SpotifyTrack } from '$lib/helpers/music';
+import { getSpotifyToken, type Track } from '$lib/helpers/music';
 
-export async function editMusic({ locals: { getCurrentProfile }, url }: RequestEvent) {
+export async function setExternalMusic({ locals: { getCurrentProfile }, url }: RequestEvent) {
 	const user = await getCurrentProfile();
 
 	if (!user) redirect(302, '/login');
 
-	const contentType = url.searchParams.get('content-type');
+	const provider = url.searchParams.get('provider');
 	const trackId = url.searchParams.get('track-id');
 
-	if (!contentType || !trackId || contentType !== 'spotify') {
+	if (!provider || !trackId || provider !== 'spotify') {
 		return fail(400, {
-			message: 'Invalid content type or track ID.'
+			message: 'Invalid provider or track ID.'
 		});
 	}
 
@@ -33,7 +33,7 @@ export async function editMusic({ locals: { getCurrentProfile }, url }: RequestE
 		});
 	}
 
-	const track: SpotifyTrack = await res.json();
+	const track: Track = await res.json();
 
 	if (!track) {
 		return fail(400, {
@@ -51,7 +51,7 @@ export async function editMusic({ locals: { getCurrentProfile }, url }: RequestE
 							...w,
 							album_art_url: track.album.images[0].url,
 							content_url: track.preview_url,
-							content_type: 'spotify',
+							provider: 'spotify',
 							title: track.name,
 							artist: track.artists.map((a) => a.name).join(', '),
 							external_url: track.external_urls.spotify
