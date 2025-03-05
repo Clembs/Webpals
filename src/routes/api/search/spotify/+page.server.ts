@@ -15,7 +15,7 @@ export const actions: Actions = {
 			const searchParams = new URLSearchParams();
 			searchParams.append('q', query);
 			searchParams.append('type', 'track');
-			searchParams.append('limit', '5');
+			searchParams.append('limit', '10');
 
 			const searchRes = await fetch(`https://api.spotify.com/v1/search?${searchParams}`, {
 				headers: {

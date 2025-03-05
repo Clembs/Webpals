@@ -53,6 +53,7 @@
 		"@supabase/ssr": "^0.5.2",
 		"city-timezones": "^1.3.0",
 		"drizzle-orm": "^0.39.3",
+		"music-metadata": "^11.0.0",
 		"postgres": "^3.4.5"
 	}
 }
