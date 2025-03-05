@@ -7,7 +7,7 @@
 	import { SvelteMap } from 'svelte/reactivity';
 	import type { Connection } from '$lib/db/types';
 
-	let { profile, widget, editing }: WidgetComponentProps<ConnectionsWidget> = $props();
+	let { profile, widget, editing }: Required<WidgetComponentProps<ConnectionsWidget>> = $props();
 
 	let modalOpened = $state(false);
 
@@ -53,7 +53,7 @@
 	{/if}
 {/snippet}
 
-<BaseWidget bind:isWidgetEditing={modalOpened} {profile} {widget} editingMode={editing}>
+<BaseWidget bind:isWidgetEditing={modalOpened} {widget} editingMode={editing}>
 	{#snippet editMenu()}
 		<ConnectionsWidgetEditComponent user={profile} />
 	{/snippet}

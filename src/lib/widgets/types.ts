@@ -122,7 +122,7 @@ export type DefaultWidget =
 export type AnyWidget = DefaultWidget | CustomWidget;
 
 export type WidgetComponentProps<T extends AnyWidget> = {
-	profile: Profile;
+	profile?: Profile;
 	widget: T;
 	editing: boolean;
 };

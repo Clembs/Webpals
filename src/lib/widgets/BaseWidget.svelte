@@ -9,7 +9,6 @@
 </script>
 
 <script lang="ts">
-	import type { Profile } from '$lib/db/types';
 	import type { AnyWidget } from '$lib/widgets/types';
 	import { tick, type Snippet } from 'svelte';
 	import { enhance } from '$app/forms';
@@ -27,7 +26,6 @@
 	}: {
 		editingMode?: boolean;
 		isWidgetEditing?: boolean;
-		profile: Profile;
 		widget?: AnyWidget;
 		editMenu?: Snippet;
 		children: Snippet;

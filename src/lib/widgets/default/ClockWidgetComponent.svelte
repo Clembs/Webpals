@@ -49,7 +49,7 @@
 	});
 </script>
 
-<BaseWidget bind:isWidgetEditing={modalOpened} {profile} {widget} editingMode={editing}>
+<BaseWidget bind:isWidgetEditing={modalOpened} {widget} editingMode={editing}>
 	{#snippet editMenu()}
 		<div id="clock-edit-menu">
 			<h2>Edit Clock</h2>

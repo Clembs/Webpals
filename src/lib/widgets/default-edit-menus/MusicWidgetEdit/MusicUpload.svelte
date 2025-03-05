@@ -10,7 +10,6 @@
 
 	let {
 		modalOpened = $bindable(),
-		profile,
 		widget
 	}: WidgetComponentProps<MusicWidget> & {
 		modalOpened: boolean;
@@ -210,7 +209,6 @@
 			<h3>Preview</h3>
 
 			<MusicWidgetComponent
-				{profile}
 				widget={{
 					id: 'music',
 					album_art_url: null,

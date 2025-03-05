@@ -5,12 +5,12 @@
 	import { enhance } from '$app/forms';
 	import { parseMarkdown } from '$lib/helpers/text';
 
-	let { profile, widget, editing }: WidgetComponentProps<AboutMeWidget> = $props();
+	let { widget, editing }: WidgetComponentProps<AboutMeWidget> = $props();
 
 	let modalOpened = $state(false);
 </script>
 
-<BaseWidget bind:isWidgetEditing={modalOpened} {profile} {widget} editingMode={editing}>
+<BaseWidget bind:isWidgetEditing={modalOpened} {widget} editingMode={editing}>
 	{#snippet editMenu()}
 		<form
 			use:enhance={() =>

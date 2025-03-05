@@ -85,7 +85,7 @@
 	</div>
 {/snippet}
 
-<BaseWidget bind:isWidgetEditing={modalOpened} {profile} editingMode={editing}>
+<BaseWidget bind:isWidgetEditing={modalOpened} editingMode={editing}>
 	{#snippet editMenu()}
 		<form
 			use:enhance={() => {
