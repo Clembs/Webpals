@@ -1,4 +1,4 @@
-<script module>
+<script module lang="ts">
 	export { aboutWebpalsDialog };
 </script>
 
@@ -9,7 +9,7 @@
 	import Webpals from '$icons/Webpals.svelte';
 	import type { FullProfile } from '$lib/db/types';
 	import { dialogPortal } from '$lib/portals/dialog.svelte';
-	import { ArrowSquareOut, DoorOpen, EyeSlash, Gear, Scroll, UserSquare } from 'phosphor-svelte';
+	import { ArrowSquareOut, DoorOpen, Gear, UserSquare } from 'phosphor-svelte';
 	import { fly } from 'svelte/transition';
 	import WebpalsThumbup from '$icons/WebpalsThumbup.svelte';
 	import GitHubLogo from '$icons/brands/GitHubLogo.svelte';

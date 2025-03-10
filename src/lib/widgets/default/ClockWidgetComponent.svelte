@@ -9,7 +9,7 @@
 	import Button from '$lib/components/Button.svelte';
 	import Spinner from '$icons/Spinner.svelte';
 
-	let { profile, widget, editing }: WidgetComponentProps<ClockWidget> = $props();
+	let { widget, editing }: WidgetComponentProps<ClockWidget> = $props();
 
 	let modalOpened = $state(false);
 	let date = $state(new Date());
@@ -21,7 +21,8 @@
 			...(widget.show_seconds ? { second: 'numeric' } : {}),
 			hour12: widget.hour_format === '12h',
 			timeZoneName: 'short',
-			timeZone: widget.timezone
+			timeZone: widget.timezone,
+			dayPeriod: widget.hour_format === '12h' ? 'short' : undefined
 		}).formatToParts(date)
 	);
 
@@ -33,7 +34,7 @@
 	);
 
 	let dayPeriod = $derived(
-		timeParts.find(({ type }) => type === 'dayPeriod')!.value as 'AM' | 'PM'
+		timeParts.find(({ type }) => type === 'dayPeriod')?.value as 'AM' | 'PM' | undefined
 	);
 
 	let cities = $state<CityData[]>([]);
@@ -156,7 +157,7 @@
 			<span class="time-string">
 				{timeString}
 			</span>
-			{#if widget.hour_format === '12h'}
+			{#if widget.hour_format === '12h' && dayPeriod}
 				<span class="day-period">{dayPeriod}</span>
 			{/if}
 		</time>

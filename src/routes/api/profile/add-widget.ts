@@ -5,10 +5,14 @@ import { db } from '$lib/db';
 import { profiles } from '$lib/db/schema/profiles';
 import { eq } from 'drizzle-orm';
 
-export async function addWidget({ locals: { getCurrentProfile }, url }: RequestEvent) {
-	const user = await getCurrentProfile();
+export async function addWidget({
+	locals: { getCurrentProfile },
+	url,
+	getClientAddress
+}: RequestEvent) {
+	const currentProfile = getCurrentProfile();
 
-	if (!user) redirect(302, '/login');
+	if (!currentProfile) redirect(302, '/login');
 
 	const widgetId = url.searchParams.get('id');
 	const widget = defaultWidgets.find(({ id }) => id === widgetId);
@@ -19,12 +23,17 @@ export async function addWidget({ locals: { getCurrentProfile }, url }: RequestE
 		});
 	}
 
+	const generatedWidget = await widget.generateDefault({
+		clientAddress: getClientAddress(),
+		profile: currentProfile
+	});
+
 	await db
 		.update(profiles)
 		.set({
-			widgets: [user.widgets[0], [...user.widgets[1], widget]]
+			widgets: [currentProfile.widgets[0], [...currentProfile.widgets[1], generatedWidget]]
 		})
-		.where(eq(profiles.id, user.id));
+		.where(eq(profiles.id, currentProfile.id));
 
 	return {};
 }

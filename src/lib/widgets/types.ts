@@ -103,6 +103,7 @@ export type ConnectionsWidget = BaseDefaultWidget & {
 };
 
 export type ClockWidget = BaseDefaultWidget & {
+	id: 'clock';
 	timezone: string;
 	show_seconds: boolean;
 	hour_format: '12h' | '24h';
@@ -110,7 +111,7 @@ export type ClockWidget = BaseDefaultWidget & {
 	country: string;
 };
 
-export type DefaultWidget =
+export type AnyDefaultWidget =
 	| MusicWidget
 	| AboutMeWidget
 	| FriendsWidget
@@ -119,7 +120,7 @@ export type DefaultWidget =
 	| ConnectionsWidget
 	| ClockWidget;
 
-export type AnyWidget = DefaultWidget | CustomWidget;
+export type AnyWidget = AnyDefaultWidget | CustomWidget;
 
 export type WidgetComponentProps<T extends AnyWidget> = {
 	profile?: Profile;
