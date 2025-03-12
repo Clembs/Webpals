@@ -93,7 +93,15 @@ export const defaultClockWidget: DefaultWidgetInfo<ClockWidget, false> = {
 			timezone: 'Europe/Paris'
 		};
 
-		if (!clientAddress || clientAddress === '::1') {
+		if (!clientAddress) {
+			return {
+				...defaultNonPersonalizedClock,
+				city: 'Paris',
+				country: 'France'
+			};
+		}
+
+		if (clientAddress === '::1') {
 			return defaultNonPersonalizedClock;
 		}
 
