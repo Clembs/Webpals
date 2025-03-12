@@ -5,7 +5,7 @@ import { profiles } from '$lib/db/schema/profiles';
 import { eq } from 'drizzle-orm';
 import cityTimezones from 'city-timezones';
 
-export async function editClock({ locals: { getCurrentProfile }, request }: RequestEvent) {
+export async function editClockTimezone({ locals: { getCurrentProfile }, request }: RequestEvent) {
 	const currentProfile = getCurrentProfile();
 
 	if (!currentProfile) redirect(302, '/login');

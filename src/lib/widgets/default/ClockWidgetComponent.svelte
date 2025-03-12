@@ -2,12 +2,8 @@
 	import { onMount } from 'svelte';
 	import BaseWidget from '../BaseWidget.svelte';
 	import type { ClockWidget, WidgetComponentProps } from '../types';
-	import { Globe, MagnifyingGlass } from 'phosphor-svelte';
-	import TextInput from '$lib/components/TextInput.svelte';
-	import { enhance } from '$app/forms';
-	import { type CityData } from 'city-timezones';
-	import Button from '$lib/components/Button.svelte';
-	import Spinner from '$icons/Spinner.svelte';
+	import { Globe } from 'phosphor-svelte';
+	import ClockWidgetEdit from '../default-edit-menus/ClockWidgetEdit.svelte';
 
 	let { widget, editing }: WidgetComponentProps<ClockWidget> = $props();
 
@@ -21,8 +17,7 @@
 			...(widget.show_seconds ? { second: 'numeric' } : {}),
 			hour12: widget.hour_format === '12h',
 			timeZoneName: 'short',
-			timeZone: widget.timezone,
-			dayPeriod: widget.hour_format === '12h' ? 'short' : undefined
+			timeZone: widget.timezone
 		}).formatToParts(date)
 	);
 
@@ -37,10 +32,6 @@
 		timeParts.find(({ type }) => type === 'dayPeriod')?.value as 'AM' | 'PM' | undefined
 	);
 
-	let cities = $state<CityData[]>([]);
-	let error = $state('');
-	let isLoading = $state(false);
-
 	onMount(() => {
 		const interval = setInterval(() => {
 			date = new Date();
@@ -52,104 +43,7 @@
 
 <BaseWidget bind:isWidgetEditing={modalOpened} {widget} editingMode={editing}>
 	{#snippet editMenu()}
-		<div id="clock-edit-menu">
-			<h2>Edit Clock</h2>
-
-			<form
-				use:enhance={() => {
-					error = '';
-					isLoading = true;
-					return async ({ update, result }) => {
-						await update({ reset: false });
-						if (
-							result.type === 'success' &&
-							result.data &&
-							'cities' in result.data &&
-							Array.isArray(result.data.cities)
-						) {
-							cities = result.data.cities;
-						} else if (
-							result.type === 'failure' &&
-							result.data &&
-							'message' in result.data &&
-							typeof result.data.message === 'string'
-						) {
-							error = result.data.message;
-						}
-						isLoading = false;
-					};
-				}}
-				action="/api/search/places"
-				method="post"
-			>
-				<TextInput
-					placeholder="Search cities or countries to set the clock"
-					name="query"
-					defaultValue={widget.city}
-					{error}
-				>
-					{#snippet prefixIcon()}
-						<Globe />
-					{/snippet}
-					{#snippet suffixButton()}
-						<Button size="small" icon type="submit" disabled={isLoading}>
-							{#if isLoading}
-								<Spinner />
-							{:else}
-								<MagnifyingGlass weight="regular" />
-							{/if}
-						</Button>
-					{/snippet}
-				</TextInput>
-			</form>
-			{#if cities.length}
-				<ul class="cities">
-					{#each cities as city}
-						<li>
-							<form
-								use:enhance={() =>
-									async ({ result, update }) => {
-										console.log(result);
-										await update({ reset: false });
-										if (result.type === 'success') {
-											modalOpened = false;
-										}
-									}}
-								action="/api/profile?/editClock"
-								method="post"
-							>
-								<button type="submit">
-									<input type="hidden" name="city" value={city.city} />
-									<div class="city-left">
-										<div class="city-country">
-											{city.city}, {city.country}
-										</div>
-
-										<div class="timezone subtext">
-											{new Intl.DateTimeFormat('en-US', {
-												timeZoneName: 'shortOffset',
-												timeZone: city.timezone
-											})
-												.formatToParts(date)
-												.find(({ type }) => type === 'timeZoneName')?.value}
-										</div>
-									</div>
-
-									<time class="city-time" datetime={date.toISOString()}>
-										{date.toLocaleTimeString('en-US', {
-											hour: 'numeric',
-											minute: 'numeric',
-											timeZone: city.timezone,
-											hour12: true
-										})}
-									</time>
-								</button>
-							</form>
-						</li>
-					{/each}
-				</ul>
-			{/if}
-		</div>
+		<ClockWidgetEdit bind:modalOpened {widget} {editing} />
 	{/snippet}
 
 	<div class="clock">
@@ -173,53 +67,6 @@
 </BaseWidget>
 
 <style lang="scss">
-	@use '../../../styles/mixins.scss';
-
-	#clock-edit-menu {
-		display: flex;
-		flex-direction: column;
-		gap: var(--base-gap);
-
-		ul {
-			@include mixins.fancy-list;
-			color: var(--color-heading);
-			max-height: 400px;
-			overflow-y: scroll;
-
-			li {
-				form {
-					display: contents;
-
-					button {
-						display: flex;
-						padding: var(--base-padding);
-						justify-content: space-between;
-						align-items: center;
-						cursor: pointer;
-						appearance: none;
-						border: none;
-						background-color: transparent;
-						width: 100%;
-						text-align: left;
-
-						.city-left {
-							display: flex;
-							flex-direction: column;
-						}
-
-						.city-time {
-							font-size: 1.25rem;
-						}
-
-						&:hover {
-							backdrop-filter: brightness(0.95);
-						}
-					}
-				}
-			}
-		}
-	}
-
 	.clock {
 		display: flex;
 		flex-direction: column;
