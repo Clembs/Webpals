@@ -5,7 +5,7 @@
 	let { showPicker = $bindable(false) } = $props();
 </script>
 
-<BasePlaceholderWidget bind:showPicker widget-id="music">
+<BasePlaceholderWidget bind:showPicker widget-id="clock">
 	<div class="clock">
 		<time>
 			<span class="time-string"> 2:34 </span>
