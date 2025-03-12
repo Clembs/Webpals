@@ -6,6 +6,9 @@
 	import PlaceholderMusicWidget from '$lib/widgets/picker/PlaceholderMusicWidget.svelte';
 	import PlaceholderConnectionsWidgets from '$lib/widgets/picker/PlaceholderConnectionsWidgets.svelte';
 	import BaseEditBarMenu from './BaseEditBarMenu.svelte';
+	import ClockWidgetComponent from '$lib/widgets/default/ClockWidgetComponent.svelte';
+	import type { ClockWidget } from '$lib/widgets/types';
+	import PlaceholderClockWidget from '$lib/widgets/picker/PlaceholderClockWidget.svelte';
 
 	let {
 		profile,
@@ -48,9 +51,7 @@
 				{:else if widget.id === 'connections'}
 					<PlaceholderConnectionsWidgets bind:showPicker={menuOpen} />
 				{:else if widget.id === 'clock'}
-					<BasePlaceholderWidget bind:showPicker={menuOpen} widget-id={widget.id}>
-						12:00 PM
-					</BasePlaceholderWidget>
+					<PlaceholderClockWidget bind:showPicker={menuOpen} />
 				{/if}
 			{/each}
 		</ul>
