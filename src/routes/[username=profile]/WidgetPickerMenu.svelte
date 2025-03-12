@@ -6,14 +6,17 @@
 	import PlaceholderMusicWidget from '$lib/widgets/picker/PlaceholderMusicWidget.svelte';
 	import PlaceholderConnectionsWidgets from '$lib/widgets/picker/PlaceholderConnectionsWidgets.svelte';
 	import BaseEditBarMenu from './BaseEditBarMenu.svelte';
+	import ClockWidgetComponent from '$lib/widgets/default/ClockWidgetComponent.svelte';
+	import type { ClockWidget } from '$lib/widgets/types';
+	import PlaceholderClockWidget from '$lib/widgets/picker/PlaceholderClockWidget.svelte';
 
 	let {
-		user,
+		profile,
 		menuOpen = $bindable(false),
 		editBarEl,
 		editBarWrapperEl
 	}: {
-		user: FullProfile;
+		profile: FullProfile;
 		menuOpen: boolean;
 		editBarEl: HTMLDivElement | undefined;
 		editBarWrapperEl: HTMLDivElement | undefined;
@@ -22,12 +25,12 @@
 	// filter widgets that are not in a user's widgets
 	// user.widgets is an array of arrays containing the widgets
 	let addableWidgets = $derived(
-		defaultWidgets.filter((e) => !user.widgets.find((c) => c.find((w) => w.id === e.id)))
+		defaultWidgets.filter((e) => !profile.widgets.find((c) => c.find((w) => w.id === e.id)))
 	);
 </script>
 
 <BaseEditBarMenu name="Add a widget" {editBarEl} {editBarWrapperEl} bind:menuOpen>
-	{#if addableWidgets.length === 0}
+	{#if !addableWidgets.length}
 		<div class="no-widgets">
 			<p>No more widgets to add :(</p>
 
@@ -47,6 +50,8 @@
 					<PlaceholderMusicWidget bind:showPicker={menuOpen} />
 				{:else if widget.id === 'connections'}
 					<PlaceholderConnectionsWidgets bind:showPicker={menuOpen} />
+				{:else if widget.id === 'clock'}
+					<PlaceholderClockWidget bind:showPicker={menuOpen} />
 				{/if}
 			{/each}
 		</ul>

@@ -84,12 +84,7 @@
 
 <ThemeProvider theme={plainTheme}>
 	<div id="edit-bar-wrapper" bind:this={editBarWrapperEl} class:viewing={!editing}>
-		<WidgetPickerMenu
-			user={profile}
-			{editBarEl}
-			{editBarWrapperEl}
-			bind:menuOpen={widgetPickerOpen}
-		/>
+		<WidgetPickerMenu {profile} {editBarEl} {editBarWrapperEl} bind:menuOpen={widgetPickerOpen} />
 
 		<ThemeEditorMenu bind:theme {editBarEl} {editBarWrapperEl} bind:menuOpen={themeEditorOpen} />
 

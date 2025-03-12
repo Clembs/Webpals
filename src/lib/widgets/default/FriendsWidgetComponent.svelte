@@ -24,7 +24,7 @@
 	);
 </script>
 
-<BaseWidget {profile} {widget} editingMode={editing}>
+<BaseWidget {widget} editingMode={editing}>
 	<h2>Friends ({friends.length})</h2>
 
 	<div class="friends-wrapper">

@@ -16,7 +16,7 @@
 	let modalOpened = $state(false);
 </script>
 
-<BaseWidget bind:isWidgetEditing={modalOpened} {profile} {widget} editingMode={editing}>
+<BaseWidget bind:isWidgetEditing={modalOpened} {widget} editingMode={editing}>
 	{#snippet editMenu()}
 		<form
 			use:enhance={() =>

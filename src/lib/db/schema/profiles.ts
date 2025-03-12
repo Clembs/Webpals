@@ -47,8 +47,12 @@ export const profiles = pgTable(
 		widgets: jsonb()
 			.notNull()
 			.default([
-				[defaultMusicWidget],
-				[defaultAboutMeWidget, defaultFriendsWidget, defaultCommentsWidget]
+				[defaultMusicWidget.generateDefault()],
+				[
+					defaultAboutMeWidget.generateDefault(),
+					defaultFriendsWidget.generateDefault(),
+					defaultCommentsWidget.generateDefault()
+				]
 			] as AnyWidget[][])
 			.$type<AnyWidget[][]>(),
 		theme: jsonb('theme').$type<PartialTheme>()

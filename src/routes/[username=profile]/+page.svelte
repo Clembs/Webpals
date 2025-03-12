@@ -7,13 +7,19 @@
 	import FriendsWidgetComponent from '$lib/widgets/default/FriendsWidgetComponent.svelte';
 	import MusicWidgetComponent from '$lib/widgets/default/MusicWidgetComponent.svelte';
 	import ProfileWidgetComponent from '$lib/widgets/default/ProfileWidgetComponent.svelte';
-	import type { AboutMeWidget, AnyWidget, ConnectionsWidget } from '$lib/widgets/types';
+	import type {
+		AboutMeWidget,
+		AnyWidget,
+		ConnectionsWidget,
+		FriendsWidget
+	} from '$lib/widgets/types';
 	import { flip } from 'svelte/animate';
 	import ProfileEditBar from './ProfileEditBar.svelte';
 	import { dndzone } from 'svelte-dnd-action';
 	import { invalidateAll } from '$app/navigation';
 	import BaseWidget, { isAnyWidgetEditing } from '$lib/widgets/BaseWidget.svelte';
 	import NavBar from '$lib/components/NavBar/NavBar.svelte';
+	import ClockWidgetComponent from '$lib/widgets/default/ClockWidgetComponent.svelte';
 
 	let { data } = $props();
 
@@ -61,14 +67,16 @@
 		<AboutMeWidgetComponent {widget} {...data} {editing} />
 	{:else if widget.id === 'music' && 'content_url' in widget && (!editing ? widget.content_url : true)}
 		<MusicWidgetComponent {widget} {...data} {editing} />
-	{:else if widget.id === 'friends' && !('blocks' in widget)}
-		<FriendsWidgetComponent {widget} {...data} {editing} />
 	{:else if widget.id === 'connections'}
 		<ConnectionsWidgetComponent widget={widget as ConnectionsWidget} {...data} {editing} />
+	{:else if widget.id === 'clock' && 'hour_format' in widget}
+		<ClockWidgetComponent {widget} {...data} {editing} />
 	{:else if 'blocks' in widget}
 		<CustomWidgetComponent {widget} {...data} {editing} />
+	{:else if widget.id === 'friends'}
+		<FriendsWidgetComponent widget={widget as FriendsWidget} {...data} {editing} />
 	{:else if editing}
-		<BaseWidget editingMode={editing} profile={data.profile} {widget}>
+		<BaseWidget editingMode={editing} {widget}>
 			I didn't code this widget in yet (type {widget.id}).<br />
 			Other users won't see this widget, but once it's coded it'll render properly!
 		</BaseWidget>
