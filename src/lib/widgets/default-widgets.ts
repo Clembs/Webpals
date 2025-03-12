@@ -7,7 +7,6 @@ import type {
 	FriendsWidget,
 	MusicWidget
 } from './types';
-import { findFromCityStateProvince, lookupViaCity } from 'city-timezones';
 import type { FullProfile } from '$lib/db/types';
 import type { MaybePromise } from 'valibot';
 
@@ -79,50 +78,18 @@ export const defaultConnectionsWidget: DefaultWidgetInfo<ConnectionsWidget> = {
 	})
 };
 
-export const defaultClockWidget: DefaultWidgetInfo<ClockWidget, false> = {
+export const defaultClockWidget: DefaultWidgetInfo<ClockWidget> = {
 	id: 'clock',
 	label: 'Clock',
 	description: '',
-	generateDefault: async ({ clientAddress }) => {
-		const defaultNonPersonalizedClock: ClockWidget = {
+	generateDefault: () => {
+		return {
 			id: 'clock',
-			city: 'Unknown',
-			country: 'Unknown',
+			city: 'Paris',
+			country: 'France',
 			hour_format: '24h',
 			show_seconds: false,
 			timezone: 'Europe/Paris'
-		};
-
-		if (!clientAddress) {
-			return {
-				...defaultNonPersonalizedClock,
-				city: 'Paris',
-				country: 'France'
-			};
-		}
-
-		if (clientAddress === '::1') {
-			return defaultNonPersonalizedClock;
-		}
-
-		const ipLookup = await import('geoip-lite2').then((m) => m.lookup);
-
-		const ipInfo = ipLookup(clientAddress);
-
-		if (!ipInfo) {
-			return defaultNonPersonalizedClock;
-		}
-
-		const timezoneCity = ipInfo?.timezone.split('/')[1];
-		const [{ city, country }] = findFromCityStateProvince(timezoneCity);
-
-		return {
-			id: 'clock',
-			city,
-			country,
-			hour_format: '24h',
-			show_seconds: false,
-			timezone: ipInfo.timezone
 		};
 	}
 };

@@ -18,8 +18,6 @@
 			<span class="city-country"> Toulouse, France </span>
 		</div>
 	</div>
-
-	<!-- <AudioPlayer src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" /> -->
 </BasePlaceholderWidget>
 
 <style lang="scss">
